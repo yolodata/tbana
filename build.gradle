@@ -1,0 +1,19 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    mavenRepo name: 'conjars', url: 'http://conjars.org/repo/'
+}
+
+dependencies {
+    compile( group: 'cascading', name: 'cascading-core', version: '2.1.6' )
+
+    // hadoop deps
+    compile( group: 'org.apache.hadoop', name: 'hadoop-core', version: '1.0.3' ) {
+        exclude group: 'ant'
+        exclude group: 'junit'
+        exclude group: 'oro' // causes transient build maven failures, ftw
+    }
+}

@@ -3,6 +3,9 @@
 .idea/
 
 *.class
+.gradle/
+
 # Package Files #
 *.jar
+
 

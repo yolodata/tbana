@@ -1,4 +1,4 @@
-package org.apache.hadoop.mapred.lib;
+package com.yolodata.tbana.hadoop.mapred;
 
 import java.io.IOException;
 import java.util.ArrayList;

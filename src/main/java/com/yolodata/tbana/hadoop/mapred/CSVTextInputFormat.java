@@ -17,13 +17,13 @@ public class CSVTextInputFormat extends FileInputFormat<LongWritable, List<Text>
 	@Override
 	public RecordReader<LongWritable, List<Text>> getRecordReader(
 			InputSplit split, JobConf jobConf, Reporter reporter) throws IOException {
-		if(jobConf.get(CSVLineRecordReader.FORMAT_DELIMITER) == null ||
+        if(jobConf.get(CSVLineRecordReader.FORMAT_DELIMITER) == null ||
 				jobConf.get(CSVLineRecordReader.FORMAT_SEPARATOR) == null) {
 			throw new IOException("CSVTextInputFormat: missing parameter delimiter/separator");
 		}
 		
 		CSVLineRecordReader reader = new CSVLineRecordReader();
-		reader.initialize(split, jobConf);
+        reader.initialize(split, jobConf);
 		return reader;
 		
 	}

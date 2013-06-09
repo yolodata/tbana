@@ -26,7 +26,7 @@ public class CSVNLineInputFormat extends FileInputFormat<LongWritable, List<Text
 	@Override
 	public RecordReader<LongWritable, List<Text>> getRecordReader(
 			InputSplit inputSplit, JobConf jobConf, Reporter reporter) throws IOException {
-		
+
 		String quote = jobConf.get(CSVLineRecordReader.FORMAT_DELIMITER, CSVLineRecordReader.DEFAULT_DELIMITER);
 		String separator = jobConf.get(CSVLineRecordReader.FORMAT_SEPARATOR, CSVLineRecordReader.DEFAULT_SEPARATOR);
 		
@@ -37,6 +37,7 @@ public class CSVNLineInputFormat extends FileInputFormat<LongWritable, List<Text
 			
 		CSVLineRecordReader reader = new CSVLineRecordReader();
 		reader.initialize(inputSplit, jobConf);
+
 		return reader;
 	}
 

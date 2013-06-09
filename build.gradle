@@ -9,6 +9,12 @@ repositories {
 
 dependencies {
     compile( group: 'cascading', name: 'cascading-core', version: '2.1.6' )
+    compile( group: 'cascading', name: 'cascading-test', version: '2.0.8' )
+    compile( group: 'cascading', name: 'cascading-hadoop', version: '2.1.6' )
+    compile( group: 'cascading', name: 'cascading-local', version: '2.1.6' )
+
+    compile( group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.5')
+    compile( group: 'junit', name: 'junit', version: '4.11')
 
     compile( group: 'org.apache.hadoop', name: 'hadoop-core', version: '1.0.3' ) {
         exclude group: 'ant'

@@ -5,11 +5,14 @@ import cascading.flow.Flow;
 import cascading.flow.hadoop.HadoopFlowConnector;
 import cascading.pipe.Pipe;
 import cascading.scheme.hadoop.TextDelimited;
+import cascading.scheme.hadoop.TextLine;
 import cascading.tap.SinkMode;
 import cascading.tap.hadoop.Hfs;
 import cascading.tuple.Fields;
 import cascading.tuple.Tuple;
 import cascading.tuple.TupleEntryIterator;
+import com.yolodata.tbana.hadoop.mapred.ArrayListTextWritable;
+import org.apache.hadoop.io.Text;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -29,51 +32,39 @@ public class CSVLineTest extends CascadingTestCase
 
     public void runCSVLine( String path, String inputData) throws IOException
     {
-        Object[][] results = new Object[][]{
-                {"header1","header2"},
-                {"Column1", "Column 2 using one rows"},
-                {"c1", "c2"}
-        };
-
-        Tuple[] tuples = new Tuple[results.length];
-
-        for( int i = 0; i < results.length; i++ )
-            tuples[ i ] = new Tuple( results[ i ] );
-
         Properties properties = new Properties();
 
-
         CSVLine inputScheme = new CSVLine();
-        TextDelimited outputScheme = new TextDelimited();
+        TextLine outputScheme = new TextLine();
 
         Hfs input = new Hfs( inputScheme, inputData );
         Hfs output = new Hfs( outputScheme, outputPath + "/quoted/" + path, SinkMode.REPLACE );
 
-        Pipe pipe = new Pipe( "testCSVLinePipe" );
+        Pipe pipe = new Pipe( "test" );
         Flow flow = new HadoopFlowConnector( properties ).connect( input, output, pipe );
 
         flow.complete();
 
-        validateLength( flow, results.length, 2 );
+        validateLength( flow, 4, 2 ); // The file contains 4 rows, however there are only 3 CSV rows (inc the header row)
 
 
         TupleEntryIterator iterator = flow.openSource();
 
-        int count = 0;
-        while( iterator.hasNext() )
-        {
-            Tuple tuple = iterator.next().getTuple();
-            assertEquals( tuples[ count++ ], tuple );
-        }
+        ArrayListTextWritable expected = new ArrayListTextWritable();
 
-        iterator = flow.openSink();
+        expected.add(new Text("header1"));
+        expected.add(new Text("header2"));
+        assertEquals(expected, iterator.next().getTuple().getObject(1));
 
-        count = 0;
-        while( iterator.hasNext() )
-        {
-            Tuple tuple = iterator.next().getTuple();
-            assertEquals( tuples[ count++ ], tuple );
-        }
+        expected.clear();
+        expected.add(new Text("Column1"));
+        expected.add(new Text("\"Column 2 using\ntwo rows\""));
+        assertEquals(expected, iterator.next().getTuple().getObject(1));
+
+        expected.clear();
+        expected.add(new Text("c1"));
+        expected.add(new Text("c2"));
+        assertEquals(expected, iterator.next().getTuple().getObject(1));
     }
 
     @Test

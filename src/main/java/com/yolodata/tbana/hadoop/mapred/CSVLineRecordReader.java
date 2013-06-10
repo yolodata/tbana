@@ -248,8 +248,15 @@ public class CSVLineRecordReader implements RecordReader<LongWritable, List<Text
 				value = null;
 				return false;
 			} else {
+                removeNewLineOnLastColumn(value);
 				return true;
 			}
 		}
 	}
+
+    private void removeNewLineOnLastColumn(List<Text> value) {
+        String lastColumn = value.get(value.size()-1).toString();
+        if(lastColumn.endsWith("\n"))
+            value.set(value.size()-1, new Text(lastColumn.substring(0,lastColumn.length()-1)));
+    }
 }

@@ -2,15 +2,22 @@ package com.yolodata.tbana.cascading.csv;
 
 
 import cascading.flow.FlowProcess;
+import cascading.scheme.SourceCall;
+import cascading.scheme.hadoop.TextDelimited;
 import cascading.scheme.hadoop.TextLine;
 import cascading.tap.Tap;
+import cascading.tuple.Tuple;
+import com.yolodata.tbana.hadoop.mapred.CSVLineRecordReader;
 import com.yolodata.tbana.hadoop.mapred.CSVNLineInputFormat;
+import com.yolodata.tbana.hadoop.mapred.CSVTextInputFormat;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.mapred.FileInputFormat;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.OutputCollector;
 import org.apache.hadoop.mapred.RecordReader;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 public class CSVLine extends TextLine {
@@ -20,6 +27,11 @@ public class CSVLine extends TextLine {
     {
         if( hasZippedFiles(FileInputFormat.getInputPaths(conf)) )
             throw new IllegalStateException( "cannot read zip files: " + Arrays.toString(FileInputFormat.getInputPaths(conf)) );
+
+        conf.set(CSVLineRecordReader.FORMAT_DELIMITER,CSVLineRecordReader.DEFAULT_DELIMITER);
+        conf.set(CSVLineRecordReader.FORMAT_SEPARATOR,CSVLineRecordReader.DEFAULT_SEPARATOR);
+        conf.setBoolean(CSVLineRecordReader.IS_ZIPFILE, false);
+        conf.setInt(CSVNLineInputFormat.LINES_PER_MAP, 40000);
 
         conf.setInputFormat( CSVNLineInputFormat.class );
     }
@@ -36,4 +48,37 @@ public class CSVLine extends TextLine {
 
         return isZipped;
     }
+
+    @Override
+    public boolean source( FlowProcess<JobConf> flowProcess, SourceCall<Object[], RecordReader> sourceCall ) throws IOException
+    {
+        if( !sourceReadInput( sourceCall ) )
+            return false;
+
+        sourceHandleInput( sourceCall );
+
+        return true;
+    }
+
+    private boolean sourceReadInput( SourceCall<Object[], RecordReader> sourceCall ) throws IOException
+    {
+        Object[] context = sourceCall.getContext();
+        return sourceCall.getInput().next( context[ 0 ], context[ 1 ] );
+    }
+
+    protected void sourceHandleInput( SourceCall<Object[], RecordReader> sourceCall )
+    {
+        Tuple tuple = sourceCall.getIncomingEntry().getTuple();
+
+        int index = 0;
+
+        Object[] context = sourceCall.getContext();
+
+        if( getSourceFields().size() == 2 )
+            tuple.set( index++, ( (LongWritable) context[ 0 ] ).get() );
+
+        tuple.set( index, context[1] );
+
+    }
+
 }

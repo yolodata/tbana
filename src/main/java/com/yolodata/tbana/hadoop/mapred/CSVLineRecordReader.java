@@ -79,7 +79,8 @@ public class CSVLineRecordReader implements RecordReader<LongWritable, List<Text
 	 * @throws IOException
 	 */
 	protected int readLine(List<Text> values) throws IOException {
-		values.clear();// Empty value columns list
+		values.clear();
+
 		char c;
 		int numRead = 0;
 		boolean insideQuote = false;
@@ -122,20 +123,6 @@ public class CSVLineRecordReader implements RecordReader<LongWritable, List<Text
 		return numRead;
 	}
 
-	/**
-	 * Helper function that adds a new value to the values list passed as
-	 * argument.
-	 * 
-	 * @param sb
-	 *            StringBuffer that has the value to be added
-	 * @param values
-	 *            values list
-	 * @param takeDelimiterOut
-	 *            should be true when called in the middle of the line, when a
-	 *            delimiter was found, and false when sb contains the line
-	 *            ending
-	 * @throws UnsupportedEncodingException
-	 */
 	protected void foundDelimiter(StringBuffer sb, List<Text> values, boolean takeDelimiterOut)
 			throws UnsupportedEncodingException {
 		// Found a real delimiter

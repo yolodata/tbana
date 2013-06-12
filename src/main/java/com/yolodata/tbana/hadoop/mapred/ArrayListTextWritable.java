@@ -13,7 +13,9 @@ import org.apache.hadoop.io.Writable;
  * side. Besides that, it behaves as a simple ArrayList
  * 
  * @author mvallebr
- * 
+ *
+ *
+ * Source: https://github.com/mvallebr/CSVInputFormat
  */
 public class ArrayListTextWritable extends ArrayList<Text> implements Writable {
 	private static final long serialVersionUID = -6737762624115237320L;

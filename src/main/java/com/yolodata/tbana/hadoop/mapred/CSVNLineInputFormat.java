@@ -52,52 +52,54 @@ public class CSVNLineInputFormat extends FileInputFormat<LongWritable, List<Text
 		return splits.toArray(new InputSplit[splits.size()]);
 	}
 
-	private static List<FileSplit> getSplitsForFile(FileStatus status, JobConf conf, int numLinesPerSplit)
+	protected static List<FileSplit> getSplitsForFile(FileStatus status, JobConf conf, int numLinesPerSplit)
 			throws IOException {
-		List<FileSplit> splits = new ArrayList<FileSplit>();
-		Path fileName = status.getPath();
-		if (status.isDir()) {
-			throw new IOException("Not a file: " + fileName);
-		}
-		FileSystem fs = fileName.getFileSystem(conf);
-		CSVLineRecordReader lr = null;
-		try {
-			FSDataInputStream in = fs.open(fileName);
-			lr = new CSVLineRecordReader(in, conf);
-			List<Text> line = new ArrayList<Text>();
-			int numLines = 0;
-			long begin = 0;
-			long length = 0;
-			int num = -1;
-			while ((num = lr.readLine(line)) > 0) {
-				numLines++;
-				length += num;
-				if (numLines == numLinesPerSplit) {
-					// To make sure that each mapper gets N lines,
-					// we move back the upper split limits of each split
-					// by one character here.
-					if (begin == 0) {
-						splits.add(new FileSplit(fileName, begin, length - 1, new String[] {}));
-					} else {
-						splits.add(new FileSplit(fileName, begin, length - 1, new String[] {}));
-					}
-					begin += length;
-					length = 0;
-					numLines = 0;
-				}
-			}
-			if (numLines != 0) {
-				splits.add(new FileSplit(fileName, begin, length, new String[] {}));
-			}
-		} finally {
-			if (lr != null) {
-				lr.close();
-			}
-		}
-		return splits;
+        Path filePath = getPath(status);
+		FileSystem fs = filePath.getFileSystem(conf);
+        return getFileSplits(conf, numLinesPerSplit, filePath, fs);
 	}
 
-	public static int getNumLinesPerSplit(JobConf job) {
+    private static List<FileSplit> getFileSplits(JobConf conf, int numLinesPerSplit, Path filePath, FileSystem fs) throws IOException {
+
+        List<FileSplit> splits = new ArrayList<FileSplit>();
+
+        CSVLineRecordReader lr = null;
+        try {
+            FSDataInputStream in = fs.open(filePath);
+            lr = new CSVLineRecordReader(in, conf);
+            List<Text> line = new ArrayList<Text>();
+            int numLines = 0;
+            long startPos = 0;
+            long splitLength = 0;
+            int num;
+            while ((num = lr.readLine(line)) > 0) {
+                numLines++;
+                splitLength += num;
+                if (numLines == numLinesPerSplit) {
+                    splits.add(new FileSplit(filePath, startPos, splitLength - 1, new String[] {}));
+                    startPos += splitLength;
+                    splitLength = 0;
+                    numLines = 0;
+                }
+            }
+            if (numLines != 0) {
+                splits.add(new FileSplit(filePath, startPos, splitLength, new String[] {}));
+            }
+        } finally {
+            if (lr != null) lr.close();
+        }
+        return splits;
+    }
+
+    private static Path getPath(FileStatus status) throws IOException {
+        Path fileName = status.getPath();
+        if (status.isDir()) {
+            throw new IOException("Not a file: " + fileName);
+        }
+        return fileName;
+    }
+
+    public static int getNumLinesPerSplit(JobConf job) {
 		return job.getInt(LINES_PER_MAP, DEFAULT_LINES_PER_MAP);
 	}
 

@@ -1,13 +1,9 @@
 package com.yolodata.tbana.hadoop.mapred.splunk;
 
-import com.yolodata.tbana.hadoop.mapred.CSVLineRecordReader;
 import com.yolodata.tbana.hadoop.mapred.CSVNLineInputFormat;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FSDataOutputStream;
-import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
@@ -19,7 +15,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -42,7 +37,7 @@ public class SplunkInputFormatTest {
     }
 
     private boolean runJob() throws Exception {
-        return (ToolRunner.run(new Configuration(), new CSVTestRunner(), new String[]{}) == 0);
+        return (ToolRunner.run(new Configuration(), new SplunkTestRunner(), new String[]{}) == 0);
     }
 }
 
@@ -56,7 +51,7 @@ class TestMapper extends MapReduceBase implements Mapper<LongWritable, List<Text
     }
 }
 
-class CSVTestRunner extends Configured implements Tool {
+class SplunkTestRunner extends Configured implements Tool {
 
     public int run(String[] args) throws Exception {
         JobConf jobConf = new JobConf(getConf());
@@ -67,11 +62,11 @@ class CSVTestRunner extends Configured implements Tool {
         jobConf.set(SplunkExportRecordReader.SPLUNK_PORT, "8089");
         jobConf.set(SplunkExportRecordReader.SPLUNK_SEARCH_QUERY, "*");
 
-        jobConf.setJarByClass(CSVTestRunner.class);
+        jobConf.setJarByClass(SplunkTestRunner.class);
         jobConf.setNumReduceTasks(0);
         jobConf.setMapperClass(TestMapper.class);
 
-        jobConf.setInputFormat(CSVNLineInputFormat.class);
+        jobConf.setInputFormat(SplunkExportRecordReader.class);
         jobConf.setOutputKeyClass(NullWritable.class);
         jobConf.setOutputValueClass(Text.class);
 
@@ -83,7 +78,7 @@ class CSVTestRunner extends Configured implements Tool {
         return 0;
     }
 
-    public CSVTestRunner() {
+    public SplunkTestRunner() {
         super(new Configuration());
     }
 

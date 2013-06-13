@@ -2,10 +2,10 @@
 *.iml
 .idea/
 build/
+out/
 *.class
 .gradle/
 
 # Package Files #
 *.jar
-
 

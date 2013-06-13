@@ -1,6 +1,8 @@
 package com.yolodata.tbana.hadoop.mapred.splunk;
 
+import com.google.common.primitives.Bytes;
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.hadoop.io.UTF8;
 import org.apache.hadoop.mapred.InputSplit;
 
 import java.io.DataInput;
@@ -16,7 +18,8 @@ public class SplunkSplit implements InputSplit{
     private long length;
 
     public SplunkSplit(long start, long end) {
-        locations = new String[] {String.valueOf(start), String.valueOf(end)};
+        this.start = start;
+        this.end = end;
     }
 
     @Override
@@ -26,17 +29,19 @@ public class SplunkSplit implements InputSplit{
 
     @Override
     public String[] getLocations() throws IOException {
-        return locations;
+        return new String[] {String.valueOf(start), String.valueOf(end)};
     }
 
     @Override
     public void write(DataOutput dataOutput) throws IOException {
-        throw new NotImplementedException();
+        dataOutput.writeLong(start);
+        dataOutput.writeLong(end);
     }
 
     @Override
     public void readFields(DataInput dataInput) throws IOException {
-        throw new NotImplementedException();
+        this.start = dataInput.readLong();
+        this.end = dataInput.readLong();
     }
 
     public long getStart() {

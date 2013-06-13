@@ -10,15 +10,33 @@ import java.util.List;
 
 import com.splunk.*;
 
-public class SplunkInputFormat extends FileInputFormat<LongWritable, List<Text>> {
+public class SplunkInputFormat implements InputFormat<LongWritable, List<Text>> {
 
     @Override
     public RecordReader<LongWritable, List<Text>> getRecordReader(InputSplit inputSplit,
-                                                                  JobConf entries, Reporter reporter) throws IOException {
+                                                                  JobConf configuration, Reporter reporter) throws IOException {
+        SplunkExportRecordReader splunkExportRecordReader = new SplunkExportRecordReader(configuration);
 
-        //TODO: Check JobConf for user, password, address:port, searchMode(realtime/normal)
+        splunkExportRecordReader.initialize(inputSplit);
 
+        return splunkExportRecordReader;
+    }
 
-        return null;
+    @Override
+    public InputSplit[] getSplits(JobConf conf, int numberOfSplits) throws IOException {
+
+        InputSplit[] splits = new InputSplit[numberOfSplits];
+
+        SplunkExportRecordReader rr = new SplunkExportRecordReader(conf);
+
+        int resultsPerSplit = rr.getNumberOfResults()/numberOfSplits;
+
+        for(int i=0; i<numberOfSplits; i++) {
+            int start = i * resultsPerSplit;
+            int end = start + resultsPerSplit;
+            splits[i] = new SplunkSplit(start, end);
+        }
+
+        return splits;
     }
 }

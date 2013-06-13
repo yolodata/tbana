@@ -14,6 +14,9 @@ public class SplunkSplit implements InputSplit{
     private long start;
     private long end;
 
+    public SplunkSplit() {
+    }
+
     public SplunkSplit(long start, long end) {
         this.start = start;
         this.end = end;

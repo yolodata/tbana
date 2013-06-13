@@ -1,6 +1,7 @@
 package com.yolodata.tbana.hadoop.mapred.splunk;
 
 import com.yolodata.tbana.hadoop.mapred.CSVNLineInputFormat;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -15,12 +16,17 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 public class SplunkInputFormatTest {
+
+    String outputPath= "build/testTmp";
+
     @Before
     public void setUp() throws Exception {
+        FileUtils.deleteDirectory(new File(outputPath));
     }
 
     @After
@@ -37,7 +43,8 @@ public class SplunkInputFormatTest {
     }
 
     private boolean runJob() throws Exception {
-        return (ToolRunner.run(new Configuration(), new SplunkTestRunner(), new String[]{}) == 0);
+        return (ToolRunner.run(new Configuration(), new SplunkTestRunner(),
+                new String[]{outputPath}) == 0);
     }
 }
 
@@ -57,21 +64,20 @@ class SplunkTestRunner extends Configured implements Tool {
         JobConf jobConf = new JobConf(getConf());
 
         jobConf.set(SplunkExportRecordReader.SPLUNK_USERNAME, "admin");
-        jobConf.set(SplunkExportRecordReader.SPLUNK_PASSWORD, "changeme");
+        jobConf.set(SplunkExportRecordReader.SPLUNK_PASSWORD, "changeIt");
         jobConf.set(SplunkExportRecordReader.SPLUNK_HOST, "localhost");
         jobConf.set(SplunkExportRecordReader.SPLUNK_PORT, "8089");
-        jobConf.set(SplunkExportRecordReader.SPLUNK_SEARCH_QUERY, "*");
+        jobConf.set(SplunkExportRecordReader.SPLUNK_SEARCH_QUERY, "search source=/var/log/system.log");
 
         jobConf.setJarByClass(SplunkTestRunner.class);
         jobConf.setNumReduceTasks(0);
         jobConf.setMapperClass(TestMapper.class);
 
-        jobConf.setInputFormat(SplunkExportRecordReader.class);
+        jobConf.setInputFormat(SplunkInputFormat.class);
         jobConf.setOutputKeyClass(NullWritable.class);
         jobConf.setOutputValueClass(Text.class);
 
-        CSVNLineInputFormat.setInputPaths(jobConf, new Path(args[0]));
-        TextOutputFormat.setOutputPath(jobConf,new Path(args[1]));
+        TextOutputFormat.setOutputPath(jobConf,new Path(args[0]));
 
         JobClient.runJob(jobConf);
 

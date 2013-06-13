@@ -41,6 +41,7 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
 
         this.configuration = configuration;
         validateConfiguration(this.configuration);
+        setupService();
     }
 
     private void validateConfiguration(JobConf configuration) throws SplunkConfigurationException {
@@ -58,9 +59,11 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
 
     }
 
-    public int getNumberOfResults() {
-        Job searchJob = splunkService.search(configuration.get(SPLUNK_SEARCH_QUERY), getJobExportArgs()).finish();
-
+    public int getNumberOfResults() throws InterruptedException {
+        Job searchJob = splunkService.search(configuration.get(SPLUNK_SEARCH_QUERY), getJobExportArgs());
+        while (!searchJob.isDone()){
+            Thread.sleep(1000);
+        }
         return searchJob.getEventCount();
     }
 
@@ -68,11 +71,14 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
 
         initPositions((SplunkSplit) inputSplit);
 
-        ServiceArgs serviceArgs = getLoginArgs();
-        splunkService = Service.connect(serviceArgs);
 
         is = splunkService.export(configuration.get(SPLUNK_SEARCH_QUERY), getJobExportArgs());
 
+    }
+
+    private void setupService() {
+        ServiceArgs serviceArgs = getLoginArgs();
+        splunkService = Service.connect(serviceArgs);
     }
 
     private void initPositions(SplunkSplit inputSplit) {
@@ -84,10 +90,10 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
 
     private JobExportArgs getJobExportArgs() {
         JobExportArgs jobExportArgs = new JobExportArgs();
-        jobExportArgs.setOutputMode(JobExportArgs.OutputMode.JSON);
+        jobExportArgs.setOutputMode(JobExportArgs.OutputMode.CSV);
         jobExportArgs.add("offset", startPosition);
-        jobExportArgs.setLatestTime("-12h");
-        jobExportArgs.setEarliestTime("now"); // Add to JobConf.
+        jobExportArgs.setLatestTime("now");
+        jobExportArgs.setEarliestTime("-12h"); // Add to JobConf.
 
         jobExportArgs.setSearchMode(JobExportArgs.SearchMode.NORMAL);
         long totalLinesToGet = endPosition-startPosition;

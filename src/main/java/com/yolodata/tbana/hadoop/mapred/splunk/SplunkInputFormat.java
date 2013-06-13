@@ -23,18 +23,24 @@ public class SplunkInputFormat implements InputFormat<LongWritable, List<Text>> 
     }
 
     @Override
-    public InputSplit[] getSplits(JobConf conf, int numberOfSplits) throws IOException {
+    public InputSplit[] getSplits(JobConf conf, int numberOfSplits) throws RuntimeException {
 
         InputSplit[] splits = new InputSplit[numberOfSplits];
 
-        SplunkExportRecordReader rr = new SplunkExportRecordReader(conf);
+        SplunkExportRecordReader rr = null;
 
-        int resultsPerSplit = rr.getNumberOfResults()/numberOfSplits;
+        try {
+            rr = new SplunkExportRecordReader(conf);
+            int resultsPerSplit = rr.getNumberOfResults()/numberOfSplits;
 
-        for(int i=0; i<numberOfSplits; i++) {
-            int start = i * resultsPerSplit;
-            int end = start + resultsPerSplit;
-            splits[i] = new SplunkSplit(start, end);
+            for(int i=0; i<numberOfSplits; i++) {
+                int start = i * resultsPerSplit;
+                int end = start + resultsPerSplit;
+                splits[i] = new SplunkSplit(start, end);
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
         return splits;

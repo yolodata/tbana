@@ -2,6 +2,7 @@ package com.yolodata.tbana.hadoop.mapred.splunk;
 
 
 import com.yolodata.tbana.hadoop.mapred.ArrayListTextWritable;
+import com.yolodata.tbana.hadoop.mapred.CSVReader;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.InputSplit;
@@ -10,6 +11,7 @@ import org.apache.hadoop.mapred.RecordReader;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.List;
 
@@ -33,6 +35,7 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
 
 
     private Service splunkService;
+    private CSVReader reader;
 
     public SplunkExportRecordReader(JobConf configuration) throws IOException {
 
@@ -56,7 +59,7 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
     }
 
     public int getNumberOfResults() {
-        Job searchJob = splunkService.search(configuration.get(SPLUNK_SEARCH_QUERY), getJobExportArgs(configuration)).finish();
+        Job searchJob = splunkService.search(configuration.get(SPLUNK_SEARCH_QUERY), getJobExportArgs()).finish();
 
         return searchJob.getEventCount();
     }
@@ -68,7 +71,7 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
         ServiceArgs serviceArgs = getLoginArgs();
         splunkService = Service.connect(serviceArgs);
 
-        is = splunkService.export(configuration.get(SPLUNK_SEARCH_QUERY), getJobExportArgs(configuration));
+        is = splunkService.export(configuration.get(SPLUNK_SEARCH_QUERY), getJobExportArgs());
 
     }
 
@@ -90,6 +93,7 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
         long totalLinesToGet = endPosition-startPosition;
         jobExportArgs.add("count",totalLinesToGet);
 
+        return jobExportArgs;
     }
 
     private ServiceArgs getLoginArgs() {
@@ -100,13 +104,33 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
         loginArgs.setPort(configuration.getInt(SPLUNK_PORT, 8080));
 
         return loginArgs;
+
     }
 
     @Override
-    public boolean next(LongWritable longWritable, List<Text> text) throws IOException {
-
+    public boolean next(LongWritable key, List<Text> value) throws IOException {
         //TODO: Extract CSV-logic from CSVRecordReader to separate file and use here to read lines from InputStream
-        return false;
+
+        if(currentPosition == endPosition)
+            return false;
+
+        InputStreamReader streamReader = new InputStreamReader(is);
+        reader = new CSVReader(streamReader);
+
+        if(key == null) key = createKey();
+        if(value == null) value = createValue();
+
+        int bytesRead = reader.readLine(value);
+        if(bytesRead == 0) {
+            key = null;
+            value = null;
+
+            return false;
+        }
+
+        key.set(currentPosition);
+        currentPosition++;
+        return true;
     }
 
     @Override

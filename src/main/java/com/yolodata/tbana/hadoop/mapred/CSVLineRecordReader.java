@@ -36,7 +36,7 @@ public class CSVLineRecordReader implements RecordReader<LongWritable, List<Text
 	private String separator;
 	private boolean isZipFile;
 	protected InputStream is;
-	protected Reader in;
+	protected CSVReader reader;
 	
 
 	private CompressionCodecFactory compressionCodecs = null;
@@ -65,86 +65,12 @@ public class CSVLineRecordReader implements RecordReader<LongWritable, List<Text
 		}
 		
 		this.is = is;
-		this.in = new BufferedReader(new InputStreamReader(is));
-	}
-	
-	
-	/**
-	 * Parses a line from the CSV, from the current stream position. It stops
-	 * parsing when it finds a new line char outside two delimiters
-	 * 
-	 * @param values
-	 *            List of column values parsed from the current CSV line
-	 * @return number of chars processed from the stream
-	 * @throws IOException
-	 */
-	protected int readLine(List<Text> values) throws IOException {
-		values.clear();
-
-		char c;
-		int numRead = 0;
-		boolean insideQuote = false;
-		StringBuffer sb = new StringBuffer();
-		int i;
-		int quoteOffset = 0, delimiterOffset = 0;
-		// Reads each char from input stream unless eof was reached
-		while ((i = in.read()) != -1) {
-			c = (char) i;
-			numRead++;
-			sb.append(c);
-			// Check quotes, as delimiter inside quotes don't count
-			if (c == delimiter.charAt(quoteOffset)) {
-				quoteOffset++;
-				if (quoteOffset >= delimiter.length()) {
-					insideQuote = !insideQuote;
-					quoteOffset = 0;
-				}
-			} else {
-				quoteOffset = 0;
-			}
-			// Check delimiters, but only those outside of quotes
-			if (!insideQuote) {
-				if (c == separator.charAt(delimiterOffset)) {
-					delimiterOffset++;
-					if (delimiterOffset >= separator.length()) {
-						foundDelimiter(sb, values, true);
-						delimiterOffset = 0;
-					}
-				} else {
-					delimiterOffset = 0;
-				}
-				// A new line outside of a quote is a real csv line breaker
-				if (c == '\n') {
-					break;
-				}
-			}
-		}
-		foundDelimiter(sb, values, false);
-		return numRead;
+		this.reader = new CSVReader(new BufferedReader(new InputStreamReader(is)));
 	}
 
-	protected void foundDelimiter(StringBuffer sb, List<Text> values, boolean takeDelimiterOut)
-			throws UnsupportedEncodingException {
-		// Found a real delimiter
-		Text text = new Text();
-		String val = (takeDelimiterOut) ? sb.substring(0, sb.length() - separator.length()) : sb.toString();
-		if (val.startsWith(delimiter) && val.endsWith(delimiter)) {
-			val = (val.length() - (2 * delimiter.length()) > 0) ? val.substring(delimiter.length(), val.length()
-					- (2 * delimiter.length())) : "";
-		}
-		text.append(val.getBytes("UTF-8"), 0, val.length());
-		values.add(text);
-		// Empty string buffer
-		sb.setLength(0);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.apache.hadoop.mapreduce.RecordReader#initialize(org.apache.hadoop
-	 * .mapreduce.InputSplit, org.apache.hadoop.mapreduce.TaskAttemptContext)
-	 */
+    public int readLine(List<Text> values) throws IOException {
+        return this.reader.readLine(values);
+    }
 	public void initialize(InputSplit genericSplit, JobConf conf) throws IOException {
 		FileSplit split = (FileSplit) genericSplit;
 
@@ -171,7 +97,8 @@ public class CSVLineRecordReader implements RecordReader<LongWritable, List<Text
 		this.pos = start;
 		init(is, conf);
 	}
-	
+
+    @Override
 	public float getProgress() {
 		if (start == end) {
 			return 0.0f;
@@ -181,9 +108,9 @@ public class CSVLineRecordReader implements RecordReader<LongWritable, List<Text
 	}
 
 	public synchronized void close() throws IOException {
-		if (in != null) {
-			in.close();
-			in = null;
+		if (reader != null) {
+			reader.close();
+            reader = null;
 		}
 		if (is != null) {
 			is.close();
@@ -220,14 +147,14 @@ public class CSVLineRecordReader implements RecordReader<LongWritable, List<Text
 			if (pos >= end)
 				return false;
 			int newSize = 0;
-			newSize = readLine(value);
+			newSize = reader.readLine(value);
 			pos += newSize;
 			if (newSize == 0) {
 				if (isZipFile) {
 					ZipInputStream zis = (ZipInputStream) is;
 					if (zis.getNextEntry() != null) {
 						is = zis;
-						in = new BufferedReader(new InputStreamReader(is));
+						reader = new CSVReader(new BufferedReader(new InputStreamReader(is)));
 						continue;
 					}
 				}

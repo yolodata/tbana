@@ -11,11 +11,8 @@ import java.io.IOException;
 
 public class SplunkSplit implements InputSplit{
 
-    private String[] locations;
     private long start;
     private long end;
-
-    private long length;
 
     public SplunkSplit(long start, long end) {
         this.start = start;

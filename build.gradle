@@ -26,5 +26,5 @@ dependencies {
         exclude group: 'oro'
     }
 
-    compile "splunk-splunk-sdk-java-1.1"
+    compile fileTree(dir: 'lib', include: '*.jar')
 }

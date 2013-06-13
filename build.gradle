@@ -5,6 +5,10 @@ repositories {
     mavenLocal()
     mavenCentral()
     mavenRepo name: 'conjars', url: 'http://conjars.org/repo/'
+
+    flatDir {
+        dirs 'lib'
+    }
 }
 
 dependencies {
@@ -21,4 +25,6 @@ dependencies {
         exclude group: 'junit'
         exclude group: 'oro'
     }
+
+    compile "splunk-splunk-sdk-java-1.1"
 }

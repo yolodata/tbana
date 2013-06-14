@@ -1,15 +1,5 @@
 package com.yolodata.tbana.hadoop.mapred;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.zip.ZipInputStream;
-
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -21,6 +11,10 @@ import org.apache.hadoop.mapred.FileSplit;
 import org.apache.hadoop.mapred.InputSplit;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.RecordReader;
+
+import java.io.*;
+import java.util.List;
+import java.util.zip.ZipInputStream;
 
 public class CSVLineRecordReader implements RecordReader<LongWritable, List<Text>> {
 

@@ -23,46 +23,46 @@ public class CSVReader implements Closeable {
     public int readLine(List<Text> values) throws IOException {
         values.clear();
 
-        char c;
-        int numRead = 0;
-        boolean insideQuote = false;
-        StringBuffer sb = new StringBuffer();
-        int i;
-        int quoteOffset = 0, delimiterOffset = 0;
-        // Reads each char from input stream unless eof was reached
+        StringBuffer line = new StringBuffer();
+        int charactersRead = 0;
+        char currentChar;
+
+        boolean insideQuotes = false;
+        int i, quoteOffset = 0, delimiterOffset = 0;
+
         while ((i = reader.read()) != -1) {
-            c = (char) i;
-            numRead++;
-            sb.append(c);
+            currentChar = (char) i;
+            charactersRead++;
+            line.append(currentChar);
             // Check quotes, as delimiter inside quotes don't count
-            if (c == delimiter.charAt(quoteOffset)) {
+            if (currentChar == delimiter.charAt(quoteOffset)) {
                 quoteOffset++;
                 if (quoteOffset >= delimiter.length()) {
-                    insideQuote = !insideQuote;
+                    insideQuotes = !insideQuotes;
                     quoteOffset = 0;
                 }
             } else {
                 quoteOffset = 0;
             }
             // Check delimiters, but only those outside of quotes
-            if (!insideQuote) {
-                if (c == separator.charAt(delimiterOffset)) {
+            if (!insideQuotes) {
+                if (currentChar == separator.charAt(delimiterOffset)) {
                     delimiterOffset++;
                     if (delimiterOffset >= separator.length()) {
-                        foundDelimiter(sb, values, true);
+                        foundDelimiter(line, values, true);
                         delimiterOffset = 0;
                     }
                 } else {
                     delimiterOffset = 0;
                 }
                 // A new line outside of a quote is a real csv line breaker
-                if (c == '\n') {
+                if (currentChar == '\n') {
                     break;
                 }
             }
         }
-        foundDelimiter(sb, values, false);
-        return numRead;
+        foundDelimiter(line, values, false);
+        return charactersRead;
     }
 
     protected void foundDelimiter(StringBuffer sb, List<Text> values, boolean takeDelimiterOut)
@@ -84,4 +84,5 @@ public class CSVReader implements Closeable {
     public void close() throws IOException {
         reader.close();
     }
+
 }

@@ -1,10 +1,13 @@
 package com.yolodata.tbana.hadoop.mapred.splunk;
 
 import com.yolodata.tbana.hadoop.mapred.CSVNLineInputFormat;
+import com.yolodata.tbana.hadoop.mapred.TestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
@@ -22,11 +25,13 @@ import java.util.List;
 
 public class SplunkInputFormatTest {
 
-    String outputPath= "build/testTmp";
+    private Path outputPath= new Path("build/testTmp");
+    private FileSystem fs;
 
     @Before
     public void setUp() throws Exception {
-        FileUtils.deleteDirectory(new File(outputPath));
+        fs= FileSystem.get(new Configuration());
+        fs.delete(outputPath, true);
     }
 
     @After
@@ -40,11 +45,14 @@ public class SplunkInputFormatTest {
         boolean jobCompleted = runJob();
         assert(jobCompleted == true); // Means that the job successfully finished
 
+        String outputContent = TestUtils.readMapReduceOutputFile(fs, outputPath);
+        System.out.println(outputContent);
+
     }
 
     private boolean runJob() throws Exception {
         return (ToolRunner.run(new Configuration(), new SplunkTestRunner(),
-                new String[]{outputPath}) == 0);
+                new String[]{outputPath.toString()}) == 0);
     }
 }
 
@@ -67,7 +75,9 @@ class SplunkTestRunner extends Configured implements Tool {
         jobConf.set(SplunkExportRecordReader.SPLUNK_PASSWORD, "changeIt");
         jobConf.set(SplunkExportRecordReader.SPLUNK_HOST, "localhost");
         jobConf.set(SplunkExportRecordReader.SPLUNK_PORT, "8089");
-        jobConf.set(SplunkExportRecordReader.SPLUNK_SEARCH_QUERY, "search source=/var/log/system.log");
+        jobConf.set(SplunkExportRecordReader.SPLUNK_EARLIEST_TIME, "2012-12-30T23:59:55.000");
+        jobConf.set(SplunkExportRecordReader.SPLUNK_LATEST_TIME, "2013-01-31T23:59:59.000");
+        jobConf.set(SplunkExportRecordReader.SPLUNK_SEARCH_QUERY, "search * sourcetype=\"moc3\"");
 
         jobConf.setJarByClass(SplunkTestRunner.class);
         jobConf.setNumReduceTasks(0);
@@ -77,7 +87,7 @@ class SplunkTestRunner extends Configured implements Tool {
         jobConf.setOutputKeyClass(NullWritable.class);
         jobConf.setOutputValueClass(Text.class);
 
-        TextOutputFormat.setOutputPath(jobConf,new Path(args[0]));
+        TextOutputFormat.setOutputPath(jobConf ,new Path(args[0]));
 
         JobClient.runJob(jobConf);
 

@@ -32,6 +32,8 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
     public static final String SPLUNK_HOST = "splunk.host";
     public static final String SPLUNK_PORT = "splunk.port";
     public static final String SPLUNK_SEARCH_QUERY = "splunk.search.query";
+    public static final String SPLUNK_EARLIEST_TIME = "splunk.search.earliest_time";
+    public static final String SPLUNK_LATEST_TIME = "splunk.search.latest_time";
 
 
     private Service splunkService;
@@ -49,13 +51,17 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
                 configuration.get(SPLUNK_PASSWORD) == null ||
                 configuration.get(SPLUNK_HOST) == null ||
                 configuration.get(SPLUNK_PORT) == null ||
-                configuration.get(SPLUNK_SEARCH_QUERY) == null)
+                configuration.get(SPLUNK_SEARCH_QUERY) == null ||
+                configuration.get(SPLUNK_EARLIEST_TIME) == null ||
+                configuration.get(SPLUNK_LATEST_TIME) == null)
             throw new SplunkConfigurationException("Missing one or more of the following required configurations in JobConf:\n" +
                     SPLUNK_USERNAME + "\n" +
                     SPLUNK_PASSWORD + "\n" +
                     SPLUNK_HOST + "\n" +
                     SPLUNK_PORT + "\n" +
-                    SPLUNK_SEARCH_QUERY + "\n");
+                    SPLUNK_SEARCH_QUERY + "\n" +
+                    SPLUNK_EARLIEST_TIME + "\n" +
+                    SPLUNK_LATEST_TIME + "\n");
 
     }
 
@@ -92,8 +98,8 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
         JobExportArgs jobExportArgs = new JobExportArgs();
         jobExportArgs.setOutputMode(JobExportArgs.OutputMode.CSV);
         jobExportArgs.add("offset", startPosition);
-        jobExportArgs.setLatestTime("now");
-        jobExportArgs.setEarliestTime("-12h"); // Add to JobConf.
+        jobExportArgs.setLatestTime(configuration.get(SPLUNK_LATEST_TIME));
+        jobExportArgs.setEarliestTime(configuration.get(SPLUNK_EARLIEST_TIME));
 
         jobExportArgs.setSearchMode(JobExportArgs.SearchMode.NORMAL);
         long totalLinesToGet = endPosition-startPosition;

@@ -20,7 +20,7 @@ dependencies {
     compile( group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.5')
     compile( group: 'junit', name: 'junit', version: '4.11')
 
-    compile( group: 'org.apache.hadoop', name: 'hadoop-core', version: '1.0.3' ) {
+    compile( group: 'org.apache.hadoop', name: 'hadoop-core', version: '1.2.0' ) {
         exclude group: 'ant'
         exclude group: 'junit'
         exclude group: 'oro'

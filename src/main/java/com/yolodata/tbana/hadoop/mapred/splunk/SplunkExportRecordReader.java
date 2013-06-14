@@ -12,7 +12,6 @@ import org.apache.hadoop.mapred.RecordReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.List;
 
 import com.splunk.*;
@@ -24,8 +23,10 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
     private long startPosition;
     private long endPosition;
 
+    private Service splunkService;
     private InputStream is;
-    private Reader in;
+    private CSVReader reader;
+
 
     public static final String SPLUNK_USERNAME = "splunk.username";
     public static final String SPLUNK_PASSWORD = "splunk.password";
@@ -36,8 +37,6 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
     public static final String SPLUNK_LATEST_TIME = "splunk.search.latest_time";
 
 
-    private Service splunkService;
-    private CSVReader reader;
 
     public SplunkExportRecordReader(JobConf configuration) throws IOException {
 
@@ -121,8 +120,6 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
 
     @Override
     public boolean next(LongWritable key, List<Text> value) throws IOException {
-        //TODO: Extract CSV-logic from CSVRecordReader to separate file and use here to read lines from InputStream
-
         if(currentPosition == endPosition)
             return false;
 
@@ -133,10 +130,10 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
         if(value == null) value = createValue();
 
         int bytesRead = reader.readLine(value);
+
         if(bytesRead == 0) {
             key = null;
             value = null;
-
             return false;
         }
 
@@ -163,7 +160,16 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
     @Override
     public void close() throws IOException {
         try {
-            // Close splunk connection/splunk export
+            if(is!=null) {
+                is.close();
+                is=null;
+            }
+
+            if(reader!=null) {
+                reader.close();
+                reader=null;
+            }
+
 
         } catch(Exception e){
             throw new IOException(e);
@@ -178,18 +184,6 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
         } else {
             return Math.min(1.0f, (currentPosition - startPosition) / (float) (endPosition - startPosition));
         }
-    }
-
-    public void setCurrentPosition(long currentPosition) {
-        this.currentPosition = currentPosition;
-    }
-
-    public void setStartPosition(long startPosition) {
-        this.startPosition = startPosition;
-    }
-
-    public void setEndPosition(long endPosition) {
-        this.endPosition = endPosition;
     }
 
     private class SplunkConfigurationException extends RuntimeException {

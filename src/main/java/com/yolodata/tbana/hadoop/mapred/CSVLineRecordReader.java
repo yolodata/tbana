@@ -24,10 +24,7 @@ public class CSVLineRecordReader implements RecordReader<LongWritable, List<Text
 	public static final String DEFAULT_DELIMITER = "\"";
 	public static final String DEFAULT_SEPARATOR = ",";
 	public static final boolean DEFAULT_ZIP = true;
-	
-	
-	private String delimiter;
-	private String separator;
+
 	private boolean isZipFile;
 	protected InputStream is;
 	protected CSVReader reader;
@@ -47,8 +44,6 @@ public class CSVLineRecordReader implements RecordReader<LongWritable, List<Text
 	}
 	
 	public void init(InputStream is, JobConf conf) throws IOException {
-		this.delimiter = conf.get(FORMAT_DELIMITER, DEFAULT_DELIMITER);
-		this.separator = conf.get(FORMAT_SEPARATOR, DEFAULT_SEPARATOR);
 		this.isZipFile = conf.getBoolean(IS_ZIPFILE, DEFAULT_ZIP);
 		
 		if(isZipFile) {

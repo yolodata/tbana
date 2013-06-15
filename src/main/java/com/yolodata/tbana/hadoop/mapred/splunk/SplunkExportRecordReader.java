@@ -9,10 +9,7 @@ import org.apache.hadoop.mapred.InputSplit;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.RecordReader;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.util.List;
 
 import com.splunk.*;
@@ -79,7 +76,7 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
 
 
         is = splunkService.export(configuration.get(SPLUNK_SEARCH_QUERY), getJobExportArgs());
-
+        in = new InputStreamReader(is);
     }
 
     private void setupService() {
@@ -126,8 +123,7 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
         if(currentPosition == endPosition)
             return false;
 
-        InputStreamReader streamReader = new InputStreamReader(is);
-        reader = new CSVReader(streamReader);
+        reader = new CSVReader(in);
 
         if(key == null) key = createKey();
         if(value == null) value = createValue();
@@ -140,8 +136,7 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
             return false;
         }
 
-        key.set(currentPosition);
-        currentPosition++;
+        key.set(currentPosition++);
         return true;
     }
 
@@ -163,7 +158,8 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
     @Override
     public void close() throws IOException {
         try {
-            // Close splunk connection/splunk export
+            in.close();
+            is.close();
 
         } catch(Exception e){
             throw new IOException(e);

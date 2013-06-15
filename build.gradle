@@ -1,5 +1,15 @@
 apply plugin: 'java'
 apply plugin: 'idea'
+apply plugin: com.smokejumperit.gradle.ExecPlugin
+
+buildscript { //For the ExecPlugin
+    repositories {
+        mavenRepo url: 'http://repo.smokejumperit.com'
+    }
+    dependencies {
+        classpath 'com.smokejumperit:gradle-plugins:0.8.2'
+    }
+}
 
 repositories {
     mavenLocal()
@@ -28,3 +38,5 @@ dependencies {
 
     compile fileTree(dir: 'lib', include: '*.jar')
 }
+
+project.exec("say 'yolosetup completed'")

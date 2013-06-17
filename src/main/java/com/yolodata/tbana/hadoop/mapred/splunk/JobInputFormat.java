@@ -1,6 +1,7 @@
 package com.yolodata.tbana.hadoop.mapred.splunk;
 
 
+import com.splunk.Job;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.*;
@@ -8,37 +9,38 @@ import org.apache.hadoop.mapred.*;
 import java.io.IOException;
 import java.util.List;
 
-public class ExportInputFormat implements InputFormat<LongWritable, List<Text>> {
+public class JobInputFormat implements InputFormat<LongWritable, List<Text>> {
 
     @Override
     public RecordReader<LongWritable, List<Text>> getRecordReader(InputSplit inputSplit,
                                                                   JobConf configuration, Reporter reporter) throws IOException {
-        ExportRecordReader splunkExportRecordReader = new ExportRecordReader(configuration);
+        JobRecordReader jobRecordReader = new JobRecordReader(configuration);
 
-        splunkExportRecordReader.initialize(inputSplit);
+        jobRecordReader.initialize(inputSplit);
 
-        return splunkExportRecordReader;
+        return jobRecordReader;
     }
 
     @Override
-    public InputSplit[] getSplits(JobConf conf, int numberOfSplits) throws RuntimeException {
+    public InputSplit[] getSplits(JobConf conf, int numberOfSplits) throws RuntimeException, IOException {
 
         InputSplit[] splits = new InputSplit[numberOfSplits];
 
-        ExportRecordReader rr = null;
-//
-//        String jobID = rr.createJob();
-//
-//        rr.getEventsFromJob(jobID);
+        JobRecordReader rr = new JobRecordReader(conf);
+
+        Job job = rr.createJob();
+
+        rr.waitForJobDone(job);
+
+        long numberOfEvents = rr.getNumberOfResultsFromJob(job);
 
         try {
-            rr = new ExportRecordReader(conf);
-            int resultsPerSplit = 1; //(rr.getNumberOfResults()+1)/numberOfSplits;
+            int resultsPerSplit = (int) ((numberOfEvents/numberOfSplits));
 
             for(int i=0; i<numberOfSplits; i++) {
                 int start = i * resultsPerSplit;
                 int end = start + resultsPerSplit;
-                splits[i] = new SplunkSplit(start, end);
+                splits[i] = new SplunkSplit(job.getSid(), start, end);
             }
 
         } catch (Exception e) {

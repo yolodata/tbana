@@ -21,6 +21,12 @@ public class SplunkSplit implements InputSplit{
     public SplunkSplit(long start, long end) {
         this.start = start;
         this.end = end;
+        this.jobID = "NONE";
+    }
+
+    public SplunkSplit(String jobID, long start, long end) {
+        this(start,end);
+        this.jobID = jobID;
     }
 
     @Override
@@ -35,12 +41,14 @@ public class SplunkSplit implements InputSplit{
 
     @Override
     public void write(DataOutput dataOutput) throws IOException {
+        dataOutput.writeUTF(jobID);
         dataOutput.writeLong(start);
         dataOutput.writeLong(end);
     }
 
     @Override
     public void readFields(DataInput dataInput) throws IOException {
+        this.jobID = dataInput.readUTF();
         this.start = dataInput.readLong();
         this.end = dataInput.readLong();
     }
@@ -51,5 +59,9 @@ public class SplunkSplit implements InputSplit{
 
     public long getEnd() {
         return this.end;
+    }
+
+    public String getJobID() {
+        return this.jobID;
     }
 }

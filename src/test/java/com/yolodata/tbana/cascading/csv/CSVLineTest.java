@@ -58,7 +58,7 @@ public class CSVLineTest extends CascadingTestCase
 
         expected.clear();
         expected.add(new Text("Column1"));
-        expected.add(new Text("\"Column 2 using\ntwo rows\""));
+        expected.add(new Text("Column 2 using\ntwo rows"));
         assertEquals(expected, iterator.next().getTuple().getObject(1));
 
         expected.clear();

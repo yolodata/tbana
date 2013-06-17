@@ -67,15 +67,6 @@ public abstract class SplunkRecordReader implements RecordReader<LongWritable, L
 
     }
 
-    public int getNumberOfResults() throws InterruptedException {
-        Job searchJob = splunkService.search(configuration.get(SPLUNK_SEARCH_QUERY), getJobExportArgs());
-        while (!searchJob.isDone()){
-            Thread.sleep(1000);
-        }
-        return searchJob.getEventCount();
-    }
-
-
     private void setupService() {
         ServiceArgs serviceArgs = getLoginArgs();
         splunkService = Service.connect(serviceArgs);
@@ -85,20 +76,6 @@ public abstract class SplunkRecordReader implements RecordReader<LongWritable, L
         startPosition = inputSplit.getStart();
         endPosition = inputSplit.getEnd();
         currentPosition = startPosition;
-    }
-
-    protected JobExportArgs getJobExportArgs() {
-        JobExportArgs jobExportArgs = new JobExportArgs();
-        jobExportArgs.setOutputMode(JobExportArgs.OutputMode.CSV);
-        jobExportArgs.add("offset", startPosition);
-        jobExportArgs.setLatestTime(configuration.get(SPLUNK_LATEST_TIME));
-        jobExportArgs.setEarliestTime(configuration.get(SPLUNK_EARLIEST_TIME));
-
-        jobExportArgs.setSearchMode(JobExportArgs.SearchMode.NORMAL);
-        long totalLinesToGet = endPosition-startPosition;
-        jobExportArgs.add("count",totalLinesToGet);
-
-        return jobExportArgs;
     }
 
     private ServiceArgs getLoginArgs() {
@@ -114,8 +91,8 @@ public abstract class SplunkRecordReader implements RecordReader<LongWritable, L
 
     @Override
     public boolean next(LongWritable key, List<Text> value) throws IOException {
-        if(currentPosition == endPosition)
-            return false;
+//        if(currentPosition == endPosition)
+//            return false;
 
         reader = new CSVReader(in);
 

@@ -40,7 +40,7 @@ public class CSVInputFormatTest {
     public void testJobUsingCSVNLineInputFormat() throws Exception {
 
         String inputContent = "header1,header2\n" +
-                "column1,\"column 2 using\n two lines\"\n" +
+                "column1,column 2 using\n two lines\n" +
                 "c1,c2\n";
 
         Path outputPath = runJob(inputContent);

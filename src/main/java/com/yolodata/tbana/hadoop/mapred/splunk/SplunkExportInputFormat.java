@@ -8,7 +8,7 @@ import org.apache.hadoop.mapred.*;
 import java.io.IOException;
 import java.util.List;
 
-public class SplunkInputFormat implements InputFormat<LongWritable, List<Text>> {
+public class SplunkExportInputFormat implements InputFormat<LongWritable, List<Text>> {
 
     @Override
     public RecordReader<LongWritable, List<Text>> getRecordReader(InputSplit inputSplit,

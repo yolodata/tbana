@@ -11,6 +11,7 @@ import java.io.IOException;
 
 public class SplunkSplit implements InputSplit{
 
+    private String jobID;
     private long start;
     private long end;
 

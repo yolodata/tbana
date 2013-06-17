@@ -1,12 +1,9 @@
 package com.yolodata.tbana.hadoop.mapred.splunk;
 
-import com.yolodata.tbana.hadoop.mapred.CSVNLineInputFormat;
 import com.yolodata.tbana.hadoop.mapred.TestUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
@@ -19,9 +16,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class SplunkInputFormatTest {
@@ -100,7 +95,7 @@ class SplunkTestRunner extends Configured implements Tool {
         jobConf.setNumReduceTasks(0);
         jobConf.setMapperClass(TestMapper.class);
 
-        jobConf.setInputFormat(SplunkInputFormat.class);
+        jobConf.setInputFormat(SplunkExportInputFormat.class);
         jobConf.setOutputKeyClass(NullWritable.class);
         jobConf.setOutputValueClass(Text.class);
 

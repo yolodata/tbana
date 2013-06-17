@@ -7,9 +7,9 @@ import org.apache.hadoop.mapred.JobConf;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class SplunkExportRecordReader extends SplunkRecordReader {
+public class ExportRecordReader extends SplunkRecordReader {
 
-    public SplunkExportRecordReader(JobConf configuration) throws IOException {
+    public ExportRecordReader(JobConf configuration) throws IOException {
         super(configuration);
     }
 

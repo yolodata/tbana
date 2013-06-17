@@ -8,12 +8,12 @@ import org.apache.hadoop.mapred.*;
 import java.io.IOException;
 import java.util.List;
 
-public class SplunkExportInputFormat implements InputFormat<LongWritable, List<Text>> {
+public class ExportInputFormat implements InputFormat<LongWritable, List<Text>> {
 
     @Override
     public RecordReader<LongWritable, List<Text>> getRecordReader(InputSplit inputSplit,
                                                                   JobConf configuration, Reporter reporter) throws IOException {
-        SplunkExportRecordReader splunkExportRecordReader = new SplunkExportRecordReader(configuration);
+        ExportRecordReader splunkExportRecordReader = new ExportRecordReader(configuration);
 
         splunkExportRecordReader.initialize(inputSplit);
 
@@ -25,14 +25,14 @@ public class SplunkExportInputFormat implements InputFormat<LongWritable, List<T
 
         InputSplit[] splits = new InputSplit[numberOfSplits];
 
-        SplunkExportRecordReader rr = null;
+        ExportRecordReader rr = null;
 //
 //        String jobID = rr.createJob();
 //
 //        rr.getEventsFromJob(jobID);
 
         try {
-            rr = new SplunkExportRecordReader(conf);
+            rr = new ExportRecordReader(conf);
             int resultsPerSplit = (rr.getNumberOfResults()+1)/numberOfSplits;
 
             for(int i=0; i<numberOfSplits; i++) {

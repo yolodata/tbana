@@ -83,19 +83,19 @@ class SplunkTestRunner extends Configured implements Tool {
     public int run(String[] args) throws Exception {
         JobConf jobConf = new JobConf(getConf());
 
-        jobConf.set(SplunkExportRecordReader.SPLUNK_USERNAME, "admin");
-        jobConf.set(SplunkExportRecordReader.SPLUNK_PASSWORD, "changeIt");
-        jobConf.set(SplunkExportRecordReader.SPLUNK_HOST, "localhost");
-        jobConf.set(SplunkExportRecordReader.SPLUNK_PORT, "8089");
-        jobConf.set(SplunkExportRecordReader.SPLUNK_EARLIEST_TIME, "2012-12-30T23:59:55.000");
-        jobConf.set(SplunkExportRecordReader.SPLUNK_LATEST_TIME, "2013-01-31T23:59:59.000");
-        jobConf.set(SplunkExportRecordReader.SPLUNK_SEARCH_QUERY, "search * sourcetype=\"moc3\"");
+        jobConf.set(ExportRecordReader.SPLUNK_USERNAME, "admin");
+        jobConf.set(ExportRecordReader.SPLUNK_PASSWORD, "changeIt");
+        jobConf.set(ExportRecordReader.SPLUNK_HOST, "localhost");
+        jobConf.set(ExportRecordReader.SPLUNK_PORT, "8089");
+        jobConf.set(ExportRecordReader.SPLUNK_EARLIEST_TIME, "2012-12-30T23:59:55.000");
+        jobConf.set(ExportRecordReader.SPLUNK_LATEST_TIME, "2013-01-31T23:59:59.000");
+        jobConf.set(ExportRecordReader.SPLUNK_SEARCH_QUERY, "search * sourcetype=\"moc3\"");
 
         jobConf.setJarByClass(SplunkTestRunner.class);
         jobConf.setNumReduceTasks(0);
         jobConf.setMapperClass(TestMapper.class);
 
-        jobConf.setInputFormat(SplunkExportInputFormat.class);
+        jobConf.setInputFormat(ExportInputFormat.class);
         jobConf.setOutputKeyClass(NullWritable.class);
         jobConf.setOutputValueClass(Text.class);
 

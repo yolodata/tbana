@@ -71,8 +71,8 @@ public class CSVReader implements Closeable {
             throws UnsupportedEncodingException {
         Text text = new Text();
         String val = (takeDelimiterOut) ? sb.substring(0, sb.length() - separator.length()) : sb.toString();
-        val = StringUtils.strip(val,delimiter);
         val = StringUtils.strip(val,"\n");
+        val = StringUtils.strip(val,delimiter);
 
         text.set(val);
         values.add(text);

@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SplunkInputFormatTest {
@@ -46,7 +47,23 @@ public class SplunkInputFormatTest {
         assert(jobCompleted == true); // Means that the job successfully finished
 
         String outputContent = TestUtils.readMapReduceOutputFile(fs, outputPath);
-        System.out.println(outputContent);
+
+        List<String> lines = TestUtils.getLinesFromString(outputContent);
+        int actualEvents = lines.size()-1; //Remove one line due to header
+
+        assert(actualEvents == 5);
+
+        String[] expectedEndOfLines = {
+                "_raw",
+                "#<DateTime 2012-12-31T23:59:59.000Z> count=0",
+                "#<DateTime 2012-12-31T23:59:58.000Z> count=1",
+                "#<DateTime 2012-12-31T23:59:57.000Z> count=2",
+                "#<DateTime 2012-12-31T23:59:56.000Z> count=3",
+                "#<DateTime 2012-12-31T23:59:55.000Z> count=4"};
+
+        // Check that the last column of each line ends with the expected values
+        for(int i=0;i<lines.size();i++)
+            assert(lines.get(i).endsWith(expectedEndOfLines[i]));
 
     }
 

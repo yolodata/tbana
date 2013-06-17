@@ -12,6 +12,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TestUtils {
     public static String readMapReduceOutputFile(FileSystem fs, Path outputPath) throws IOException, IllegalAccessException, InstantiationException {
@@ -39,5 +41,28 @@ public class TestUtils {
         fso.writeBytes(content);
         fso.flush();
         fso.close();
+    }
+
+     public static List<String> getLinesFromString(String outputContent) {
+        List<String> result = new ArrayList<String>();
+
+        StringBuilder sb = new StringBuilder();
+        boolean withinQuote = false;
+        for(char c : outputContent.toCharArray()) {
+
+            if(!withinQuote && (c == '\n')) {
+                result.add(sb.toString());
+                sb.setLength(0);
+                continue;
+            }
+
+            if(c == '\"') {
+                withinQuote = !withinQuote;
+            }
+
+            sb.append(c);
+
+        }
+        return result;
     }
 }

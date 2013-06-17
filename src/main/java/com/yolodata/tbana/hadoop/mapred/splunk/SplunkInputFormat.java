@@ -8,8 +8,6 @@ import org.apache.hadoop.mapred.*;
 import java.io.IOException;
 import java.util.List;
 
-import com.splunk.*;
-
 public class SplunkInputFormat implements InputFormat<LongWritable, List<Text>> {
 
     @Override
@@ -28,10 +26,14 @@ public class SplunkInputFormat implements InputFormat<LongWritable, List<Text>> 
         InputSplit[] splits = new InputSplit[numberOfSplits];
 
         SplunkExportRecordReader rr = null;
+//
+//        String jobID = rr.createJob();
+//
+//        rr.getEventsFromJob(jobID);
 
         try {
             rr = new SplunkExportRecordReader(conf);
-            int resultsPerSplit = rr.getNumberOfResults()/numberOfSplits;
+            int resultsPerSplit = (rr.getNumberOfResults()+1)/numberOfSplits;
 
             for(int i=0; i<numberOfSplits; i++) {
                 int start = i * resultsPerSplit;

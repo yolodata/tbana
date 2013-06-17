@@ -25,6 +25,7 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
 
     private Service splunkService;
     private InputStream is;
+    private InputStreamReader in;
     private CSVReader reader;
 
 
@@ -78,7 +79,7 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
 
 
         is = splunkService.export(configuration.get(SPLUNK_SEARCH_QUERY), getJobExportArgs());
-
+        in = new InputStreamReader(is);
     }
 
     private void setupService() {
@@ -87,9 +88,8 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
     }
 
     private void initPositions(SplunkSplit inputSplit) {
-        SplunkSplit split = (SplunkSplit) inputSplit;
-        startPosition = split.getStart();
-        endPosition = split.getEnd();
+        startPosition = inputSplit.getStart();
+        endPosition = inputSplit.getEnd();
         currentPosition = startPosition;
     }
 
@@ -123,8 +123,7 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
         if(currentPosition == endPosition)
             return false;
 
-        InputStreamReader streamReader = new InputStreamReader(is);
-        reader = new CSVReader(streamReader);
+        reader = new CSVReader(in);
 
         if(key == null) key = createKey();
         if(value == null) value = createValue();
@@ -137,8 +136,7 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
             return false;
         }
 
-        key.set(currentPosition);
-        currentPosition++;
+        key.set(currentPosition++);
         return true;
     }
 
@@ -159,22 +157,15 @@ public class SplunkExportRecordReader implements RecordReader<LongWritable, List
 
     @Override
     public void close() throws IOException {
-        try {
             if(is!=null) {
                 is.close();
                 is=null;
             }
 
-            if(reader!=null) {
-                reader.close();
-                reader=null;
+            if(in!=null) {
+                in.close();
+                in=null;
             }
-
-
-        } catch(Exception e){
-            throw new IOException(e);
-        }
-
     }
 
     @Override

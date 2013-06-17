@@ -22,12 +22,14 @@ public abstract class SplunkRecordReader implements RecordReader<LongWritable, L
     protected long currentPosition;
     protected long startPosition;
     protected long endPosition;
-
     protected Service splunkService;
+
     protected InputStream is;
     protected InputStreamReader in;
     protected CSVReader reader;
 
+
+    public static final String INPUTFORMAT_SPLITS = "hadoop.inputformat.splits" ;
 
     public static final String SPLUNK_USERNAME = "splunk.username";
     public static final String SPLUNK_PASSWORD = "splunk.password";
@@ -36,7 +38,7 @@ public abstract class SplunkRecordReader implements RecordReader<LongWritable, L
     public static final String SPLUNK_SEARCH_QUERY = "splunk.search.query";
     public static final String SPLUNK_EARLIEST_TIME = "splunk.search.earliest_time";
     public static final String SPLUNK_LATEST_TIME = "splunk.search.latest_time";
-
+    public static final String SPLUNK_FIELD_LIST = "splunk.search.field_list";
 
 
     public SplunkRecordReader(JobConf configuration) throws IOException {

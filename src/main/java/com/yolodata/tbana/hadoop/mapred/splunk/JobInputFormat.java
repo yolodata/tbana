@@ -24,6 +24,10 @@ public class JobInputFormat implements InputFormat<LongWritable, List<Text>> {
     @Override
     public InputSplit[] getSplits(JobConf conf, int numberOfSplits) throws RuntimeException, IOException {
 
+        // Solve problem with configuring number of inputSplits
+        if(conf.get(SplunkRecordReader.INPUTFORMAT_SPLITS) != null)
+            numberOfSplits = Integer.parseInt(conf.get(SplunkRecordReader.INPUTFORMAT_SPLITS));
+
         InputSplit[] splits = new InputSplit[numberOfSplits];
 
         JobRecordReader rr = new JobRecordReader(conf);
@@ -35,7 +39,7 @@ public class JobInputFormat implements InputFormat<LongWritable, List<Text>> {
         long numberOfEvents = rr.getNumberOfResultsFromJob(job);
 
         try {
-            int resultsPerSplit = (int) ((numberOfEvents/numberOfSplits));
+            int resultsPerSplit = (int)Math.ceil((numberOfEvents/numberOfSplits));
 
             for(int i=0; i<numberOfSplits; i++) {
                 int start = i * resultsPerSplit;

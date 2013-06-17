@@ -1,5 +1,6 @@
 package com.yolodata.tbana.hadoop.mapred;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.io.Text;
 
 import java.io.Closeable;
@@ -29,6 +30,7 @@ public class CSVReader implements Closeable {
 
         boolean insideQuotes = false;
         int i, quoteOffset = 0, delimiterOffset = 0;
+
 
         while ((i = reader.read()) != -1) {
             currentChar = (char) i;
@@ -67,16 +69,14 @@ public class CSVReader implements Closeable {
 
     protected void foundDelimiter(StringBuffer sb, List<Text> values, boolean takeDelimiterOut)
             throws UnsupportedEncodingException {
-        // Found a real delimiter
         Text text = new Text();
         String val = (takeDelimiterOut) ? sb.substring(0, sb.length() - separator.length()) : sb.toString();
-        if (val.startsWith(delimiter) && val.endsWith(delimiter)) {
-            val = (val.length() - (2 * delimiter.length()) > 0) ? val.substring(delimiter.length(), val.length()
-                    - (2 * delimiter.length())) : "";
-        }
-        text.append(val.getBytes("UTF-8"), 0, val.length());
+        val = StringUtils.strip(val,delimiter);
+        val = StringUtils.strip(val,"\n");
+
+        text.set(val);
         values.add(text);
-        // Empty string buffer
+
         sb.setLength(0);
     }
 

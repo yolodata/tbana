@@ -24,27 +24,44 @@ public class JobInputFormat implements InputFormat<LongWritable, List<Text>> {
     @Override
     public InputSplit[] getSplits(JobConf conf, int numberOfSplits) throws RuntimeException, IOException {
 
-        // Solve problem with configuring number of inputSplits
         if(conf.get(SplunkRecordReader.INPUTFORMAT_SPLITS) != null)
             numberOfSplits = Integer.parseInt(conf.get(SplunkRecordReader.INPUTFORMAT_SPLITS));
 
         InputSplit[] splits = new InputSplit[numberOfSplits];
 
         JobRecordReader rr = new JobRecordReader(conf);
-
         Job job = rr.createJob();
-
         rr.waitForJobDone(job);
-
         long numberOfEvents = rr.getNumberOfResultsFromJob(job);
 
         try {
-            int resultsPerSplit = (int)Math.ceil((numberOfEvents/numberOfSplits));
+            int resultsPerSplit = (int)numberOfEvents/numberOfSplits;
+            int overflow = (int)numberOfEvents%numberOfSplits;
 
+            boolean skipHeader = false;
             for(int i=0; i<numberOfSplits; i++) {
-                int start = i * resultsPerSplit;
-                int end = start + resultsPerSplit;
-                splits[i] = new SplunkSplit(job.getSid(), start, end);
+                int start;
+                int end;
+
+                start = i * resultsPerSplit;
+                if(i>0)
+                    start += overflow;
+
+                if(i==numberOfSplits-1)
+                    end= (int) numberOfEvents;
+                else
+                    end = start + resultsPerSplit;
+
+                if(i==0)
+                    end+=overflow;
+
+                // header is always included, therefore, always add +1 to account for that.
+                end++;
+
+                // Skip header for all splits except first
+                skipHeader = i>0;
+
+                splits[i] = new SplunkSplit(job.getSid(), start, end, skipHeader);
             }
 
         } catch (Exception e) {

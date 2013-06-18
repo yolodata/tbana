@@ -25,14 +25,9 @@ public class ExportInputFormat implements InputFormat<LongWritable, List<Text>> 
 
         InputSplit[] splits = new InputSplit[numberOfSplits];
 
-        ExportRecordReader rr = null;
-//
-//        String jobID = rr.createJob();
-//
-//        rr.getEventsFromJob(jobID);
 
         try {
-            rr = new ExportRecordReader(conf);
+            // ExportRecordReader rr = new ExportRecordReader(conf);
             int resultsPerSplit = 1; //(rr.getNumberOfResults()+1)/numberOfSplits;
 
             for(int i=0; i<numberOfSplits; i++) {

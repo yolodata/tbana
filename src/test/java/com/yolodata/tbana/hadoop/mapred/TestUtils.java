@@ -7,15 +7,14 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.tools.ant.util.FileUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TestUtils {
+    public static final String TEST_FILE_PATH = "build/testTMP/";
+
     public static String readMapReduceOutputFile(FileSystem fs, Path outputPath) throws IOException, IllegalAccessException, InstantiationException {
         FileStatus[] fileStatuses = fs.listStatus(outputPath);
         StringBuilder sb = new StringBuilder();
@@ -41,6 +40,26 @@ public class TestUtils {
         fso.writeBytes(content);
         fso.flush();
         fso.close();
+    }
+
+    public static String getPathToTestFile(String filename) {
+        return TEST_FILE_PATH.concat(filename);
+    }
+
+    public static String getRandomTestFilepath() {
+        return getPathToTestFile(RandomStringUtils.randomAlphanumeric(25));
+    }
+
+    public static boolean createFileWithContent(String filepath, String content) throws IOException {
+        File f = new File(filepath);
+        if(!f.createNewFile())
+            return false;
+
+        PrintWriter pw = new PrintWriter(f);
+        pw.write(content);
+        pw.close();
+
+        return true;
     }
 
      public static List<String> getLinesFromString(String outputContent) {

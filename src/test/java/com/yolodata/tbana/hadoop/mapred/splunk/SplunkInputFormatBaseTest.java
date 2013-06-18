@@ -37,7 +37,6 @@ public abstract class SplunkInputFormatBaseTest {
         testInputFormat(conf);
     }
 
-
     @Test
     public void testInputFormatDefaultConfig() throws Exception {
 

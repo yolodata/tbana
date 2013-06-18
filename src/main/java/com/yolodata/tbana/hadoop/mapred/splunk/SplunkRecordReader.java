@@ -46,6 +46,8 @@ public abstract class SplunkRecordReader implements RecordReader<LongWritable, L
         this.configuration = configuration;
         validateConfiguration(this.configuration);
         setupService();
+
+
     }
 
     public abstract void initialize(InputSplit inputSplit) throws IOException;
@@ -72,6 +74,7 @@ public abstract class SplunkRecordReader implements RecordReader<LongWritable, L
     private void setupService() {
         ServiceArgs serviceArgs = getLoginArgs();
         splunkService = Service.connect(serviceArgs);
+
     }
 
     protected void initPositions(SplunkSplit inputSplit) {
@@ -93,11 +96,8 @@ public abstract class SplunkRecordReader implements RecordReader<LongWritable, L
 
     @Override
     public boolean next(LongWritable key, List<Text> value) throws IOException {
-//        if(currentPosition == endPosition)
-//            return false;
 
         reader = new CSVReader(in);
-
         if(key == null) key = createKey();
         if(value == null) value = createValue();
 

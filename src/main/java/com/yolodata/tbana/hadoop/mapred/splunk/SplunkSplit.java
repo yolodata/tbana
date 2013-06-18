@@ -14,19 +14,24 @@ public class SplunkSplit implements InputSplit{
     private String jobID;
     private long start;
     private long end;
+    private boolean skipHeader;
 
     public SplunkSplit() {
     }
 
     public SplunkSplit(long start, long end) {
-        this.start = start;
-        this.end = end;
-        this.jobID = "NONE";
+        this("NONE",start,end);
     }
 
     public SplunkSplit(String jobID, long start, long end) {
-        this(start,end);
+        this(jobID, start, end, false);
+    }
+
+    public SplunkSplit(String jobID, long start, long end, boolean skipHeader) {
+        this.start = start;
+        this.end = end;
         this.jobID = jobID;
+        this.skipHeader = skipHeader;
     }
 
     @Override
@@ -44,6 +49,7 @@ public class SplunkSplit implements InputSplit{
         dataOutput.writeUTF(jobID);
         dataOutput.writeLong(start);
         dataOutput.writeLong(end);
+        dataOutput.writeBoolean(skipHeader);
     }
 
     @Override
@@ -51,6 +57,7 @@ public class SplunkSplit implements InputSplit{
         this.jobID = dataInput.readUTF();
         this.start = dataInput.readLong();
         this.end = dataInput.readLong();
+        this.skipHeader = dataInput.readBoolean();
     }
 
     public long getStart() {
@@ -63,5 +70,9 @@ public class SplunkSplit implements InputSplit{
 
     public String getJobID() {
         return this.jobID;
+    }
+
+    public boolean getSkipHeader() {
+        return skipHeader;
     }
 }

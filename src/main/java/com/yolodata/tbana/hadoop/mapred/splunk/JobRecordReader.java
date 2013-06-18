@@ -3,13 +3,18 @@ package com.yolodata.tbana.hadoop.mapred.splunk;
 import com.splunk.Job;
 import com.splunk.JobArgs;
 import com.splunk.JobResultsArgs;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.InputSplit;
 import org.apache.hadoop.mapred.JobConf;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 
 public class JobRecordReader extends SplunkRecordReader {
+
+    private boolean skipHeader;
 
     public JobRecordReader(JobConf configuration) throws IOException {
         super(configuration);
@@ -18,6 +23,9 @@ public class JobRecordReader extends SplunkRecordReader {
     @Override
     public void initialize(InputSplit inputSplit) throws IOException {
         SplunkSplit splunkSplit = (SplunkSplit) inputSplit;
+        super.initPositions(splunkSplit);
+        skipHeader = splunkSplit.getSkipHeader();
+
         Job job = getJob(splunkSplit.getJobID());
 
         JobResultsArgs resultsArgs = new JobResultsArgs();
@@ -31,6 +39,18 @@ public class JobRecordReader extends SplunkRecordReader {
 
         is = job.getResults(resultsArgs);
         in = new InputStreamReader(is);
+
+    }
+
+    @Override
+    public boolean next(LongWritable key, List<Text> value) throws IOException {
+        if(currentPosition == endPosition)
+            return false;
+
+        if(currentPosition == startPosition && skipHeader)
+            super.next(key,value); //skip header
+
+        return super.next(key,value);
     }
 
     private void setFieldList(JobResultsArgs resultsArgs) {
@@ -75,4 +95,6 @@ public class JobRecordReader extends SplunkRecordReader {
     public int getNumberOfResultsFromJob(Job job) {
         return job.getEventCount();
     }
+
+
 }

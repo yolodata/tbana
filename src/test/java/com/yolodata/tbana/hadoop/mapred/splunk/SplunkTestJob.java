@@ -51,7 +51,7 @@ class SplunkTestRunner extends Configured implements Tool {
         return 0;
     }
 
-    public SplunkTestRunner() {
-        super(new Configuration());
+    public SplunkTestRunner(Configuration conf) {
+        super(conf);
     }
 }

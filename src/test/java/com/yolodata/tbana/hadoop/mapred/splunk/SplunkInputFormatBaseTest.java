@@ -1,22 +1,14 @@
 package com.yolodata.tbana.hadoop.mapred.splunk;
 
 import com.yolodata.tbana.hadoop.mapred.TestUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.*;
-import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.List;
 
 public abstract class SplunkInputFormatBaseTest {
@@ -24,14 +16,13 @@ public abstract class SplunkInputFormatBaseTest {
     private Path outputPath= new Path("build/testTMP/"+getClassToTest());
     private FileSystem fs;
 
+    protected abstract String getClassToTest();
+
     @Before
     public void setUp() throws Exception {
         fs= FileSystem.get(new Configuration());
         fs.delete(outputPath, true);
     }
-
-    protected abstract String getClassToTest();
-
 
     @After
     public void tearDown() throws Exception {
@@ -39,9 +30,22 @@ public abstract class SplunkInputFormatBaseTest {
     }
 
     @Test
-    public void testInputFormat() throws Exception {
+    public void testInputFormatMultipleSplits() throws Exception {
+        Configuration conf = new Configuration();
+        conf.setInt(SplunkRecordReader.INPUTFORMAT_SPLITS, 4);
 
-        boolean jobCompleted = runJob();
+        testInputFormat(conf);
+    }
+
+
+    @Test
+    public void testInputFormatDefaultConfig() throws Exception {
+
+        testInputFormat(new Configuration());
+
+    }
+    private void testInputFormat(Configuration conf) throws Exception {
+        boolean jobCompleted = runJob(conf);
         assert(jobCompleted == true); // Means that the job successfully finished
 
         String outputContent = TestUtils.readMapReduceOutputFile(fs, outputPath);
@@ -62,12 +66,11 @@ public abstract class SplunkInputFormatBaseTest {
         // Check that the last column of each line ends with the expected values
         for(int i=0;i<lines.size();i++)
             assert(lines.get(i).endsWith(expectedEndOfLines[i]));
-
     }
 
-    private boolean runJob() throws Exception {
-        return (ToolRunner.run(new Configuration(), new SplunkTestRunner(),
-                new String[]{this.getClass().getPackage().getName().concat("."+getClassToTest()),outputPath.toString()}) == 0);
+    private boolean runJob(Configuration conf) throws Exception {
+        return (ToolRunner.run(conf, new SplunkTestRunner(conf),
+                new String[]{this.getClass().getPackage().getName().concat("." + getClassToTest()),outputPath.toString()}) == 0);
     }
 }
 

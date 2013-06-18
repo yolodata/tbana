@@ -23,14 +23,22 @@ public class JobRecordReader extends SplunkRecordReader {
         JobResultsArgs resultsArgs = new JobResultsArgs();
         resultsArgs.setOutputMode(JobResultsArgs.OutputMode.CSV);
 
+        setFieldList(resultsArgs);
 
-        //resultsArgs.setFieldList(new String[] {"sourcetype","_raw"});
         int totalLinesToGet = (int) (endPosition-startPosition);
         resultsArgs.setOffset((int) startPosition);
         resultsArgs.setCount(totalLinesToGet);
 
         is = job.getResults(resultsArgs);
         in = new InputStreamReader(is);
+    }
+
+    private void setFieldList(JobResultsArgs resultsArgs) {
+        String fields = configuration.get(SPLUNK_FIELD_LIST);
+        if(fields == null)
+            return;
+
+        resultsArgs.setFieldList(fields.split(","));
     }
 
     public Job createJob() {

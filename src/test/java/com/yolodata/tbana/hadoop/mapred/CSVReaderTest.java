@@ -15,10 +15,15 @@ import java.util.List;
 public class CSVReaderTest {
 
     private CSVReader csvReader;
+    private ArrayList<Text> actual;
+    private ArrayList<Text> expected;
 
     @Before
     public void setUp() throws IOException {
         FileUtils.deleteDirectory(new File(TestUtils.TEST_FILE_PATH));
+        FileUtils.forceMkdir(new File(TestUtils.TEST_FILE_PATH));
+        actual = new ArrayList<Text>();
+        expected = new ArrayList<Text>();
     }
 
     @After
@@ -27,26 +32,33 @@ public class CSVReaderTest {
     }
 
     @Test
-    public void readLine_emptyFile_returnsEmptyList() throws IOException {
+    public void readLine_emptyFile_returnsEmptyText() throws IOException {
         String csvContent = "";
-        ArrayList<Text> actual = new ArrayList<Text>();
-        ArrayList<Text> expected = new ArrayList<Text>();
-        testFileContent(csvContent, actual, expected);
+        expected.add(new Text());
+        testFileContent(csvContent, expected);
     }
 
 
     @Test
-    public void readLine_oneLine_returnsOneText() throws IOException {
+    public void readLine_oneColumn_returnsOneText() throws IOException {
         String csvContent = "hello";
-        ArrayList<Text> actual = new ArrayList<Text>();
-        ArrayList<Text> expected = new ArrayList<Text>();
         expected.add(new Text("hello"));
-        testFileContent(csvContent, actual, expected);
+        testFileContent(csvContent, expected);
     }
 
-    private void testFileContent(String csvContent, List<Text> actual, List<Text> expected) throws IOException {
+    @Test
+    public void readLine_twoColumns_returnsTwoTexts() throws IOException {
+        String csvContent = "hello,world";
+
+        expected.add(new Text("hello"));
+        expected.add(new Text("world"));
+        testFileContent(csvContent,expected);
+    }
+
+    private void testFileContent(String csvContent, List<Text> expected) throws IOException {
         String filepath = TestUtils.getRandomTestFilepath();
-        TestUtils.createFileWithContent(filepath, csvContent);
+
+        assert(TestUtils.createFileWithContent(filepath, csvContent));
 
         csvReader = new CSVReader(new FileReader(filepath));
 

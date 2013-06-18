@@ -66,24 +66,4 @@ public class CSVLineTest extends CascadingTestCase
         expected.add(new Text("c2"));
         assertEquals(expected, iterator.next().getTuple().getObject(1));
     }
-
-    @Test
-    public void testHeader() throws IOException
-    {
-        Properties properties = new Properties();
-
-        Class[] types = new Class[]{String.class, String.class};
-        Fields fields = new Fields( "first", "second");
-
-        Hfs input = new Hfs( new TextDelimited( fields, true, ",", "\"", types ), testData );
-        Hfs output = new Hfs( new TextDelimited( fields, ",", "\"", types ), outputPath + "/header", SinkMode.REPLACE );
-
-        Pipe pipe = new Pipe( "pipe" );
-
-        Flow flow = new HadoopFlowConnector( properties ).connect( input, output, pipe );
-
-        flow.complete();
-
-        validateLength( flow, 2, 2 );
-    }
 }

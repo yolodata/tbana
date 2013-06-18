@@ -15,10 +15,7 @@ repositories {
     mavenLocal()
     mavenCentral()
     mavenRepo name: 'conjars', url: 'http://conjars.org/repo/'
-
-    flatDir {
-        dirs 'lib'
-    }
+    mavenRepo name: 'ext-release-local', url: 'http://splunk.artifactoryonline.com/splunk/ext-releases-local'
 }
 
 dependencies {
@@ -36,7 +33,7 @@ dependencies {
         exclude group: 'oro'
     }
 
-    compile fileTree(dir: 'lib', include: '*.jar')
+    compile( group: 'com.splunk', name: 'splunk', version: '1.1.0' )
 }
 
 project.exec("say 'yolosetup completed'")

@@ -1,4 +1,4 @@
-package com.yolodata.tbana.hadoop.mapred;
+package com.yolodata.tbana.hadoop.mapred.util;
 
 import java.io.DataInput;
 import java.io.DataOutput;

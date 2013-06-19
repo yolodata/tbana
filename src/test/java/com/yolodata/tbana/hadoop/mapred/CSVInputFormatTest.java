@@ -1,5 +1,7 @@
 package com.yolodata.tbana.hadoop.mapred;
 
+import com.yolodata.tbana.hadoop.mapred.csv.CSVLineRecordReader;
+import com.yolodata.tbana.hadoop.mapred.csv.CSVNLineInputFormat;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;

@@ -1,8 +1,8 @@
 package com.yolodata.tbana.hadoop.mapred.splunk.recordreader;
 
 
-import com.yolodata.tbana.hadoop.mapred.ArrayListTextWritable;
-import com.yolodata.tbana.hadoop.mapred.CSVReader;
+import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;
+import com.yolodata.tbana.hadoop.mapred.util.CSVReader;
 import com.yolodata.tbana.hadoop.mapred.splunk.split.SplunkSplit;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;

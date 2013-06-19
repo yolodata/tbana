@@ -4,14 +4,11 @@ import cascading.CascadingTestCase;
 import cascading.flow.Flow;
 import cascading.flow.hadoop.HadoopFlowConnector;
 import cascading.pipe.Pipe;
-import cascading.scheme.hadoop.TextDelimited;
 import cascading.scheme.hadoop.TextLine;
 import cascading.tap.SinkMode;
 import cascading.tap.hadoop.Hfs;
-import cascading.tuple.Fields;
-import cascading.tuple.Tuple;
 import cascading.tuple.TupleEntryIterator;
-import com.yolodata.tbana.hadoop.mapred.ArrayListTextWritable;
+import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;
 import org.apache.hadoop.io.Text;
 import org.junit.Test;
 

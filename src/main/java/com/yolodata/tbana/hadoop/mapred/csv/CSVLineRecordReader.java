@@ -1,5 +1,7 @@
-package com.yolodata.tbana.hadoop.mapred;
+package com.yolodata.tbana.hadoop.mapred.csv;
 
+import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;
+import com.yolodata.tbana.hadoop.mapred.util.CSVReader;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;

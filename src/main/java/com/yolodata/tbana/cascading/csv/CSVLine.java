@@ -3,13 +3,11 @@ package com.yolodata.tbana.cascading.csv;
 
 import cascading.flow.FlowProcess;
 import cascading.scheme.SourceCall;
-import cascading.scheme.hadoop.TextDelimited;
 import cascading.scheme.hadoop.TextLine;
 import cascading.tap.Tap;
 import cascading.tuple.Tuple;
-import com.yolodata.tbana.hadoop.mapred.CSVLineRecordReader;
-import com.yolodata.tbana.hadoop.mapred.CSVNLineInputFormat;
-import com.yolodata.tbana.hadoop.mapred.CSVTextInputFormat;
+import com.yolodata.tbana.hadoop.mapred.csv.CSVLineRecordReader;
+import com.yolodata.tbana.hadoop.mapred.csv.CSVNLineInputFormat;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.mapred.FileInputFormat;

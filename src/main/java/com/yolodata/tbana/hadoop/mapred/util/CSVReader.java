@@ -1,4 +1,4 @@
-package com.yolodata.tbana.hadoop.mapred;
+package com.yolodata.tbana.hadoop.mapred.util;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.io.Text;

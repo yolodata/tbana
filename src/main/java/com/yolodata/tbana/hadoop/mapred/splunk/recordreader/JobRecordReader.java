@@ -19,6 +19,7 @@ public class JobRecordReader extends SplunkRecordReader {
 
     public JobRecordReader(JobConf configuration) throws IOException {
         super(configuration);
+
     }
 
     @Override

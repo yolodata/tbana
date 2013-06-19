@@ -1,4 +1,4 @@
-package com.yolodata.tbana.hadoop.mapred;
+package com.yolodata.tbana.hadoop.mapred.csv;
 
 import java.io.IOException;
 import java.util.ArrayList;

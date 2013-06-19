@@ -1,9 +1,7 @@
 package com.yolodata.tbana.hadoop.mapred.splunk.split;
 
 import com.splunk.Job;
-import com.yolodata.tbana.hadoop.mapred.splunk.SplunkInputFormat;
 import com.yolodata.tbana.hadoop.mapred.splunk.recordreader.JobRecordReader;
-import com.yolodata.tbana.hadoop.mapred.splunk.recordreader.SplunkRecordReader;
 import org.apache.hadoop.mapred.InputSplit;
 import org.apache.hadoop.mapred.JobConf;
 

@@ -1,7 +1,6 @@
 package com.yolodata.tbana.hadoop.mapred.splunk;
 
 import com.yolodata.tbana.hadoop.mapred.TestUtils;
-import com.yolodata.tbana.hadoop.mapred.splunk.recordreader.SplunkRecordReader;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;

@@ -7,16 +7,37 @@ import org.apache.hadoop.conf.Configuration;
 public class SplunkService {
 
     public static Service connect(Configuration configuration) {
-        return Service.connect(getLoginArgs(configuration));
+        return connect(
+                configuration.get(SplunkConf.SPLUNK_USERNAME),
+                configuration.get(SplunkConf.SPLUNK_PASSWORD),
+                configuration.get(SplunkConf.SPLUNK_HOST),
+                configuration.getInt(SplunkConf.SPLUNK_PORT, 8080));
     }
 
-    private static ServiceArgs getLoginArgs(Configuration configuration) {
-        ServiceArgs loginArgs = new ServiceArgs();
-        loginArgs.setUsername(configuration.get(SplunkConf.SPLUNK_USERNAME));
-        loginArgs.setPassword(configuration.get(SplunkConf.SPLUNK_PASSWORD));
-        loginArgs.setHost(configuration.get(SplunkConf.SPLUNK_HOST));
-        loginArgs.setPort(configuration.getInt(SplunkConf.SPLUNK_PORT, 8080));
+    public static Service connect(Configuration configuration, String host, int port) {
+        return connect(
+                configuration.get(SplunkConf.SPLUNK_USERNAME),
+                configuration.get(SplunkConf.SPLUNK_PASSWORD),
+                host,
+                port);
+    }
 
+    public static Service connect(String username, String password, String host, int port ) {
+        ServiceArgs loginArgs = getLoginArgs(
+                username,
+                password,
+                host,
+                port);
+
+        return Service.connect(loginArgs);
+    }
+
+    private static ServiceArgs getLoginArgs(String username, String password, String host, int port) {
+        ServiceArgs loginArgs = new ServiceArgs();
+        loginArgs.setUsername(username);
+        loginArgs.setPassword(password);
+        loginArgs.setHost(host);
+        loginArgs.setPort(port);
         return loginArgs;
 
     }

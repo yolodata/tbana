@@ -26,4 +26,10 @@ public abstract class SplitProvider {
         }
         return null;
     }
+
+    protected int getNumberOfSplits(JobConf conf, int defaultValue) {
+        if(conf.get(SplunkInputFormat.INPUTFORMAT_SPLITS) != null)
+            defaultValue = Integer.parseInt(conf.get(SplunkInputFormat.INPUTFORMAT_SPLITS));
+        return defaultValue;
+    }
 }

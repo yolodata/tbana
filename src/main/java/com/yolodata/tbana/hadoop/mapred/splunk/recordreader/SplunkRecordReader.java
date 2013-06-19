@@ -1,6 +1,8 @@
 package com.yolodata.tbana.hadoop.mapred.splunk.recordreader;
 
 
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkService;
 import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;
 import com.yolodata.tbana.hadoop.mapred.util.CSVReader;
 import com.yolodata.tbana.hadoop.mapred.splunk.split.SplunkSplit;
@@ -29,70 +31,21 @@ public abstract class SplunkRecordReader implements RecordReader<LongWritable, L
     protected InputStreamReader in;
     protected CSVReader reader;
 
-
-    public static final String INPUTFORMAT_SPLITS = "hadoop.inputformat.splits" ;
-
-    public static final String SPLUNK_USERNAME = "splunk.username";
-    public static final String SPLUNK_PASSWORD = "splunk.password";
-    public static final String SPLUNK_HOST = "splunk.host";
-    public static final String SPLUNK_PORT = "splunk.port";
-    public static final String SPLUNK_SEARCH_QUERY = "splunk.search.query";
-    public static final String SPLUNK_EARLIEST_TIME = "splunk.search.earliest_time";
-    public static final String SPLUNK_LATEST_TIME = "splunk.search.latest_time";
-    public static final String SPLUNK_FIELD_LIST = "splunk.search.field_list";
-
-
     public SplunkRecordReader(JobConf configuration) throws IOException {
 
         this.configuration = configuration;
-        validateConfiguration(this.configuration);
-        setupService();
+        SplunkConf.validateConfiguration(this.configuration);
+        splunkService = SplunkService.connect(configuration);
 
 
     }
 
     public abstract void initialize(InputSplit inputSplit) throws IOException;
 
-    private void validateConfiguration(JobConf configuration) throws SplunkConfigurationException {
-        if(configuration.get(SPLUNK_USERNAME) == null ||
-                configuration.get(SPLUNK_PASSWORD) == null ||
-                configuration.get(SPLUNK_HOST) == null ||
-                configuration.get(SPLUNK_PORT) == null ||
-                configuration.get(SPLUNK_SEARCH_QUERY) == null ||
-                configuration.get(SPLUNK_EARLIEST_TIME) == null ||
-                configuration.get(SPLUNK_LATEST_TIME) == null)
-            throw new SplunkConfigurationException("Missing one or more of the following required configurations in JobConf:\n" +
-                    SPLUNK_USERNAME + "\n" +
-                    SPLUNK_PASSWORD + "\n" +
-                    SPLUNK_HOST + "\n" +
-                    SPLUNK_PORT + "\n" +
-                    SPLUNK_SEARCH_QUERY + "\n" +
-                    SPLUNK_EARLIEST_TIME + "\n" +
-                    SPLUNK_LATEST_TIME + "\n");
-
-    }
-
-    private void setupService() {
-        ServiceArgs serviceArgs = getLoginArgs();
-        splunkService = Service.connect(serviceArgs);
-
-    }
-
     protected void initPositions(SplunkSplit inputSplit) {
         startPosition = inputSplit.getStart();
         endPosition = inputSplit.getEnd();
         currentPosition = startPosition;
-    }
-
-    private ServiceArgs getLoginArgs() {
-        ServiceArgs loginArgs = new ServiceArgs();
-        loginArgs.setUsername(configuration.get(SPLUNK_USERNAME));
-        loginArgs.setPassword(configuration.get(SPLUNK_PASSWORD));
-        loginArgs.setHost(configuration.get(SPLUNK_HOST));
-        loginArgs.setPort(configuration.getInt(SPLUNK_PORT, 8080));
-
-        return loginArgs;
-
     }
 
     @Override
@@ -151,9 +104,4 @@ public abstract class SplunkRecordReader implements RecordReader<LongWritable, L
         }
     }
 
-    private class SplunkConfigurationException extends RuntimeException {
-        public SplunkConfigurationException(String message) {
-            super(message);
-        }
-    }
 }

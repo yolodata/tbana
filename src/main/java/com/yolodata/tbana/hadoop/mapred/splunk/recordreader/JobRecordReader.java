@@ -3,6 +3,7 @@ package com.yolodata.tbana.hadoop.mapred.splunk.recordreader;
 import com.splunk.Job;
 import com.splunk.JobArgs;
 import com.splunk.JobResultsArgs;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import com.yolodata.tbana.hadoop.mapred.splunk.split.SplunkSplit;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -56,7 +57,7 @@ public class JobRecordReader extends SplunkRecordReader {
     }
 
     private void setFieldList(JobResultsArgs resultsArgs) {
-        String fields = configuration.get(SPLUNK_FIELD_LIST);
+        String fields = configuration.get(SplunkConf.SPLUNK_FIELD_LIST);
         if(fields == null)
             return;
 
@@ -64,7 +65,7 @@ public class JobRecordReader extends SplunkRecordReader {
     }
 
     public Job createJob() {
-        Job j = splunkService.getJobs().create(configuration.get(SPLUNK_SEARCH_QUERY), getJobArgs());
+        Job j = splunkService.getJobs().create(configuration.get(SplunkConf.SPLUNK_SEARCH_QUERY), getJobArgs());
 
         return j;
     }
@@ -73,8 +74,8 @@ public class JobRecordReader extends SplunkRecordReader {
     protected JobArgs getJobArgs() {
         JobArgs jobArgs = new JobArgs();
 
-        jobArgs.setLatestTime(configuration.get(SPLUNK_LATEST_TIME));
-        jobArgs.setEarliestTime(configuration.get(SPLUNK_EARLIEST_TIME));
+        jobArgs.setLatestTime(configuration.get(SplunkConf.SPLUNK_LATEST_TIME));
+        jobArgs.setEarliestTime(configuration.get(SplunkConf.SPLUNK_EARLIEST_TIME));
 
         return jobArgs;
     }

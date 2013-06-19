@@ -1,7 +1,6 @@
-package com.yolodata.tbana.hadoop.mapred;
+package com.yolodata.tbana.hadoop.mapred.csv;
 
-import com.yolodata.tbana.hadoop.mapred.csv.CSVLineRecordReader;
-import com.yolodata.tbana.hadoop.mapred.csv.CSVNLineInputFormat;
+import com.yolodata.tbana.hadoop.mapred.TestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -48,7 +47,7 @@ public class CSVInputFormatTest {
         Path outputPath = runJob(inputContent);
         assert(outputPath != null); // Means that the job successfully finished
 
-        String outputContent = TestUtils.readMapReduceOutputFile(fs,outputPath);
+        String outputContent = TestUtils.readMapReduceOutputFile(fs, outputPath);
         assert(inputContent.equals(outputContent));
 
     }

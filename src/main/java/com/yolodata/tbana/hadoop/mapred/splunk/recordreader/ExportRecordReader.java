@@ -1,6 +1,7 @@
 package com.yolodata.tbana.hadoop.mapred.splunk.recordreader;
 
 import com.splunk.JobExportArgs;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import com.yolodata.tbana.hadoop.mapred.splunk.split.SplunkSplit;
 import org.apache.hadoop.mapred.InputSplit;
 import org.apache.hadoop.mapred.JobConf;
@@ -19,7 +20,7 @@ public class ExportRecordReader extends SplunkRecordReader {
 
         initPositions((SplunkSplit)inputSplit);
 
-        is = splunkService.export(configuration.get(SPLUNK_SEARCH_QUERY), getExportArgs());
+        is = splunkService.export(configuration.get(SplunkConf.SPLUNK_SEARCH_QUERY), getExportArgs());
         in = new InputStreamReader(is);
     }
 
@@ -35,8 +36,8 @@ public class ExportRecordReader extends SplunkRecordReader {
         //long totalLinesToGet = endPosition-startPosition;
         //jobExportArgs.add("count",totalLinesToGet);
 
-        jobExportArgs.setLatestTime(configuration.get(SPLUNK_LATEST_TIME));
-        jobExportArgs.setEarliestTime(configuration.get(SPLUNK_EARLIEST_TIME));
+        jobExportArgs.setLatestTime(configuration.get(SplunkConf.SPLUNK_LATEST_TIME));
+        jobExportArgs.setEarliestTime(configuration.get(SplunkConf.SPLUNK_EARLIEST_TIME));
 
         jobExportArgs.setSearchMode(JobExportArgs.SearchMode.NORMAL);
 

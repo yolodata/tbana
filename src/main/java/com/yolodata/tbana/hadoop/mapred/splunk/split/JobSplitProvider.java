@@ -1,6 +1,7 @@
 package com.yolodata.tbana.hadoop.mapred.splunk.split;
 
 import com.splunk.Job;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkInputFormat;
 import com.yolodata.tbana.hadoop.mapred.splunk.recordreader.JobRecordReader;
 import com.yolodata.tbana.hadoop.mapred.splunk.recordreader.SplunkRecordReader;
 import org.apache.hadoop.mapred.InputSplit;
@@ -9,10 +10,11 @@ import org.apache.hadoop.mapred.JobConf;
 import java.io.IOException;
 
 public class JobSplitProvider extends SplitProvider {
+
     @Override
     public InputSplit[] getSplits(JobConf conf, int numberOfSplits) throws IOException {
-        if(conf.get(SplunkRecordReader.INPUTFORMAT_SPLITS) != null)
-            numberOfSplits = Integer.parseInt(conf.get(SplunkRecordReader.INPUTFORMAT_SPLITS));
+
+        numberOfSplits = getNumberOfSplits(conf,numberOfSplits);
 
         InputSplit[] splits = new InputSplit[numberOfSplits];
 

@@ -13,6 +13,7 @@ import java.util.List;
 
 public class SplunkInputFormat implements InputFormat<LongWritable, List<Text>> {
 
+    public static final String INPUTFORMAT_SPLITS = "splunk.inputformat.splits";
     public static final String INPUTFORMAT_METHOD = "splunk.inputformat.method";
 
     public static enum Method { Job, Export, Indexer, TwoLayerIndexer};

@@ -1,6 +1,5 @@
 package com.yolodata.tbana.hadoop.mapred.splunk;
 
-import com.yolodata.tbana.hadoop.mapred.splunk.recordreader.ExportRecordReader;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -29,13 +28,13 @@ class SplunkTestRunner extends Configured implements Tool {
     public int run(String[] args) throws Exception {
         JobConf jobConf = new JobConf(getConf());
 
-        jobConf.set(ExportRecordReader.SPLUNK_USERNAME, "admin");
-        jobConf.set(ExportRecordReader.SPLUNK_PASSWORD, "changeIt");
-        jobConf.set(ExportRecordReader.SPLUNK_HOST, "localhost");
-        jobConf.set(ExportRecordReader.SPLUNK_PORT, "8089");
-        jobConf.set(ExportRecordReader.SPLUNK_EARLIEST_TIME, "2012-12-30T23:59:55.000");
-        jobConf.set(ExportRecordReader.SPLUNK_LATEST_TIME, "2013-01-31T23:59:59.000");
-        jobConf.set(ExportRecordReader.SPLUNK_SEARCH_QUERY, "search * sourcetype=\"moc3\" | table sourcetype,_raw");
+        jobConf.set(SplunkConf.SPLUNK_USERNAME, "admin");
+        jobConf.set(SplunkConf.SPLUNK_PASSWORD, "changeIt");
+        jobConf.set(SplunkConf.SPLUNK_HOST, "localhost");
+        jobConf.set(SplunkConf.SPLUNK_PORT, "8089");
+        jobConf.set(SplunkConf.SPLUNK_EARLIEST_TIME, "2012-12-30T23:59:55.000");
+        jobConf.set(SplunkConf.SPLUNK_LATEST_TIME, "2013-01-31T23:59:59.000");
+        jobConf.set(SplunkConf.SPLUNK_SEARCH_QUERY, "search * sourcetype=\"moc3\" | table sourcetype,_raw");
 
         jobConf.set(SplunkInputFormat.INPUTFORMAT_METHOD,args[0]);
         jobConf.setJarByClass(SplunkTestRunner.class);

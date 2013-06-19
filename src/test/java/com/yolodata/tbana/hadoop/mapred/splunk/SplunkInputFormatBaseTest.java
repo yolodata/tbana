@@ -33,7 +33,7 @@ public abstract class SplunkInputFormatBaseTest {
     @Test
     public void testInputFormatMultipleSplits() throws Exception {
         Configuration conf = new Configuration();
-        conf.setInt(SplunkRecordReader.INPUTFORMAT_SPLITS, 4);
+        conf.setInt(SplunkInputFormat.INPUTFORMAT_SPLITS, 4);
 
         testInputFormat(conf);
     }

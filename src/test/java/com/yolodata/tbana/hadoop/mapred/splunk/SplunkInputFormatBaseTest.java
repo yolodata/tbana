@@ -1,6 +1,7 @@
 package com.yolodata.tbana.hadoop.mapred.splunk;
 
 import com.yolodata.tbana.hadoop.mapred.TestUtils;
+import com.yolodata.tbana.hadoop.mapred.splunk.recordreader.SplunkRecordReader;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -13,10 +14,10 @@ import java.util.List;
 
 public abstract class SplunkInputFormatBaseTest {
 
-    private Path outputPath= new Path("build/testTMP/"+getClassToTest());
+    private Path outputPath= new Path("build/testTMP/"+ getMethodToTest());
     private FileSystem fs;
 
-    protected abstract String getClassToTest();
+    protected abstract String getMethodToTest();
 
     @Before
     public void setUp() throws Exception {
@@ -69,7 +70,7 @@ public abstract class SplunkInputFormatBaseTest {
 
     private boolean runJob(Configuration conf) throws Exception {
         return (ToolRunner.run(conf, new SplunkTestRunner(conf),
-                new String[]{this.getClass().getPackage().getName().concat("." + getClassToTest()),outputPath.toString()}) == 0);
+                new String[]{getMethodToTest(),outputPath.toString()}) == 0);
     }
 }
 

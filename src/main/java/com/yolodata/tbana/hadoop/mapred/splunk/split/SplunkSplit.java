@@ -1,4 +1,4 @@
-package com.yolodata.tbana.hadoop.mapred.splunk;
+package com.yolodata.tbana.hadoop.mapred.splunk.split;
 
 import com.google.common.primitives.Bytes;
 import org.apache.commons.lang.NotImplementedException;

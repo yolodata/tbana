@@ -1,5 +1,6 @@
 package com.yolodata.tbana.hadoop.mapred.splunk;
 
+import com.yolodata.tbana.hadoop.mapred.splunk.recordreader.ExportRecordReader;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -36,11 +37,12 @@ class SplunkTestRunner extends Configured implements Tool {
         jobConf.set(ExportRecordReader.SPLUNK_LATEST_TIME, "2013-01-31T23:59:59.000");
         jobConf.set(ExportRecordReader.SPLUNK_SEARCH_QUERY, "search * sourcetype=\"moc3\" | table sourcetype,_raw");
 
+        jobConf.set(SplunkInputFormat.INPUTFORMAT_METHOD,args[0]);
         jobConf.setJarByClass(SplunkTestRunner.class);
         jobConf.setNumReduceTasks(0);
         jobConf.setMapperClass(TestMapper.class);
 
-        jobConf.setInputFormat((Class<? extends InputFormat>) Class.forName(args[0]));
+        jobConf.setInputFormat(SplunkInputFormat.class);
         jobConf.setOutputKeyClass(NullWritable.class);
         jobConf.setOutputValueClass(Text.class);
 

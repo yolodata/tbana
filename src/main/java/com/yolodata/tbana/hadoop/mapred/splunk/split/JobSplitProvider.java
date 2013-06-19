@@ -1,29 +1,16 @@
-package com.yolodata.tbana.hadoop.mapred.splunk;
-
+package com.yolodata.tbana.hadoop.mapred.splunk.split;
 
 import com.splunk.Job;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.*;
+import com.yolodata.tbana.hadoop.mapred.splunk.recordreader.JobRecordReader;
+import com.yolodata.tbana.hadoop.mapred.splunk.recordreader.SplunkRecordReader;
+import org.apache.hadoop.mapred.InputSplit;
+import org.apache.hadoop.mapred.JobConf;
 
 import java.io.IOException;
-import java.util.List;
 
-public class JobInputFormat implements InputFormat<LongWritable, List<Text>> {
-
+public class JobSplitProvider extends SplitProvider {
     @Override
-    public RecordReader<LongWritable, List<Text>> getRecordReader(InputSplit inputSplit,
-                                                                  JobConf configuration, Reporter reporter) throws IOException {
-        JobRecordReader jobRecordReader = new JobRecordReader(configuration);
-
-        jobRecordReader.initialize(inputSplit);
-
-        return jobRecordReader;
-    }
-
-    @Override
-    public InputSplit[] getSplits(JobConf conf, int numberOfSplits) throws RuntimeException, IOException {
-
+    public InputSplit[] getSplits(JobConf conf, int numberOfSplits) throws IOException {
         if(conf.get(SplunkRecordReader.INPUTFORMAT_SPLITS) != null)
             numberOfSplits = Integer.parseInt(conf.get(SplunkRecordReader.INPUTFORMAT_SPLITS));
 

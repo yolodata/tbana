@@ -1,6 +1,7 @@
-package com.yolodata.tbana.hadoop.mapred.splunk;
+package com.yolodata.tbana.hadoop.mapred.splunk.recordreader;
 
 import com.splunk.JobExportArgs;
+import com.yolodata.tbana.hadoop.mapred.splunk.split.SplunkSplit;
 import org.apache.hadoop.mapred.InputSplit;
 import org.apache.hadoop.mapred.JobConf;
 

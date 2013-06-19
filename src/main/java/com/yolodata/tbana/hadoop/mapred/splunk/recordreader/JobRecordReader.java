@@ -1,8 +1,9 @@
-package com.yolodata.tbana.hadoop.mapred.splunk;
+package com.yolodata.tbana.hadoop.mapred.splunk.recordreader;
 
 import com.splunk.Job;
 import com.splunk.JobArgs;
 import com.splunk.JobResultsArgs;
+import com.yolodata.tbana.hadoop.mapred.splunk.split.SplunkSplit;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.InputSplit;
@@ -77,7 +78,7 @@ public class JobRecordReader extends SplunkRecordReader {
         return jobArgs;
     }
 
-    protected void waitForJobDone(Job job) {
+    public void waitForJobDone(Job job) {
         while(!job.isDone())
         {
             try {

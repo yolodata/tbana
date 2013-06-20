@@ -1,9 +1,8 @@
 package com.yolodata.tbana.hadoop.mapred.splunk.recordreader;
 
-import com.splunk.Job;
-import com.splunk.JobArgs;
 import com.splunk.JobResultsArgs;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkJob;
 import com.yolodata.tbana.hadoop.mapred.splunk.split.SplunkSplit;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -18,9 +17,10 @@ public class JobRecordReader extends SplunkRecordReader {
 
     private boolean skipHeader;
 
+    private SplunkJob splunkJob;
+
     public JobRecordReader(JobConf configuration) throws IOException {
         super(configuration);
-
     }
 
     @Override
@@ -29,7 +29,7 @@ public class JobRecordReader extends SplunkRecordReader {
         super.initPositions(splunkSplit);
         skipHeader = splunkSplit.getSkipHeader();
 
-        Job job = getJob(splunkSplit.getJobID());
+        splunkJob = SplunkJob.getSplunkJob(splunkService,splunkSplit.getJobID());
 
         JobResultsArgs resultsArgs = new JobResultsArgs();
         resultsArgs.setOutputMode(JobResultsArgs.OutputMode.CSV);
@@ -40,13 +40,13 @@ public class JobRecordReader extends SplunkRecordReader {
         resultsArgs.setOffset((int) startPosition);
         resultsArgs.setCount(totalLinesToGet);
 
-        is = job.getResults(resultsArgs);
+        is = splunkJob.getJob().getResults(resultsArgs);
         in = new InputStreamReader(is);
-
     }
 
     @Override
     public boolean next(LongWritable key, List<Text> value) throws IOException {
+
         if(currentPosition == endPosition)
             return false;
 
@@ -62,41 +62,6 @@ public class JobRecordReader extends SplunkRecordReader {
             return;
 
         resultsArgs.setFieldList(fields.split(","));
-    }
-
-    public Job createJob() {
-        Job j = splunkService.getJobs().create(configuration.get(SplunkConf.SPLUNK_SEARCH_QUERY), getJobArgs());
-
-        return j;
-    }
-
-
-    protected JobArgs getJobArgs() {
-        JobArgs jobArgs = new JobArgs();
-
-        jobArgs.setLatestTime(configuration.get(SplunkConf.SPLUNK_LATEST_TIME));
-        jobArgs.setEarliestTime(configuration.get(SplunkConf.SPLUNK_EARLIEST_TIME));
-
-        return jobArgs;
-    }
-
-    public void waitForJobDone(Job job) {
-        while(!job.isDone())
-        {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    private Job getJob(String jobID) {
-        return splunkService.getJobs().get(jobID);
-    }
-
-    public int getNumberOfResultsFromJob(Job job) {
-        return job.getEventCount();
     }
 
 

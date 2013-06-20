@@ -1,7 +1,8 @@
 package com.yolodata.tbana.hadoop.mapred.splunk.split;
 
-import com.splunk.Job;
-import com.yolodata.tbana.hadoop.mapred.splunk.recordreader.JobRecordReader;
+import com.splunk.Service;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkJob;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkService;
 import org.apache.hadoop.mapred.InputSplit;
 import org.apache.hadoop.mapred.JobConf;
 
@@ -13,19 +14,19 @@ public class JobSplitProvider extends SplitProvider {
     public InputSplit[] getSplits(JobConf conf, int numberOfSplits) throws IOException {
 
         numberOfSplits = getNumberOfSplits(conf,numberOfSplits);
-
         InputSplit[] splits = new InputSplit[numberOfSplits];
 
-        JobRecordReader rr = new JobRecordReader(conf);
-        Job job = rr.createJob();
-        rr.waitForJobDone(job);
-        long numberOfEvents = rr.getNumberOfResultsFromJob(job);
+        Service service = SplunkService.connect(conf);
+        SplunkJob splunkJob = SplunkJob.createSplunkJob(service,conf);
+
+        splunkJob.waitForCompletion(1000);
+        long numberOfEvents = splunkJob.getNumberOfResultsFromJob();
 
         try {
             int resultsPerSplit = (int)numberOfEvents/numberOfSplits;
             int overflow = (int)numberOfEvents%numberOfSplits;
 
-            boolean skipHeader = false;
+            boolean skipHeader;
             for(int i=0; i<numberOfSplits; i++) {
                 int start;
                 int end;
@@ -48,7 +49,7 @@ public class JobSplitProvider extends SplitProvider {
                 // Skip header for all splits except first
                 skipHeader = i>0;
 
-                splits[i] = new SplunkSplit(job.getSid(), start, end, skipHeader);
+                splits[i] = new SplunkSplit(splunkJob.getJob().getSid(), start, end, skipHeader);
             }
 
         } catch (Exception e) {

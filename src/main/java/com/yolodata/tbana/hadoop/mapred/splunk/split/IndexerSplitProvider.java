@@ -1,6 +1,7 @@
 package com.yolodata.tbana.hadoop.mapred.splunk.split;
 
 import com.splunk.Service;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkJob;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkService;
 import com.yolodata.tbana.hadoop.mapred.splunk.indexer.Indexer;
 import com.yolodata.tbana.hadoop.mapred.splunk.indexer.IndexerProvider;
@@ -14,24 +15,30 @@ import java.util.List;
 public class IndexerSplitProvider extends SplitProvider{
     @Override
     public InputSplit[] getSplits(JobConf conf, int numberOfSplits) throws IOException {
-        numberOfSplits = getNumberOfSplits(conf, numberOfSplits);
 
-        InputSplit[] splits = new InputSplit[numberOfSplits];
-
-        JobRecordReader rr = new JobRecordReader(conf);
-
+        Service mainService = SplunkService.connect(conf);
         List<Indexer> indexers = IndexerProvider.getIndexers(SplunkService.connect(conf));
+
+        Indexer mainIndexer = new Indexer(mainService.getHost(), mainService.getPort());
+        indexers.add(0, mainIndexer);
+
+        InputSplit[] splits = new InputSplit[indexers.size()];
 
         for(int i=0;i<indexers.size();i++)
         {
             Indexer indexer = indexers.get(i);
             Service service = SplunkService.connect(conf, indexer.getHost(), indexer.getPort());
 
-            /*
-               TODO: Refactor out create job logic from RecordReader, it should
-               TODO: it should be in a separate class, so that it can be accessed from here too.
-            */
-            splits[i] = new SplunkSplit();
+            SplunkJob splunkJob = SplunkJob.createSplunkJob(service,conf);
+            splunkJob.waitForCompletion(1000);
+
+            int start = 0;
+
+            // Add one for the header
+            int end = splunkJob.getNumberOfResultsFromJob() + 1;
+            boolean skipHeader = i>0;
+
+            splits[i] = new SplunkSplit(splunkJob.getJob().getSid(), start, end, skipHeader);
         }
 
         return splits;

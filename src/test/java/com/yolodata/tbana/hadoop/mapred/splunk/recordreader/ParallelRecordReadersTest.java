@@ -6,6 +6,7 @@ import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkJob;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkService;
 import com.yolodata.tbana.hadoop.mapred.splunk.split.SplunkSplit;
+import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.JobConf;
@@ -14,6 +15,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,13 +31,13 @@ public class ParallelRecordReadersTest {
     }
 
     @Test
-    public void testSingleRecordReader() {
-
+    public void testSingleRecordReader() throws InterruptedException {
+        startTest(1);
     }
 
     @Test
     public void testMultipleRecordReadersInParallel() throws Exception {
-
+        startTest(3);
     }
 
     private void startTest(int concurrentSplits) throws InterruptedException {
@@ -50,9 +52,36 @@ public class ParallelRecordReadersTest {
 
         waitForAllThreadsToFinish(threads);
 
-        // check all results
+        Map<LongWritable, List<Text>> expected = getExpectedResults();
 
 
+        for(RecordReaderThread thread : threads) {
+            Map<LongWritable, List<Text>> actual = thread.getResults();
+
+            assert(expected.size() == actual.size());
+
+            for(LongWritable key : actual.keySet())
+                assert(expected.get(key).get(0).equals(actual.get(key).get(1)));
+        }
+
+    }
+
+    private Map<LongWritable, List<Text>> getExpectedResults() {
+        Map expected = new HashMap<LongWritable,List<Text>>();
+        addKVToMap(expected, 0, "_raw");
+        addKVToMap(expected, 1, "#<DateTime 2012-12-31T23:59:59.000Z> count=0");
+        addKVToMap(expected, 2, "#<DateTime 2012-12-31T23:59:58.000Z> count=1");
+        addKVToMap(expected, 3, "#<DateTime 2012-12-31T23:59:57.000Z> count=2");
+        addKVToMap(expected, 4, "#<DateTime 2012-12-31T23:59:56.000Z> count=3");
+        addKVToMap(expected, 5, "#<DateTime 2012-12-31T23:59:55.000Z> count=4");
+
+        return expected;
+    }
+
+    private void addKVToMap(Map expected, int key, String value) {
+        ArrayListTextWritable texts = new ArrayListTextWritable();
+        texts.add(new Text(value));
+        expected.put(new LongWritable(key), texts);
     }
 
     private void waitForAllThreadsToFinish(List<RecordReaderThread> threads) throws InterruptedException {
@@ -65,7 +94,6 @@ public class ParallelRecordReadersTest {
 
         for(int i=0;i<numberOfSplits;i++) {
             SplunkJob job = SplunkJob.createSplunkJob(splunkService,configuration);
-            job.waitForCompletion(500);
             int start = 0;
             int end = job.getNumberOfResultsFromJob(configuration) + 1;
 
@@ -98,6 +126,7 @@ class RecordReaderThread extends Thread {
     public RecordReaderThread(SplunkSplit split, JobConf conf) {
         this.split = split;
         this.conf = conf;
+        this.results = new HashMap<LongWritable, List<Text>>();
         this.start();
     }
 
@@ -109,11 +138,15 @@ class RecordReaderThread extends Thread {
     public void run() {
         try {
             SplunkRecordReader recordReader = new JobRecordReader(conf);
+            recordReader.initialize(split);
             LongWritable key = recordReader.createKey();
             List<Text> values = recordReader.createValue();
 
-            while(recordReader.next(key,values))
+            while(recordReader.next(key,values)){
                 results.put(key,values);
+                key = recordReader.createKey();
+                values = recordReader.createValue();
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

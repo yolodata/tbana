@@ -36,7 +36,7 @@ class SplunkTestRunner extends Configured implements Tool {
         jobConf.set(SplunkConf.SPLUNK_LATEST_TIME, "2013-01-31T23:59:59.000");
         jobConf.set(SplunkConf.SPLUNK_SEARCH_QUERY, "search * sourcetype=\"moc3\" | table sourcetype,_raw");
 
-        jobConf.set(SplunkInputFormat.INPUTFORMAT_METHOD,args[0]);
+        jobConf.set(SplunkInputFormat.INPUTFORMAT_MODE,args[0]);
         jobConf.setJarByClass(SplunkTestRunner.class);
         jobConf.setNumReduceTasks(0);
         jobConf.setMapperClass(TestMapper.class);

@@ -14,10 +14,10 @@ import java.util.List;
 public class SplunkInputFormat implements InputFormat<LongWritable, List<Text>> {
 
     public static final String INPUTFORMAT_SPLITS = "splunk.inputformat.splits";
-    public static final String INPUTFORMAT_METHOD = "splunk.inputformat.method";
+    public static final String INPUTFORMAT_MODE = "splunk.inputformat.mode";
 
-    public static enum Method { Job, Export, Indexer, TwoLayerIndexer};
-    private static final Method DEFAULT_METHOD = Method.Job;
+    public static enum Mode { Job, Export, Indexer, TwoLayerIndexer};
+    private static final Mode DEFAULT_MODE = Mode.Job;
 
     @Override
     public RecordReader<LongWritable, List<Text>> getRecordReader(InputSplit inputSplit, JobConf configuration, Reporter reporter) throws IOException {
@@ -30,25 +30,25 @@ public class SplunkInputFormat implements InputFormat<LongWritable, List<Text>> 
     @Override
     public InputSplit[] getSplits(JobConf conf, int i) throws IOException {
 
-        Method method = getMethodFromConf(conf);
-        SplitProvider sp = SplitProvider.getProvider(method);
+        Mode mode = getMethodFromConf(conf);
+        SplitProvider sp = SplitProvider.getProvider(mode);
 
         return sp.getSplits(conf,i);
     }
 
-    private Method getMethodFromConf(JobConf conf) {
-        String method = conf.get(INPUTFORMAT_METHOD,"Job");
+    private Mode getMethodFromConf(JobConf conf) {
+        String mode = conf.get(INPUTFORMAT_MODE,"Job");
 
-        for(Method m : Method.values())
-            if(m.toString().equalsIgnoreCase(method))
+        for(Mode m : Mode.values())
+            if(m.toString().equalsIgnoreCase(mode))
                 return m;
 
-        return DEFAULT_METHOD;
+        return DEFAULT_MODE;
     }
 
     private SplunkRecordReader getRecordReaderFromConf(JobConf conf) throws IOException {
-        Method method = getMethodFromConf(conf);
-        switch(method) {
+        Mode mode = getMethodFromConf(conf);
+        switch(mode) {
             case Job:
                 return new JobRecordReader(conf);
             case Export:
@@ -56,7 +56,7 @@ public class SplunkInputFormat implements InputFormat<LongWritable, List<Text>> 
             case Indexer:
                 return new JobRecordReader(conf);
             default:
-                throw new RuntimeException("Cannot get SplunkRecordReader in SplunkInputFormat using method "+method.toString());
+                throw new RuntimeException("Cannot get SplunkRecordReader in SplunkInputFormat using mode "+ mode.toString());
         }
 
     }

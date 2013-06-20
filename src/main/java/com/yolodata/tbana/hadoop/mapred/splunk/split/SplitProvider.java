@@ -11,8 +11,8 @@ public abstract class SplitProvider {
 
     public abstract InputSplit[] getSplits(JobConf conf, int numberOfSplits) throws IOException;
 
-    public static SplitProvider getProvider(SplunkInputFormat.Method inputFormatMethod) {
-        switch (inputFormatMethod) {
+    public static SplitProvider getProvider(SplunkInputFormat.Mode inputFormatMode) {
+        switch (inputFormatMode) {
             case Job:
                 return new JobSplitProvider();
             case Export:
@@ -20,7 +20,7 @@ public abstract class SplitProvider {
             case Indexer:
                 return new IndexerSplitProvider();
             default:
-                throw new RuntimeException("SplitProvider for Method " + inputFormatMethod.toString() + " is not specified in SplitProvider.getProvider(Method)");
+                throw new RuntimeException("SplitProvider for Mode " + inputFormatMode.toString() + " is not specified in SplitProvider.getProvider(Mode)");
             case TwoLayerIndexer:
                 break;
         }

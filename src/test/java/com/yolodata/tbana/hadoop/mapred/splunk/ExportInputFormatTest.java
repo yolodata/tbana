@@ -4,6 +4,6 @@ public class ExportInputFormatTest extends SplunkInputFormatBaseTest {
 
     @Override
     protected String getMethodToTest() {
-        return SplunkInputFormat.Method.Export.toString();
+        return SplunkInputFormat.Mode.Export.toString();
     }
 }

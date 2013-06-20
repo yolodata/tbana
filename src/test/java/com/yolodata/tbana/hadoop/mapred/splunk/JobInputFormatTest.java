@@ -4,6 +4,6 @@ public class JobInputFormatTest extends SplunkInputFormatBaseTest {
 
     @Override
     protected String getMethodToTest() {
-        return SplunkInputFormat.Method.Job.toString();
+        return SplunkInputFormat.Mode.Job.toString();
     }
 }

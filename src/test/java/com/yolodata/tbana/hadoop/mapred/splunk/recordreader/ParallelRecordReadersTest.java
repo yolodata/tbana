@@ -6,7 +6,6 @@ import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkJob;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkService;
 import com.yolodata.tbana.hadoop.mapred.splunk.split.SplunkSplit;
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.JobConf;
@@ -39,7 +38,7 @@ public class ParallelRecordReadersTest {
 
     }
 
-    private startTest(int concurrentSplits) throws InterruptedException {
+    private void startTest(int concurrentSplits) throws InterruptedException {
         List<SplunkSplit> splits = getSplunkSplits(concurrentSplits);
 
         List<RecordReaderThread> threads = Lists.newArrayList();
@@ -52,6 +51,7 @@ public class ParallelRecordReadersTest {
         waitForAllThreadsToFinish(threads);
 
         // check all results
+
 
     }
 
@@ -67,7 +67,7 @@ public class ParallelRecordReadersTest {
             SplunkJob job = SplunkJob.createSplunkJob(splunkService,configuration);
             job.waitForCompletion(500);
             int start = 0;
-            int end = job.getNumberOfResultsFromJob() + 1;
+            int end = job.getNumberOfResultsFromJob(configuration) + 1;
 
             splunkSplits.add(new SplunkSplit(job.getJob().getSid(), start, end));
         }
@@ -99,6 +99,10 @@ class RecordReaderThread extends Thread {
         this.split = split;
         this.conf = conf;
         this.start();
+    }
+
+    public Map getResults() {
+        return results;
     }
 
     @Override

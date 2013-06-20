@@ -30,12 +30,11 @@ public class IndexerSplitProvider extends SplitProvider{
             Service service = SplunkService.connect(conf, indexer.getHost(), indexer.getPort());
 
             SplunkJob splunkJob = SplunkJob.createSplunkJob(service,conf);
-            splunkJob.waitForCompletion(1000);
 
             int start = 0;
 
             // Add one for the header
-            int end = splunkJob.getNumberOfResultsFromJob() + 1;
+            int end = splunkJob.getNumberOfResultsFromJob(conf) + 1;
             boolean skipHeader = i>0;
 
             splits[i] = new SplunkSplit(splunkJob.getJob().getSid(), start, end, skipHeader);

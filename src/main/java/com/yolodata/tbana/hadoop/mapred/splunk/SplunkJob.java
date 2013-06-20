@@ -2,9 +2,14 @@ package com.yolodata.tbana.hadoop.mapred.splunk;
 
 import com.splunk.Job;
 import com.splunk.JobArgs;
+import com.splunk.JobResultsArgs;
 import com.splunk.Service;
 import com.yolodata.tbana.hadoop.mapred.splunk.recordreader.JobRecordReader;
 import org.apache.hadoop.conf.Configuration;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class SplunkJob {
 
@@ -51,7 +56,27 @@ public class SplunkJob {
         return job;
     }
 
-    public int getNumberOfResultsFromJob() {
-        return job.getEventCount();
+    public int getNumberOfResultsFromJob(Configuration conf) {
+        Service service = job.getService();
+        String searchString = job.getSearch();
+        searchString = searchString.concat(" | stats count");
+
+        Configuration newConfig = new Configuration(conf);
+        newConfig.set(SplunkConf.SPLUNK_SEARCH_QUERY,searchString);
+
+        SplunkJob getEvents = SplunkJob.createSplunkJob(service,newConfig);
+        getEvents.waitForCompletion(100);
+
+        JobResultsArgs resultsArgs = new JobResultsArgs();
+        resultsArgs.setOutputMode(JobResultsArgs.OutputMode.CSV);
+        resultsArgs.setFieldList(new String[] {"count"});
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(getEvents.getJob().getResults(resultsArgs)));
+        try {
+            br.readLine(); // Skip header
+            return Integer.parseInt(br.readLine());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -31,6 +31,8 @@ public class JobRecordReader extends SplunkRecordReader {
 
         splunkJob = SplunkJob.getSplunkJob(splunkService,splunkSplit.getJobID());
 
+        splunkJob.waitForCompletion(1000);
+
         JobResultsArgs resultsArgs = new JobResultsArgs();
         resultsArgs.setOutputMode(JobResultsArgs.OutputMode.CSV);
 

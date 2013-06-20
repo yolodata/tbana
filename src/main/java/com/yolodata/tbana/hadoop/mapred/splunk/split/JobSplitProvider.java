@@ -19,8 +19,7 @@ public class JobSplitProvider extends SplitProvider {
         Service service = SplunkService.connect(conf);
         SplunkJob splunkJob = SplunkJob.createSplunkJob(service,conf);
 
-        splunkJob.waitForCompletion(1000);
-        long numberOfEvents = splunkJob.getNumberOfResultsFromJob();
+        long numberOfEvents = splunkJob.getNumberOfResultsFromJob(conf);
 
         try {
             int resultsPerSplit = (int)numberOfEvents/numberOfSplits;

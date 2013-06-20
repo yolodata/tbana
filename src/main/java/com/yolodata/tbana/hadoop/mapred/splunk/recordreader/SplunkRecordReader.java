@@ -37,7 +37,6 @@ public abstract class SplunkRecordReader implements RecordReader<LongWritable, L
         SplunkConf.validateConfiguration(this.configuration);
         splunkService = SplunkService.connect(configuration);
 
-
     }
 
     public abstract void initialize(InputSplit inputSplit) throws IOException;

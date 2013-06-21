@@ -6,6 +6,7 @@ import com.yolodata.tbana.hadoop.mapred.splunk.SplunkService;
 import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;
 import com.yolodata.tbana.hadoop.mapred.util.CSVReader;
 import com.yolodata.tbana.hadoop.mapred.splunk.split.SplunkSplit;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.InputSplit;
@@ -21,7 +22,7 @@ import com.splunk.*;
 
 public abstract class SplunkRecordReader implements RecordReader<LongWritable, List<Text>> {
 
-    protected final JobConf configuration;
+    protected final Configuration configuration;
     protected long currentPosition;
     protected long startPosition;
     protected long endPosition;
@@ -31,7 +32,7 @@ public abstract class SplunkRecordReader implements RecordReader<LongWritable, L
     protected InputStreamReader in;
     protected CSVReader reader;
 
-    public SplunkRecordReader(JobConf configuration) throws IOException {
+    public SplunkRecordReader(Configuration configuration) throws IOException {
 
         this.configuration = configuration;
         SplunkConf.validateConfiguration(this.configuration);

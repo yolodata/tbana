@@ -4,6 +4,7 @@ import com.yolodata.tbana.hadoop.mapred.splunk.recordreader.ExportRecordReader;
 import com.yolodata.tbana.hadoop.mapred.splunk.recordreader.JobRecordReader;
 import com.yolodata.tbana.hadoop.mapred.splunk.recordreader.SplunkRecordReader;
 import com.yolodata.tbana.hadoop.mapred.splunk.split.SplitProvider;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.*;
@@ -36,7 +37,7 @@ public class SplunkInputFormat implements InputFormat<LongWritable, List<Text>> 
         return sp.getSplits(conf,i);
     }
 
-    private Mode getMethodFromConf(JobConf conf) {
+    private static Mode getMethodFromConf(Configuration conf) {
         String mode = conf.get(INPUTFORMAT_MODE,"Job");
 
         for(Mode m : Mode.values())
@@ -46,7 +47,7 @@ public class SplunkInputFormat implements InputFormat<LongWritable, List<Text>> 
         return DEFAULT_MODE;
     }
 
-    private SplunkRecordReader getRecordReaderFromConf(JobConf conf) throws IOException {
+    public static SplunkRecordReader getRecordReaderFromConf(Configuration conf) throws IOException {
         Mode mode = getMethodFromConf(conf);
         switch(mode) {
             case Job:

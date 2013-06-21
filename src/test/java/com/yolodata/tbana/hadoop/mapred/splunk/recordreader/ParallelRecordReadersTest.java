@@ -3,10 +3,12 @@ package com.yolodata.tbana.hadoop.mapred.splunk.recordreader;
 import com.google.common.collect.Lists;
 import com.splunk.Service;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkInputFormat;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkJob;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkService;
 import com.yolodata.tbana.hadoop.mapred.splunk.split.SplunkSplit;
 import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.JobConf;
@@ -22,31 +24,49 @@ import java.util.Map;
 public class ParallelRecordReadersTest {
 
     private Service splunkService;
-    private JobConf configuration;
+    private Configuration configuration;
 
     @Before
     public void setUp() {
-        configuration = getJobConf();
+        configuration = getConfiguration();
         splunkService = SplunkService.connect(configuration);
     }
 
     @Test
-    public void testSingleRecordReader() throws InterruptedException {
-        startTest(1);
+    public void testSingleJobRecordReader() throws InterruptedException, IOException {
+        configuration.set(SplunkInputFormat.INPUTFORMAT_MODE, SplunkInputFormat.Mode.Job.toString());
+        startTest(configuration,1);
     }
 
     @Test
-    public void testMultipleRecordReadersInParallel() throws Exception {
-        startTest(3);
+    public void testSingleExportRecordReader() throws InterruptedException, IOException {
+        configuration.set(SplunkInputFormat.INPUTFORMAT_MODE, SplunkInputFormat.Mode.Export.toString());
+        startTest(configuration,1);
     }
 
-    private void startTest(int concurrentSplits) throws InterruptedException {
+    @Test
+    public void testMultipleJobRecordReadersInParallel() throws Exception {
+        configuration.set(SplunkInputFormat.INPUTFORMAT_MODE, SplunkInputFormat.Mode.Job.toString());
+        startTest(configuration,3);
+    }
+
+
+    @Test
+    public void testMultipleExportRecordReadersInParallel() throws Exception {
+        Configuration conf = new Configuration(configuration);
+        conf.set(SplunkInputFormat.INPUTFORMAT_MODE, SplunkInputFormat.Mode.Export.toString());
+        startTest(conf,3);
+    }
+
+    private void startTest(Configuration conf, int concurrentSplits) throws InterruptedException, IOException {
         List<SplunkSplit> splits = getSplunkSplits(concurrentSplits);
 
         List<RecordReaderThread> threads = Lists.newArrayList();
 
         for(SplunkSplit split : splits) {
-            RecordReaderThread thread = new RecordReaderThread(split, configuration);
+            SplunkRecordReader splunkRecordReader = SplunkInputFormat.getRecordReaderFromConf(conf);
+
+            RecordReaderThread thread = new RecordReaderThread(splunkRecordReader,split);
             threads.add(thread);
         }
 
@@ -102,53 +122,54 @@ public class ParallelRecordReadersTest {
         return splunkSplits;
     }
 
-    private JobConf getJobConf() {
-        JobConf jobConf = new JobConf();
+    private Configuration getConfiguration() {
+        Configuration conf = new Configuration();
 
-        jobConf.set(SplunkConf.SPLUNK_USERNAME, "admin");
-        jobConf.set(SplunkConf.SPLUNK_PASSWORD, "changeIt");
-        jobConf.set(SplunkConf.SPLUNK_HOST, "localhost");
-        jobConf.set(SplunkConf.SPLUNK_PORT, "8089");
-        jobConf.set(SplunkConf.SPLUNK_EARLIEST_TIME, "2012-12-30T23:59:55.000");
-        jobConf.set(SplunkConf.SPLUNK_LATEST_TIME, "2013-01-31T23:59:59.000");
-        jobConf.set(SplunkConf.SPLUNK_SEARCH_QUERY, "search * sourcetype=\"moc3\" | table sourcetype,_raw");
+        conf.set(SplunkConf.SPLUNK_USERNAME, "admin");
+        conf.set(SplunkConf.SPLUNK_PASSWORD, "changeIt");
+        conf.set(SplunkConf.SPLUNK_HOST, "localhost");
+        conf.set(SplunkConf.SPLUNK_PORT, "8089");
+        conf.set(SplunkConf.SPLUNK_EARLIEST_TIME, "2012-12-30T23:59:55.000");
+        conf.set(SplunkConf.SPLUNK_LATEST_TIME, "2013-01-31T23:59:59.000");
+        conf.set(SplunkConf.SPLUNK_SEARCH_QUERY, "search * sourcetype=\"moc3\" | table sourcetype,_raw");
 
-        return jobConf;
-    }
-}
-
-class RecordReaderThread extends Thread {
-
-    private SplunkSplit split;
-    private JobConf conf;
-    private Map<LongWritable,List<Text>> results;
-
-    public RecordReaderThread(SplunkSplit split, JobConf conf) {
-        this.split = split;
-        this.conf = conf;
-        this.results = new HashMap<LongWritable, List<Text>>();
-        this.start();
+        return conf;
     }
 
-    public Map getResults() {
-        return results;
-    }
+    private class RecordReaderThread extends Thread {
 
-    @Override
-    public void run() {
-        try {
-            SplunkRecordReader recordReader = new JobRecordReader(conf);
-            recordReader.initialize(split);
-            LongWritable key = recordReader.createKey();
-            List<Text> values = recordReader.createValue();
+        private SplunkSplit split;
+        private Map<LongWritable,List<Text>> results;
+        private SplunkRecordReader recordReader;
 
-            while(recordReader.next(key,values)){
-                results.put(key,values);
-                key = recordReader.createKey();
-                values = recordReader.createValue();
+        public RecordReaderThread(SplunkRecordReader recordReader, SplunkSplit split) {
+            this.results = new HashMap<LongWritable, List<Text>>();
+            this.recordReader = recordReader;
+            this.split = split;
+
+            this.start();
+        }
+
+        public Map getResults() {
+            return results;
+        }
+
+        @Override
+        public void run() {
+            try {
+                recordReader.initialize(split);
+                LongWritable key = recordReader.createKey();
+                List<Text> values = recordReader.createValue();
+
+                while(recordReader.next(key,values)){
+                    results.put(key,values);
+                    key = recordReader.createKey();
+                    values = recordReader.createValue();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 }
+

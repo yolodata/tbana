@@ -16,7 +16,7 @@ public class SplunkConf {
     public static final String[] REQUIRED_LOGIN_PARAMS = {SPLUNK_USERNAME,SPLUNK_PASSWORD,SPLUNK_HOST,SPLUNK_PORT};
     public static final String[] REQUIRED_SEARCH_PARAMS = {SPLUNK_SEARCH_QUERY,SPLUNK_EARLIEST_TIME,SPLUNK_LATEST_TIME};
 
-    public static void validateConfiguration(JobConf configuration) throws SplunkConfigurationException {
+    public static void validateConfiguration(Configuration configuration) throws SplunkConfigurationException {
         validateLoginConfiguration(configuration);
         validateSearchConfiguration(configuration);
     }

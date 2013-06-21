@@ -4,6 +4,7 @@ import com.splunk.JobResultsArgs;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkJob;
 import com.yolodata.tbana.hadoop.mapred.splunk.split.SplunkSplit;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.InputSplit;
@@ -19,7 +20,7 @@ public class JobRecordReader extends SplunkRecordReader {
 
     private SplunkJob splunkJob;
 
-    public JobRecordReader(JobConf configuration) throws IOException {
+    public JobRecordReader(Configuration configuration) throws IOException {
         super(configuration);
     }
 

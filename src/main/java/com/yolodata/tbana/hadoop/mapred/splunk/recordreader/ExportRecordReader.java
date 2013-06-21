@@ -3,6 +3,7 @@ package com.yolodata.tbana.hadoop.mapred.splunk.recordreader;
 import com.splunk.JobExportArgs;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import com.yolodata.tbana.hadoop.mapred.splunk.split.SplunkSplit;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapred.InputSplit;
 import org.apache.hadoop.mapred.JobConf;
 
@@ -11,7 +12,7 @@ import java.io.InputStreamReader;
 
 public class ExportRecordReader extends SplunkRecordReader {
 
-    public ExportRecordReader(JobConf configuration) throws IOException {
+    public ExportRecordReader(Configuration configuration) throws IOException {
         super(configuration);
     }
 

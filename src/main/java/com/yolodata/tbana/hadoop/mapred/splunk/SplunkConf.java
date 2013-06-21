@@ -13,22 +13,22 @@ public class SplunkConf {
     public static final String SPLUNK_LATEST_TIME = "splunk.search.latest_time";
     public static final String SPLUNK_FIELD_LIST = "splunk.search.field_list";
 
+    public static final String[] REQUIRED_LOGIN_PARAMS = {SPLUNK_USERNAME,SPLUNK_PASSWORD,SPLUNK_HOST,SPLUNK_PORT};
+    public static final String[] REQUIRED_SEARCH_PARAMS = {SPLUNK_SEARCH_QUERY,SPLUNK_EARLIEST_TIME,SPLUNK_LATEST_TIME};
+
     public static void validateConfiguration(JobConf configuration) throws SplunkConfigurationException {
         validateLoginConfiguration(configuration);
         validateSearchConfiguration(configuration);
     }
 
     public static void validateLoginConfiguration(Configuration configuration) {
-        requireKeyInConfiguration(configuration,SplunkConf.SPLUNK_USERNAME);
-        requireKeyInConfiguration(configuration,SplunkConf.SPLUNK_PASSWORD);
-        requireKeyInConfiguration(configuration,SplunkConf.SPLUNK_HOST);
-        requireKeyInConfiguration(configuration,SplunkConf.SPLUNK_PORT);
+        for(String key : REQUIRED_LOGIN_PARAMS)
+            requireKeyInConfiguration(configuration,key);
     }
 
     public static void validateSearchConfiguration(Configuration configuration) {
-        requireKeyInConfiguration(configuration,SplunkConf.SPLUNK_SEARCH_QUERY);
-        requireKeyInConfiguration(configuration,SplunkConf.SPLUNK_EARLIEST_TIME);
-        requireKeyInConfiguration(configuration,SplunkConf.SPLUNK_LATEST_TIME);
+        for(String key : REQUIRED_SEARCH_PARAMS)
+            requireKeyInConfiguration(configuration,key);
     }
 
     public static boolean keyExists(Configuration configuration, String key) {

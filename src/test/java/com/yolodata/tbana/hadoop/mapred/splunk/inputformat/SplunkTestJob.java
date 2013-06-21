@@ -1,5 +1,7 @@
 package com.yolodata.tbana.hadoop.mapred.splunk.inputformat;
 
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkInputFormat;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;

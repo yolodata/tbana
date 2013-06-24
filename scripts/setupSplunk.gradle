@@ -1,0 +1,155 @@
+project.ext{
+    buildCache= file('build/cache')
+    splunkDir= file('build/cache/splunk')
+    splunkClusterDir= file('build/splunks')
+}
+
+task customPaths << {
+    buildCache.mkdir()
+    splunkClusterDir.mkdir()
+}
+
+def instances= ['master', 'slave1', 'slave2', 'slave3']
+ext.splunkAuth= "-auth admin:changeme"
+
+task setUppCluster(dependsOn: ['getIp','copyAll']) << {
+    instances.eachWithIndex { String instance, int i ->
+        //copySplunk("${splunkClusterDir}/${instance}")
+        def splunk= "$splunkClusterDir/$instance"
+        startAndSetupSplunk(splunk, instance, 9000+i, 9050+i)
+    }
+
+    if(instances.size() > 1){
+        setAsMaster("$splunkClusterDir/${instances[0]}/bin/splunk", 2, 2)
+
+        def master_ip= getIp.output()
+        if (master_ip.isEmpty())
+            throw new IOException("No ip available!")
+        instances[1..-1].eachWithIndex{instance, int i ->
+            println "Setting up slave: $instance, $i"
+            setAsSlave("$splunkClusterDir/$instance/bin/splunk",master_ip, 9050, 9100+i)
+        }
+    }
+}
+
+task getIp(type:Exec){
+
+    commandLine 'sh', '-c', / ifconfig -a | perl -ne 'if ( m\/^\s*inet (?:addr:)?([\d.]+).*?cast\/ ) { print qq($1); exit 0; }'/
+
+    standardOutput = new ByteArrayOutputStream()
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+
+task copyAll(dependsOn: ['extractSplunk', 'cleanSplunkInstallations']) << {
+    def filesToCopy = copySpec {
+        from splunkDir
+    }
+
+    instances.each { dest ->
+        copy {
+            with filesToCopy
+            into "$splunkClusterDir/$dest"
+        }
+    }
+}
+
+task extractSplunk(dependsOn: 'findSplunk') << {
+
+    if(splunkDir.exists())
+        return
+    else{
+        def tarPath= findSplunk.output()
+        ('tar xvzf ' + tarPath + ' -C ' + buildCache.path).execute()
+    }
+}
+
+task findSplunk(type:Exec){
+
+    //def splunk_tgz= project.file('splunk_tgz/splunk*', PathValidation.EXISTS)
+    commandLine 'sh', '-c', 'ls splunk_tgz/splunk*.tgz'
+
+    standardOutput = new ByteArrayOutputStream()
+
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+
+task cleanSplunkInstallations(type:Delete, dependsOn: 'stopAllSplunks') {
+    delete splunkClusterDir
+}
+
+task stopAllSplunks << {
+    instances.each { instance ->
+        def splunk= "$splunkClusterDir/$instance/bin/splunk"
+        if (file(splunk).exists()){
+            def proc= "$splunk stop".execute()
+            //proc.consumeProcessOutput(System.out, System.err)
+            proc.waitFor()
+        }
+    }
+}
+
+def startAndSetupSplunk(path, name, web_port, splunkd_port) {
+    def splunkDir= file(path)
+    assert splunkDir.isDirectory()
+    //def name= splunkDir.getParent() //Better?
+    def splunk= "$path/bin/splunk"
+    def proc= ("$splunk start --accept-license --answer-yes").execute()
+    proc.consumeProcessOutput(System.out, System.err)
+    proc.waitFor() //Maybe choose default timeout?
+
+    println '----SETUP----'
+    [
+            "set servername $name ${project.splunkAuth}",
+            "restart splunkd",
+            "set web-port $web_port ${project.splunkAuth}",
+            "restart splunkweb",
+            "set splunkd-port $splunkd_port ${project.splunkAuth}",
+            "restart"
+    ].each{ command ->
+        println "***Command: $command"
+        proc= ("$splunk $command").execute()
+        proc.consumeProcessOutput(System.out, System.err)
+        proc.waitFor()
+    }
+}
+
+def setAsMaster(splunk, replication_factor, search_factor){
+    ("$splunk edit cluster-config -mode master" +
+            " -replication_factor $replication_factor" +
+            " -search_factor $search_factor $splunkAuth").execute().waitFor()
+    "$splunk restart".execute().waitFor()
+}
+
+def setAsSlave(splunk, master_ip, master_port, replication_port){
+    def proc= ("$splunk edit cluster-config -mode slave" +
+            " -master_uri https://$master_ip:$master_port" +
+            " -replication_port $replication_port $splunkAuth").execute()
+    proc.consumeProcessOutput(System.out, System.err)
+    proc.waitFor()
+    "$splunk restart splunkd".execute().waitFor()
+}
+
+task ss(dependsOn: 'getIp') << {
+    String ip= getIp.output()
+    if (ip.isEmpty())
+        throw new IOException("No ip!")
+    instances[2..-1].eachWithIndex{instance, int i ->
+        println "Setting up slave: $instance, $i"
+        setAsSlave("$splunkClusterDir/$instance/bin/splunk", ip, 9050, 9101+i)
+    }
+}
+
+task startAllSplunks << {
+    instances.each { instance ->
+        def splunk= "$splunkClusterDir/$instance/bin/splunk"
+        if (file(splunk).exists()){
+            def proc= "$splunk start".execute()
+            //proc.consumeProcessOutput(System.out, System.err)
+            proc.waitFor()
+        }
+    }
+}

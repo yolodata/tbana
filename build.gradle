@@ -1,15 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'idea'
-apply plugin: com.smokejumperit.gradle.ExecPlugin
-
-buildscript { //For the ExecPlugin
-    repositories {
-        mavenRepo url: 'http://repo.smokejumperit.com'
-    }
-    dependencies {
-        classpath 'com.smokejumperit:gradle-plugins:0.8.2'
-    }
-}
+apply from: 'scripts/setupSplunk.gradle'
 
 repositories {
     mavenLocal()
@@ -18,7 +9,10 @@ repositories {
     mavenRepo name: 'ext-release-local', url: 'http://splunk.artifactoryonline.com/splunk/ext-releases-local'
 }
 
+
 dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.0.5'
+
     compile( group: 'cascading', name: 'cascading-core', version: '2.1.6' )
     compile( group: 'cascading', name: 'cascading-test', version: '2.0.8' )
     compile( group: 'cascading', name: 'cascading-hadoop', version: '2.1.6' )
@@ -35,5 +29,3 @@ dependencies {
 
     compile( group: 'com.splunk', name: 'splunk', version: '1.1.0' )
 }
-
-project.exec("say 'yolosetup completed'")

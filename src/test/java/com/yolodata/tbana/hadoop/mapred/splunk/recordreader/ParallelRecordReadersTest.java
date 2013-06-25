@@ -2,7 +2,7 @@ package com.yolodata.tbana.hadoop.mapred.splunk.recordreader;
 
 import com.google.common.collect.Lists;
 import com.splunk.Service;
-import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
+import com.yolodata.tbana.TestConfigurations;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkInputFormat;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkJob;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkService;
@@ -11,7 +11,6 @@ import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.JobConf;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,7 +27,7 @@ public class ParallelRecordReadersTest {
 
     @Before
     public void setUp() {
-        configuration = getConfiguration();
+        configuration = TestConfigurations.getConfigurationWithSplunkConfigured();
         splunkService = SplunkService.connect(configuration);
     }
 
@@ -120,20 +119,6 @@ public class ParallelRecordReadersTest {
             splunkSplits.add(new SplunkSplit(job.getJob().getSid(), start, end));
         }
         return splunkSplits;
-    }
-
-    private Configuration getConfiguration() {
-        Configuration conf = new Configuration();
-
-        conf.set(SplunkConf.SPLUNK_USERNAME, "admin");
-        conf.set(SplunkConf.SPLUNK_PASSWORD, "changeme");
-        conf.set(SplunkConf.SPLUNK_HOST, "localhost");
-        conf.set(SplunkConf.SPLUNK_PORT, "9050");
-        conf.set(SplunkConf.SPLUNK_EARLIEST_TIME, "-12mon");
-        conf.set(SplunkConf.SPLUNK_LATEST_TIME, "now");
-        conf.set(SplunkConf.SPLUNK_SEARCH_QUERY, "search * sourcetype=\"mock\" | head 5 | table _raw");
-
-        return conf;
     }
 
     private class RecordReaderThread extends Thread {

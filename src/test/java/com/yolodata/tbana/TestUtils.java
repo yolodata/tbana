@@ -1,4 +1,4 @@
-package com.yolodata.tbana.hadoop.mapred;
+package com.yolodata.tbana;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.hadoop.fs.FSDataOutputStream;

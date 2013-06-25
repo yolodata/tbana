@@ -81,7 +81,7 @@ public class ParallelRecordReadersTest {
             assert(expected.size() == actual.size());
 
             for(LongWritable key : actual.keySet())
-                assert(expected.get(key).get(0).equals(actual.get(key).get(1)));
+                assert(expected.get(key).get(0).equals(actual.get(key).get(0)));
         }
 
     }
@@ -89,11 +89,11 @@ public class ParallelRecordReadersTest {
     private Map<LongWritable, List<Text>> getExpectedResults() {
         Map expected = new HashMap<LongWritable,List<Text>>();
         addKVToMap(expected, 0, "_raw");
-        addKVToMap(expected, 1, "#<DateTime 2012-12-31T23:59:59.000Z> count=0");
-        addKVToMap(expected, 2, "#<DateTime 2012-12-31T23:59:58.000Z> count=1");
-        addKVToMap(expected, 3, "#<DateTime 2012-12-31T23:59:57.000Z> count=2");
-        addKVToMap(expected, 4, "#<DateTime 2012-12-31T23:59:56.000Z> count=3");
-        addKVToMap(expected, 5, "#<DateTime 2012-12-31T23:59:55.000Z> count=4");
+        addKVToMap(expected, 1, "count=4");
+        addKVToMap(expected, 2, "count=3");
+        addKVToMap(expected, 3, "count=2");
+        addKVToMap(expected, 4, "count=1");
+        addKVToMap(expected, 5, "count=0");
 
         return expected;
     }
@@ -126,12 +126,12 @@ public class ParallelRecordReadersTest {
         Configuration conf = new Configuration();
 
         conf.set(SplunkConf.SPLUNK_USERNAME, "admin");
-        conf.set(SplunkConf.SPLUNK_PASSWORD, "changeIt");
+        conf.set(SplunkConf.SPLUNK_PASSWORD, "changeme");
         conf.set(SplunkConf.SPLUNK_HOST, "localhost");
-        conf.set(SplunkConf.SPLUNK_PORT, "8089");
-        conf.set(SplunkConf.SPLUNK_EARLIEST_TIME, "2012-12-30T23:59:55.000");
-        conf.set(SplunkConf.SPLUNK_LATEST_TIME, "2013-01-31T23:59:59.000");
-        conf.set(SplunkConf.SPLUNK_SEARCH_QUERY, "search * sourcetype=\"moc3\" | table sourcetype,_raw");
+        conf.set(SplunkConf.SPLUNK_PORT, "9050");
+        conf.set(SplunkConf.SPLUNK_EARLIEST_TIME, "-12mon");
+        conf.set(SplunkConf.SPLUNK_LATEST_TIME, "now");
+        conf.set(SplunkConf.SPLUNK_SEARCH_QUERY, "search * sourcetype=\"mock\" | head 5 | table _raw");
 
         return conf;
     }

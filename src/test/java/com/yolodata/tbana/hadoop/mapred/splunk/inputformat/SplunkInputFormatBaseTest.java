@@ -2,6 +2,7 @@ package com.yolodata.tbana.hadoop.mapred.splunk.inputformat;
 
 import com.yolodata.tbana.hadoop.mapred.TestUtils;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkInputFormat;
+import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -10,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.List;
 
 public abstract class SplunkInputFormatBaseTest {
@@ -55,17 +57,11 @@ public abstract class SplunkInputFormatBaseTest {
 
         assert(actualEvents == 5);
 
-        String[] expectedEndOfLines = {
-                "_raw",
-                "#<DateTime 2012-12-31T23:59:59.000Z> count=0",
-                "#<DateTime 2012-12-31T23:59:58.000Z> count=1",
-                "#<DateTime 2012-12-31T23:59:57.000Z> count=2",
-                "#<DateTime 2012-12-31T23:59:56.000Z> count=3",
-                "#<DateTime 2012-12-31T23:59:55.000Z> count=4"};
+        List<String> expectedEndOfLines= FileUtils.readLines(new File("build/resources/test/splunkMockData.txt"));
 
         // Check that the last column of each line ends with the expected values
         for(int i=0;i<lines.size();i++)
-            assert(lines.get(i).endsWith(expectedEndOfLines[i]));
+            assert(lines.get(i).endsWith(expectedEndOfLines.get(i)));
     }
 
     private boolean runJob(Configuration conf) throws Exception {

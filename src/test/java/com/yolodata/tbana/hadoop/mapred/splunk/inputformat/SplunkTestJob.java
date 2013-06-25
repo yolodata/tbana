@@ -31,12 +31,12 @@ class SplunkTestRunner extends Configured implements Tool {
         JobConf jobConf = new JobConf(getConf());
 
         jobConf.set(SplunkConf.SPLUNK_USERNAME, "admin");
-        jobConf.set(SplunkConf.SPLUNK_PASSWORD, "changeIt");
+        jobConf.set(SplunkConf.SPLUNK_PASSWORD, "changeme");
         jobConf.set(SplunkConf.SPLUNK_HOST, "localhost");
-        jobConf.set(SplunkConf.SPLUNK_PORT, "8089");
-        jobConf.set(SplunkConf.SPLUNK_EARLIEST_TIME, "2012-12-30T23:59:55.000");
-        jobConf.set(SplunkConf.SPLUNK_LATEST_TIME, "2013-01-31T23:59:59.000");
-        jobConf.set(SplunkConf.SPLUNK_SEARCH_QUERY, "search * sourcetype=\"moc3\" | table sourcetype,_raw");
+        jobConf.set(SplunkConf.SPLUNK_PORT, "9050");
+        jobConf.set(SplunkConf.SPLUNK_EARLIEST_TIME, "-12mon");
+        jobConf.set(SplunkConf.SPLUNK_LATEST_TIME, "now");
+        jobConf.set(SplunkConf.SPLUNK_SEARCH_QUERY, "search * sourcetype=\"mock\" | head 5 | table _raw");
 
         jobConf.set(SplunkInputFormat.INPUTFORMAT_MODE,args[0]);
         jobConf.setJarByClass(SplunkTestRunner.class);

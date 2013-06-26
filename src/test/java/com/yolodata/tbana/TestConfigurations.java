@@ -1,5 +1,6 @@
 package com.yolodata.tbana;
 
+import cascading.tuple.Fields;
 import com.yolodata.tbana.cascading.splunk.SplunkSearch;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import org.apache.hadoop.conf.Configuration;

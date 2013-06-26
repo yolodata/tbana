@@ -7,6 +7,7 @@ import cascading.pipe.Pipe;
 import cascading.scheme.hadoop.TextLine;
 import cascading.tap.SinkMode;
 import cascading.tap.hadoop.Hfs;
+import cascading.tuple.Fields;
 import cascading.tuple.Tuple;
 import cascading.tuple.TupleEntryIterator;
 import com.yolodata.tbana.TestConfigurations;
@@ -53,12 +54,24 @@ public class SplunkSchemeTest extends CascadingTestCase {
 
         flow.complete();
 
-        validateLength( flow, 6, 2 );
-
+        validateLength( flow, 5, 2 );
 
         TupleEntryIterator iterator = flow.openSource();
+
+        // TODO: Header information not used in SplunkScheme yet
+        // verifyHeader(iterator.getFields());
+
+        verifyContent(iterator);
+    }
+
+    private void verifyHeader(Fields actual) {
+        Fields expected = new Fields("offset","sourcetype","_raw");
+        assertEquals(expected,actual);
+    }
+
+    private void verifyContent(TupleEntryIterator iterator) throws IOException {
+
         String [] expectedRows = new String[] {
-                "0,sourcetype,_raw",
                 "1,moc3,#<DateTime 2012-12-31T23:59:59.000Z> count=0",
                 "2,moc3,#<DateTime 2012-12-31T23:59:58.000Z> count=1",
                 "3,moc3,#<DateTime 2012-12-31T23:59:57.000Z> count=2",

@@ -32,6 +32,8 @@ public class SplunkTapTest {
         SplunkScheme inputScheme = new SplunkScheme(TestConfigurations.getSplunkSearch());
 
         Tap tap = new SplunkTap(inputScheme);
+
+
     }
 
 

@@ -4,7 +4,10 @@ import cascading.flow.FlowProcess;
 import cascading.scheme.Scheme;
 import cascading.scheme.SinkCall;
 import cascading.scheme.SourceCall;
+import cascading.scheme.local.TextLine;
+import cascading.tap.CompositeTap;
 import cascading.tap.Tap;
+import cascading.tap.local.FileTap;
 import cascading.tuple.Fields;
 import cascading.tuple.Tuple;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
@@ -25,14 +28,26 @@ public class SplunkScheme extends Scheme<JobConf, RecordReader, OutputCollector,
     private SplunkSearch search;
 
     public SplunkScheme(SplunkSearch search) {
-        this.search = search;
+        this(search,search.getFields());
     }
 
     public SplunkScheme(SplunkSearch search, Fields fields) {
         this.search = search;
         search.setFields(fields);
-
+        setFields(fields);
     }
+
+    private void setFields(Fields fields) {
+        if(!fields.isUnknown() && !fields.isAll())
+            return;
+
+        if(!fields.contains(new Fields("offset"))) {
+            fields = new Fields("offset").append(fields);
+        }
+
+        setSourceFields(fields);
+    }
+
     @Override
     public void sourceConfInit(FlowProcess<JobConf> flowProcess, Tap<JobConf, RecordReader, OutputCollector> tap, JobConf conf) {
 
@@ -43,7 +58,8 @@ public class SplunkScheme extends Scheme<JobConf, RecordReader, OutputCollector,
         conf.set(SplunkConf.SPLUNK_LATEST_TIME, this.search.getLatestTime());
 
         if(this.search.getFields() != Fields.ALL) {
-            conf.set(SplunkConf.SPLUNK_FIELD_LIST, this.search.getFields().toString());
+            String value = this.search.getFields().toString();
+            conf.set(SplunkConf.SPLUNK_FIELD_LIST, value);
         }
     }
 
@@ -54,6 +70,13 @@ public class SplunkScheme extends Scheme<JobConf, RecordReader, OutputCollector,
                 new Object[]{sourceCall.getInput().createKey(), sourceCall.getInput().createValue()};
 
         sourceCall.setContext(pair);
+
+        try {
+            // Skip the header
+            sourceCall.getInput().next(pair[0],pair[1]);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not skip the header");
+        }
     }
 
     @Override
@@ -77,6 +100,7 @@ public class SplunkScheme extends Scheme<JobConf, RecordReader, OutputCollector,
         LongWritable keyWritable = (LongWritable) key;
         ArrayListTextWritable values = (ArrayListTextWritable) value;
         result.add(keyWritable);
+
         for(Text textValue : values)
             result.add(textValue);
 

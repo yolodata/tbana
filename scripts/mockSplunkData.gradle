@@ -1,0 +1,30 @@
+import com.splunk.Args
+import com.splunk.Receiver
+import com.splunk.Service
+
+buildscript { //Adds splunk to gradle path
+    repositories {
+        mavenRepo name: 'ext-release-local', url: 'http://splunk.artifactoryonline.com/splunk/ext-releases-local'
+    }
+    dependencies {
+        classpath 'com.splunk:splunk:1.1.0'
+    }
+}
+
+task pushDataToSplunk << { //AND TEST FILE
+
+    def outputFile= new File('build/resources/test/', 'splunkMockData.txt')
+    outputFile.text= ""
+
+    Service service= Service.connect([hostname: "localhost", port: 9050, username:"admin",password:"changeme"])
+    Receiver receiver= service.getReceiver()
+    def logArgs= [sourcetype:"mock"]
+    (0..<5).each {int i ->
+        def dataStr= "count=$i"
+        receiver.log("main", logArgs as Args, dataStr)
+        outputFile.text= "$dataStr\n" + outputFile.text
+        Thread.sleep(1)
+    }
+
+    outputFile.text= "_raw\n" + outputFile.text
+}

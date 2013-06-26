@@ -1,3 +1,5 @@
+apply from: 'scripts/mockSplunkData.gradle'
+
 project.ext{
     buildCache= file('build/cache')
     splunkDir= file('build/cache/splunk')
@@ -9,7 +11,7 @@ task customPaths << {
     splunkClusterDir.mkdir()
 }
 
-def instances= ['master', 'slave1', 'slave2', 'slave3']
+def instances= ['master']//, 'slave1', 'slave2', 'slave3']
 ext.splunkAuth= "-auth admin:changeme"
 
 task setUppCluster(dependsOn: ['getIp','copyAll']) << {
@@ -144,6 +146,8 @@ task ss(dependsOn: 'getIp') << {
 }
 
 task startAllSplunks << {
+    if (!splunkClusterDir.exists())
+        throw new FileNotFoundException(splunkClusterDir.path) //Or should the task simply skip execution?
     instances.each { instance ->
         def splunk= "$splunkClusterDir/$instance/bin/splunk"
         if (file(splunk).exists()){

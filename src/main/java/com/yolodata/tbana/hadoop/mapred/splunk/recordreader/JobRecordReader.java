@@ -1,8 +1,11 @@
 package com.yolodata.tbana.hadoop.mapred.splunk.recordreader;
 
 import com.splunk.JobResultsArgs;
+import com.splunk.Service;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkJob;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkService;
+import com.yolodata.tbana.hadoop.mapred.splunk.split.IndexerSplit;
 import com.yolodata.tbana.hadoop.mapred.splunk.split.SplunkSplit;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
@@ -28,6 +31,13 @@ public class JobRecordReader extends SplunkRecordReader {
     public void initialize(InputSplit inputSplit) throws IOException {
         SplunkSplit splunkSplit = (SplunkSplit) inputSplit;
         super.initPositions(splunkSplit);
+
+        // TODO: This should be refactored to SplunkInputFormat.getRecordReader()
+        if(splunkSplit instanceof IndexerSplit) {
+            IndexerSplit split = (IndexerSplit) splunkSplit;
+            splunkService = SplunkService.connect(configuration,split.getIndexer().getHost(), split.getIndexer().getPort());
+        }
+
         skipHeader = splunkSplit.getSkipHeader();
 
         splunkJob = SplunkJob.getSplunkJob(splunkService,splunkSplit.getJobID());

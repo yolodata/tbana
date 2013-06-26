@@ -37,7 +37,7 @@ public class IndexerSplitProvider extends SplitProvider{
             int end = splunkJob.getNumberOfResultsFromJob(conf) + 1;
             boolean skipHeader = i>0;
 
-            splits[i] = new SplunkSplit(splunkJob.getJob().getSid(), start, end, skipHeader);
+            splits[i] = new IndexerSplit(indexer,splunkJob.getJob().getSid(), start, end, skipHeader);
         }
 
         return splits;

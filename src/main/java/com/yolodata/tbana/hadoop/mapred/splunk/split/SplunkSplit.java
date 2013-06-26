@@ -1,8 +1,5 @@
 package com.yolodata.tbana.hadoop.mapred.splunk.split;
 
-import com.google.common.primitives.Bytes;
-import org.apache.commons.lang.NotImplementedException;
-import org.apache.hadoop.io.UTF8;
 import org.apache.hadoop.mapred.InputSplit;
 
 import java.io.DataInput;

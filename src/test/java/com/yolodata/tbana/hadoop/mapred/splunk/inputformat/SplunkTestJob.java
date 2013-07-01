@@ -1,5 +1,6 @@
 package com.yolodata.tbana.hadoop.mapred.splunk.inputformat;
 
+import com.yolodata.tbana.TestConfigurations;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkInputFormat;
 import org.apache.commons.lang.StringUtils;
@@ -28,15 +29,7 @@ class TestMapper extends MapReduceBase implements Mapper<LongWritable, List<Text
 class SplunkTestRunner extends Configured implements Tool {
 
     public int run(String[] args) throws Exception {
-        JobConf jobConf = new JobConf(getConf());
-
-        jobConf.set(SplunkConf.SPLUNK_USERNAME, "admin");
-        jobConf.set(SplunkConf.SPLUNK_PASSWORD, "changeme");
-        jobConf.set(SplunkConf.SPLUNK_HOST, "localhost");
-        jobConf.set(SplunkConf.SPLUNK_PORT, "9050");
-        jobConf.set(SplunkConf.SPLUNK_EARLIEST_TIME, "-12mon");
-        jobConf.set(SplunkConf.SPLUNK_LATEST_TIME, "now");
-        jobConf.set(SplunkConf.SPLUNK_SEARCH_QUERY, "search * sourcetype=\"mock\" | head 5 | table _raw");
+        JobConf jobConf = new JobConf(TestConfigurations.getConfigurationWithSplunkConfigured());
 
         jobConf.set(SplunkInputFormat.INPUTFORMAT_MODE,args[0]);
         jobConf.setJarByClass(SplunkTestRunner.class);

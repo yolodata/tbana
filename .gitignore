@@ -1,5 +1,7 @@
 # IDEA #
 *.iml
+*.iws
+*.ipr
 .idea/
 build/
 out/

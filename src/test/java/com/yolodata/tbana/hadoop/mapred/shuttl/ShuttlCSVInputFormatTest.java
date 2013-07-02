@@ -35,7 +35,25 @@ public class ShuttlCSVInputFormatTest {
     public void testReadSingleFileNoMultiline() throws Exception {
 
         String[] header = {"header", "_raw"};
-        String content = FileContentProvider.getRandomContent(header,5);
+        String content = FileContentProvider.getRandomContent(header, 5);
+        int [] offsets = new int [] {0,12,38,64,90,116};
+
+        runTestOnContent(content, offsets);
+    }
+
+
+    @Test
+    public void testReadSingleFileWithMultiline() throws Exception {
+
+        String[] header = {"header", "_raw"};
+        String content = FileContentProvider.getMultilineRandomContent(header, 5, 2);
+        int [] offsets = new int [] {0,12,82,152,222,292};
+
+        runTestOnContent(content, offsets);
+    }
+
+    private void runTestOnContent(String content, int[] offsets) throws Exception {
+
         Path inputPath = new Path(TestUtils.getRandomTestFilepath());
         TestUtils.createFileWithContent(fs, inputPath,content);
 
@@ -45,15 +63,21 @@ public class ShuttlCSVInputFormatTest {
         String result = TestUtils.readMapReduceOutputFile(fs,outputPath);
 
         List<String> linesFromExpected = TestUtils.getLinesFromString(content);
-        addOffsetToEachLine(linesFromExpected, new int [] {0,12,38,64,90,116});
+        addOffsetToEachLine(linesFromExpected, offsets);
+        String expected = "";
+        for(int i=0;i<linesFromExpected.size();i++)
+            if(i<linesFromExpected.size())
+                expected = expected.concat(linesFromExpected.get(i)+"\n");
+            else
+                expected = expected.concat(linesFromExpected.get(i));
 
-        List<String> linesFromActual = TestUtils.getLinesFromString(result);
-        assertEquals(linesFromActual,linesFromExpected);
+        assertEquals(expected,result);
     }
+
 
     private void addOffsetToEachLine(List<String> linesFromExpected, int [] offsets) {
         for(int i=0;i<linesFromExpected.size();i++)
-            linesFromExpected.set(i,(offsets[i]+"\t").concat(linesFromExpected.get(i)));
+            linesFromExpected.set(i, (offsets[i] + "\t").concat(linesFromExpected.get(i)));
     }
 
     private boolean runJob(Configuration conf, String [] args) throws Exception {

@@ -1,10 +1,12 @@
 package com.yolodata.tbana;
 
+import com.yolodata.tbana.hadoop.mapred.util.CSVReader;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.Text;
 import org.apache.tools.ant.util.FileUtils;
 
 import java.io.*;
@@ -62,26 +64,25 @@ public class TestUtils {
         return true;
     }
 
-     public static List<String> getLinesFromString(String outputContent) {
-        List<String> result = new ArrayList<String>();
+     public static List<String> getLinesFromString(String outputContent) throws IOException {
+         List<String> result = new ArrayList<String>();
 
-        StringBuilder sb = new StringBuilder();
-        boolean withinQuote = false;
-        for(char c : outputContent.toCharArray()) {
+         StringReader reader = new StringReader(outputContent);
+         CSVReader csvReader = new CSVReader(reader);
 
-            if(!withinQuote && (c == '\n')) {
-                result.add(sb.toString());
-                sb.setLength(0);
-                continue;
-            }
+         List<Text> textList = new ArrayList<Text>();
+         StringBuilder sb = new StringBuilder();
+         while(csvReader.readLine(textList) != 0) {
+             sb.setLength(0);
+             for(int i=0;i<textList.size();i++) {
+                 sb.append(textList.get(i).toString());
+                 if(i<textList.size()-1)
+                    sb.append(',');
+             }
+             result.add(sb.toString());
+         }
 
-            if(c == '\"') {
-                withinQuote = !withinQuote;
-            }
+         return result;
 
-            sb.append(c);
-
-        }
-        return result;
     }
 }

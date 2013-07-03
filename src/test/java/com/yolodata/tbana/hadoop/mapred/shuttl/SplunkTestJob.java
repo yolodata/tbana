@@ -13,6 +13,7 @@ import org.apache.hadoop.mapred.*;
 import org.apache.hadoop.util.Tool;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 class TestMapper extends MapReduceBase implements Mapper<LongWritable, List<Text>, LongWritable, Text> {
@@ -24,14 +25,23 @@ class TestMapper extends MapReduceBase implements Mapper<LongWritable, List<Text
     }
 }
 
+
+class TestReducer extends MapReduceBase implements Reducer<LongWritable, Text, LongWritable, Text> {
+    @Override
+    public void reduce(LongWritable longWritable, Iterator<Text> textIterator, OutputCollector<LongWritable, Text> longWritableTextOutputCollector, Reporter reporter) throws IOException {
+        while(textIterator.hasNext())
+            longWritableTextOutputCollector.collect(longWritable,textIterator.next());
+    }
+}
 class ShuttlTestJob extends Configured implements Tool {
 
     public int run(String[] args) throws Exception {
         JobConf jobConf = new JobConf(TestConfigurations.getConfigurationWithSplunkConfigured());
 
         jobConf.setJarByClass(ShuttlTestJob.class);
-        jobConf.setNumReduceTasks(0);
+        jobConf.setNumReduceTasks(1);
         jobConf.setMapperClass(TestMapper.class);
+        jobConf.setReducerClass(TestReducer.class);
 
         jobConf.setInputFormat(ShuttlCSVInputFormat.class);
         jobConf.setOutputKeyClass(LongWritable.class);

@@ -34,52 +34,88 @@ public class ShuttlCSVInputFormat extends FileInputFormat<LongWritable, List<Tex
 
     public InputSplit[] getSplits(JobConf job, int numSplits) throws IOException {
         List<InputSplit> splits = new ArrayList<InputSplit>();
-        int numLinesPerSplit = 0;
         for(FileStatus status : listStatus(job)) {
-            List<FileSplit> fileSplits = getSplitsForFile(status, job, numLinesPerSplit);
+            List<FileSplit> fileSplits = getSplitsForFile(status, job, numSplits);
             splits.addAll(fileSplits);
         }
 
         return splits.toArray(new InputSplit[splits.size()]);
     }
 
-    protected static List<FileSplit> getSplitsForFile(FileStatus status, JobConf conf, int numLinesPerSplit)
+    protected static List<FileSplit> getSplitsForFile(FileStatus status, JobConf conf, int numSplits)
             throws IOException {
         Path filePath = getPath(status);
         FileSystem fs = filePath.getFileSystem(conf);
-        return getFileSplits(conf, numLinesPerSplit, filePath, fs);
+        if(numSplits==0)
+            numSplits++;
+        return getFileSplitsFast(numSplits, filePath, fs);
     }
 
-    private static List<FileSplit> getFileSplits(JobConf conf, int numLinesPerSplit, Path filePath, FileSystem fs) throws IOException {
-
+    private static List<FileSplit> getFileSplitsFast(int numSplits, Path filePath, FileSystem fs) {
         List<FileSplit> splits = new ArrayList<FileSplit>();
 
-        CSVReader lr = null;
         try {
-            FSDataInputStream in = fs.open(filePath);
-            lr = new CSVReader(new InputStreamReader(in));
-            List<Text> line = new ArrayList<Text>();
-            int numLines = 0;
-            long startPos = 0;
-            long splitLength = 0;
-            int num;
-            while ((num = lr.readLine(line)) > 0) {
-                numLines++;
-                splitLength += num;
-                if (numLines == numLinesPerSplit) {
-                    splits.add(new FileSplit(filePath, startPos, splitLength - 1, new String[] {}));
-                    startPos += splitLength;
-                    splitLength = 0;
-                    numLines = 0;
+            long fileSize = fs.getFileStatus(filePath).getLen();
+            long sizePerSplit = fileSize/(numSplits+1);
+
+            long start=0,end=0;
+
+            while(end<fileSize) {
+                end = start+sizePerSplit;
+
+                if(restOfFileChunkFitsInOneSplit(fileSize, end)) {
+                    splits.add(createSplit(filePath,start,fileSize));
+                    break;
                 }
+
+                // Seek to current end and find the new line
+                FSDataInputStream in = fs.open(filePath);
+                end = findEndOfLinePosition(in,end);
+
+                splits.add(createSplit(filePath,start,end-start));
+                start=end;
             }
-            if (numLines != 0) {
-                splits.add(new FileSplit(filePath, startPos, splitLength, new String[] {}));
-            }
-        } finally {
-            if (lr != null) lr.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
         return splits;
+    }
+
+    private static boolean restOfFileChunkFitsInOneSplit(long fileSize, long end) {
+        return end >= fileSize;
+    }
+
+    // TODO: This is a heuristic that might not be true in all cases
+    private static long findEndOfLinePosition(FSDataInputStream in, long end) throws IOException {
+        in.seek(end);
+        int c;
+        String findNewLineBuffer = "";
+        while((c=in.read())!= -1) {
+            char ch = (char)c;
+
+            // a real new line is found!
+            if(findNewLineBuffer == "\"\n" && ch != ',')
+                return in.getPos();
+
+            if(findNewLineBuffer == "\"" && ch == '\n') {
+                findNewLineBuffer = findNewLineBuffer.concat("\n");
+                continue;
+            }
+
+            if(ch == '\"' && findNewLineBuffer.length()==0) {
+                findNewLineBuffer = "\"";
+                continue;
+            }
+            findNewLineBuffer = "";
+
+        }
+        return in.getPos();
+    }
+
+    private static FileSplit createSplit(Path filePath, long start, long end) {
+        return new FileSplit(filePath,start,end, new String[] {});
     }
 
     private static Path getPath(FileStatus status) throws IOException {

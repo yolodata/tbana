@@ -93,6 +93,9 @@ public class ShuttlCSVRecordReader implements RecordReader<LongWritable, List<Te
 
     @Override
     public boolean next(LongWritable key, List<Text> value) throws IOException {
+        if(pos==end) {
+            return false;
+        }
         if (key == null) {
             key = new LongWritable();
         }

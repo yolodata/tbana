@@ -13,7 +13,8 @@ public class IndexerProvider {
         List<Indexer> indexers = Lists.newArrayList();
         Collection<DistributedPeer> distributedPeers = splunkService.getDistributedPeers().values();
         for(DistributedPeer peer : distributedPeers) {
-            indexers.add(new Indexer(peer.getService().getHost(),peer.getService().getPort()));
+            String[] ipAndPort= peer.getName().split(":");
+            indexers.add(new Indexer(ipAndPort[0], Integer.parseInt(ipAndPort[1])));
         }
 
         return indexers;

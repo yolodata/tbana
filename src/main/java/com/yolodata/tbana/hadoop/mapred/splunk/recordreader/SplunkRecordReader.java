@@ -59,7 +59,7 @@ public abstract class SplunkRecordReader implements RecordReader<LongWritable, L
 
         if(bytesRead == 0) {
             key = null;
-            value = null;
+            value= null;
             return false;
         }
 

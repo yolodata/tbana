@@ -1,6 +1,8 @@
 package com.yolodata.tbana.hadoop.mapred.splunk.inputformat;
 
+import com.yolodata.tbana.TestConfigurations;
 import com.yolodata.tbana.TestUtils;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkInputFormat;
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -18,6 +20,7 @@ public abstract class SplunkInputFormatBaseTest {
 
     private Path outputPath= new Path("build/testTMP/"+ getMethodToTest());
     private FileSystem fs;
+    private Configuration testConfiguration= null;
 
     protected abstract String getMethodToTest();
 
@@ -25,6 +28,8 @@ public abstract class SplunkInputFormatBaseTest {
     public void setUp() throws Exception {
         fs= FileSystem.get(new Configuration());
         fs.delete(outputPath, true);
+
+        testConfiguration= TestConfigurations.getConfigurationWithSplunkConfigured();
     }
 
     @After
@@ -34,19 +39,34 @@ public abstract class SplunkInputFormatBaseTest {
 
     @Test
     public void testInputFormatMultipleSplits() throws Exception {
-        Configuration conf = new Configuration();
-        conf.setInt(SplunkInputFormat.INPUTFORMAT_SPLITS, 4);
+        testConfiguration.setInt(SplunkInputFormat.INPUTFORMAT_SPLITS, 4);
 
-        testInputFormat(conf);
+        testInputFormat(testConfiguration, 5);
     }
 
     @Test
     public void testInputFormatDefaultConfig() throws Exception {
 
-        testInputFormat(new Configuration());
+        testInputFormat(testConfiguration, 5);
 
     }
-    private void testInputFormat(Configuration conf) throws Exception {
+
+    @Test
+    public void testEmptySearchResults() throws Exception {
+        testConfiguration.set(SplunkConf.SPLUNK_SEARCH_QUERY, "search nothing");
+
+        testInputFormat(testConfiguration, -1);
+    }
+
+    @Test
+    public void testEmptySearchResultsWithMultipleSplits() throws Exception {
+        testConfiguration.set(SplunkConf.SPLUNK_SEARCH_QUERY, "search nothing");
+        testConfiguration.setInt(SplunkInputFormat.INPUTFORMAT_SPLITS, 4);
+
+        testInputFormat(testConfiguration, -1);
+    }
+
+    private void testInputFormat(Configuration conf, int numberOfExpectedResults) throws Exception {
         boolean jobCompleted = runJob(conf);
         assert(jobCompleted == true); // Means that the job successfully finished
 
@@ -55,7 +75,7 @@ public abstract class SplunkInputFormatBaseTest {
         List<String> lines = TestUtils.getLinesFromString(outputContent);
         int actualEvents = lines.size()-1; //Remove one line due to header
 
-        assert(actualEvents == 5);
+        assert(actualEvents == numberOfExpectedResults);
 
         List<String> expectedEndOfLines= FileUtils.readLines(new File("build/resources/test/splunkMockData.txt"));
 

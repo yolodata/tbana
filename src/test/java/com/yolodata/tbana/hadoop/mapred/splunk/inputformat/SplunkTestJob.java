@@ -29,7 +29,7 @@ class TestMapper extends MapReduceBase implements Mapper<LongWritable, List<Text
 class SplunkTestRunner extends Configured implements Tool {
 
     public int run(String[] args) throws Exception {
-        JobConf jobConf = new JobConf(TestConfigurations.getConfigurationWithSplunkConfigured());
+        JobConf jobConf = new JobConf(getConf());
 
         jobConf.set(SplunkInputFormat.INPUTFORMAT_MODE,args[0]);
         jobConf.setJarByClass(SplunkTestRunner.class);

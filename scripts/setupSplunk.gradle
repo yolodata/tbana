@@ -21,7 +21,7 @@ buildscript { //Adds splunk to gradle path
 
 }
 def instances= ['master']//, 'slave1', 'slave2', 'slave3']
-ext.splunkAuth= "-auth admin:changeme"
+ext.splunkAuth= "-auth admin:changeIt"
 
 task setUpCluster(dependsOn: ['getIp','copyAll']) << {
     instances.eachWithIndex { String instance, int i ->
@@ -42,7 +42,7 @@ task setUpCluster(dependsOn: ['getIp','copyAll']) << {
         }
     }
 
-    pushDataToSplunk(9050)
+    pushDataToSplunk(9050, 5)
 }
 
 task getIp(type:Exec){
@@ -108,6 +108,7 @@ def startAndSetupSplunk(path, name, web_port, splunkd_port) {
 
     println '----SETUP----'
     [
+            "edit user admin -password changeIt -auth admin:changeme",   //changeDefaultPassword
             "set servername $name ${project.splunkAuth}",
             "restart splunkd",
             "set web-port $web_port ${project.splunkAuth}",
@@ -138,16 +139,16 @@ def setAsSlave(splunk, master_ip, master_port, replication_port){
     "$splunk restart splunkd".execute().waitFor()
 }
 
-def pushDataToSplunk(port) { //AND TEST FILE
+def pushDataToSplunk(port, numberOfResults) { //AND TEST FILE
     def testDir= 'build/resources/test/'
     file(testDir).mkdirs()
     def outputFile= new File(testDir, 'splunkMockData.txt')
     outputFile.text= ""
 
-    Service service= Service.connect([hostname: "localhost", port: port, username:"admin",password:"changeme"])
+    Service service= Service.connect([hostname: "localhost", port: port, username:"admin",password:"changeIt"])
     Receiver receiver= service.getReceiver()
     def logArgs= [sourcetype:"mock"]
-    (0..<5).each {int i ->
+    (0..<numberOfResults).each {int i ->
         def dataStr= "count=$i"
         receiver.log("main", logArgs as Args, dataStr)
         outputFile.text= "$dataStr\n" + outputFile.text

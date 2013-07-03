@@ -23,7 +23,9 @@ public class TestUtils {
         for (FileStatus f : fileStatuses) {
             if (f.getPath().toString().endsWith("_SUCCESS"))
                 continue; // skip SUCCESS file
-            sb.append(readContentFromLocalFile(f.getPath().toUri()));
+            String partFileContent = readContentFromLocalFile(f.getPath().toUri());
+            if (partFileContent != null)
+                sb.append(partFileContent);
         }
 
         return sb.toString();

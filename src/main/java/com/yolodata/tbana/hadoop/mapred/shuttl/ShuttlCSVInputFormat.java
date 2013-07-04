@@ -3,6 +3,7 @@ package com.yolodata.tbana.hadoop.mapred.shuttl;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.yolodata.tbana.hadoop.mapred.util.CSVReader;
@@ -34,12 +35,21 @@ public class ShuttlCSVInputFormat extends FileInputFormat<LongWritable, List<Tex
 
     public InputSplit[] getSplits(JobConf job, int numSplits) throws IOException {
         List<InputSplit> splits = new ArrayList<InputSplit>();
+
         for(FileStatus status : listStatus(job)) {
-            List<FileSplit> fileSplits = getSplitsForFile(status, job, numSplits);
-            splits.addAll(fileSplits);
+            for(FileStatus csvFile : getCsvAllFiles(status)) {
+                List<FileSplit> fileSplits = getSplitsForFile(csvFile, job, numSplits);
+                splits.addAll(fileSplits);
+            }
         }
 
         return splits.toArray(new InputSplit[splits.size()]);
+    }
+
+    private List<FileStatus> getCsvAllFiles(FileStatus status) {
+
+
+        return Arrays.asList(status);
     }
 
     protected static List<FileSplit> getSplitsForFile(FileStatus status, JobConf conf, int numSplits)

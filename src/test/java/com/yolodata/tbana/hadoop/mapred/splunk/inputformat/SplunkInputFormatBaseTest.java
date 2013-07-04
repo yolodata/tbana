@@ -1,7 +1,7 @@
 package com.yolodata.tbana.hadoop.mapred.splunk.inputformat;
 
-import com.yolodata.tbana.TestConfigurations;
-import com.yolodata.tbana.TestUtils;
+import com.yolodata.tbana.testutils.TestConfigurations;
+import com.yolodata.tbana.testutils.TestUtils;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkInputFormat;
 import org.apache.commons.io.FileUtils;

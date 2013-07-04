@@ -21,7 +21,7 @@
 package com.yolodata.tbana.cascading.splunk;
 
 import cascading.tap.Tap;
-import com.yolodata.tbana.TestConfigurations;
+import com.yolodata.tbana.testutils.TestConfigurations;
 import org.junit.Test;
 
 public class SplunkTapTest {

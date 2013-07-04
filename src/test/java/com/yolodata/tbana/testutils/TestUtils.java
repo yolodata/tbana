@@ -1,4 +1,4 @@
-package com.yolodata.tbana;
+package com.yolodata.tbana.testutils;
 
 import com.yolodata.tbana.hadoop.mapred.util.CSVReader;
 import org.apache.commons.lang.RandomStringUtils;

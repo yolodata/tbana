@@ -10,7 +10,7 @@ import cascading.tap.hadoop.Hfs;
 import cascading.tuple.Fields;
 import cascading.tuple.Tuple;
 import cascading.tuple.TupleEntryIterator;
-import com.yolodata.tbana.TestConfigurations;
+import com.yolodata.tbana.testutils.TestConfigurations;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;

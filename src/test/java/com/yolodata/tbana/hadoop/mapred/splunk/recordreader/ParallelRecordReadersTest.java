@@ -2,7 +2,7 @@ package com.yolodata.tbana.hadoop.mapred.splunk.recordreader;
 
 import com.google.common.collect.Lists;
 import com.splunk.Service;
-import com.yolodata.tbana.TestConfigurations;
+import com.yolodata.tbana.testutils.TestConfigurations;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkInputFormat;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkJob;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkService;

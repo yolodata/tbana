@@ -1,13 +1,11 @@
 package com.yolodata.tbana.hadoop.mapred.shuttl;
 
-import com.yolodata.tbana.TestConfigurations;
-import com.yolodata.tbana.hadoop.mapred.splunk.SplunkInputFormat;
+import com.yolodata.tbana.testutils.TestConfigurations;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.*;
 import org.apache.hadoop.util.Tool;

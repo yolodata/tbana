@@ -51,7 +51,15 @@ public class TestUtils {
     }
 
     public static String getRandomTestFilepath() {
-        return getPathToTestFile(RandomStringUtils.randomAlphanumeric(25));
+        return getPathToTestFile(getRandomFilename());
+    }
+
+    private static String getRandomFilename() {
+        return RandomStringUtils.randomAlphanumeric(25);
+    }
+
+    public static String getRandomFilename(String extension) {
+        return RandomStringUtils.randomAlphanumeric(25).concat("."+extension);
     }
 
     public static boolean createFileWithContent(String filepath, String content) throws IOException {
@@ -86,5 +94,14 @@ public class TestUtils {
 
          return result;
 
+    }
+
+    public static Path createPath(String directory, String filename) {
+        if(!directory.endsWith("/"))
+            directory = directory.concat("/");
+
+        String path = directory.concat(filename);
+
+        return new Path(path);
     }
 }

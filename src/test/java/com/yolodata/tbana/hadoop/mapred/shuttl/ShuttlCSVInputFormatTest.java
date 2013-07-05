@@ -1,7 +1,10 @@
 package com.yolodata.tbana.hadoop.mapred.shuttl;
 
+import com.yolodata.tbana.testutils.FileTestUtils;
+import com.yolodata.tbana.testutils.HadoopFileTestUtils;
 import com.yolodata.tbana.testutils.TestUtils;
 import com.yolodata.tbana.hadoop.mapred.FileContentProvider;
+import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -52,15 +55,21 @@ public class ShuttlCSVInputFormatTest {
         runTestOnContent(content, offsets);
     }
 
+    @Test
+    public void testReadingDirectory() throws Exception {
+
+
+    }
+
     private void runTestOnContent(String content, int[] offsets) throws Exception {
 
-        Path inputPath = new Path(TestUtils.getRandomTestFilepath());
-        TestUtils.createFileWithContent(fs, inputPath,content);
+        Path inputPath = new Path(FileTestUtils.getRandomTestFilepath());
+        HadoopFileTestUtils.createFileWithContent(fs, inputPath, content);
 
-        Path outputPath = new Path(TestUtils.getRandomTestFilepath());
+        Path outputPath = new Path(FileTestUtils.getRandomTestFilepath());
         assertTrue(runJob(new Configuration(), new String[] {inputPath.toString(),outputPath.toString()}));
 
-        String result = TestUtils.readMapReduceOutputFile(fs,outputPath);
+        String result = HadoopFileTestUtils.readMapReduceOutputFile(fs,outputPath);
 
         List<String> linesFromExpected = TestUtils.getLinesFromString(content);
         addOffsetToEachLine(linesFromExpected, offsets);

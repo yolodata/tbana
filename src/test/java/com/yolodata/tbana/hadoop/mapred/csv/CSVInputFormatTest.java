@@ -1,5 +1,6 @@
 package com.yolodata.tbana.hadoop.mapred.csv;
 
+import com.yolodata.tbana.testutils.HadoopFileTestUtils;
 import com.yolodata.tbana.testutils.TestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -47,14 +48,14 @@ public class CSVInputFormatTest {
         Path outputPath = runJob(inputContent);
         assert(outputPath != null); // Means that the job successfully finished
 
-        String outputContent = TestUtils.readMapReduceOutputFile(fs, outputPath);
+        String outputContent = HadoopFileTestUtils.readMapReduceOutputFile(fs, outputPath);
         assert(inputContent.equals(outputContent));
 
     }
 
     private Path runJob(String inputContent) throws Exception {
         Path inputPath = new Path(TEST_FOLDER_PATH.concat("/multilineCSV.in"));
-        TestUtils.createFileWithContent(fs,inputPath,inputContent);
+        HadoopFileTestUtils.createFileWithContent(fs,inputPath,inputContent);
 
         Path outputPath = new Path(TEST_FOLDER_PATH.concat("/multilineCSV.out"));
 

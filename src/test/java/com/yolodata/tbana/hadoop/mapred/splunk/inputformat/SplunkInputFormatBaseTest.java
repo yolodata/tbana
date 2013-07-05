@@ -1,5 +1,6 @@
 package com.yolodata.tbana.hadoop.mapred.splunk.inputformat;
 
+import com.yolodata.tbana.testutils.HadoopFileTestUtils;
 import com.yolodata.tbana.testutils.TestConfigurations;
 import com.yolodata.tbana.testutils.TestUtils;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
@@ -70,7 +71,7 @@ public abstract class SplunkInputFormatBaseTest {
         boolean jobCompleted = runJob(conf);
         assert(jobCompleted == true); // Means that the job successfully finished
 
-        String outputContent = TestUtils.readMapReduceOutputFile(fs, outputPath);
+        String outputContent = HadoopFileTestUtils.readMapReduceOutputFile(fs, outputPath);
 
         List<String> lines = TestUtils.getLinesFromString(outputContent);
         int actualEvents = lines.size()-1; //Remove one line due to header

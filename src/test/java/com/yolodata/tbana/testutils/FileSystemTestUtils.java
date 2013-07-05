@@ -14,7 +14,7 @@ public class FileSystemTestUtils {
     }
 
     public static Path createEmptyFile(FileSystem fs, String extension) throws IOException {
-        Path file = new Path(TestUtils.getRandomTestFilepath().concat("."+extension));
+        Path file = new Path(FileTestUtils.getRandomTestFilepath().concat("."+extension));
 
         assertTrue(fs.createNewFile(file));
 
@@ -23,7 +23,7 @@ public class FileSystemTestUtils {
 
     public static Path createEmptyFile(FileSystem fs, Path location, String extension) throws IOException {
 
-        Path file = TestUtils.createPath(location.toString(),TestUtils.getRandomFilename(extension));
+        Path file = HadoopFileTestUtils.createPath(location.toString(),FileTestUtils.getRandomFilename(extension));
 
         assertTrue(fs.createNewFile(file));
 
@@ -31,7 +31,7 @@ public class FileSystemTestUtils {
     }
 
     public static Path createEmptyDir(FileSystem fileSystem) throws IOException {
-        Path dir = new Path(TestUtils.getRandomTestFilepath());
+        Path dir = new Path(FileTestUtils.getRandomTestFilepath());
 
         assertTrue(fileSystem.mkdirs(dir));
 

@@ -1,5 +1,6 @@
 package com.yolodata.tbana.hadoop.mapred;
 
+import com.yolodata.tbana.testutils.FileTestUtils;
 import com.yolodata.tbana.testutils.TestUtils;
 import com.yolodata.tbana.hadoop.mapred.util.CSVReader;
 import org.apache.commons.io.FileUtils;
@@ -58,9 +59,9 @@ public class CSVReaderTest {
     }
 
     private void testFileContent(String csvContent, List<Text> expected) throws IOException {
-        String filepath = TestUtils.getRandomTestFilepath();
+        String filepath = FileTestUtils.getRandomTestFilepath();
 
-        assert(TestUtils.createFileWithContent(filepath, csvContent));
+        assert(FileTestUtils.createFileWithContent(filepath, csvContent));
 
         csvReader = new CSVReader(new FileReader(filepath));
 

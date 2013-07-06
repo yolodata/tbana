@@ -23,7 +23,6 @@ class TestMapper extends MapReduceBase implements Mapper<LongWritable, List<Text
     }
 }
 
-
 class TestReducer extends MapReduceBase implements Reducer<LongWritable, Text, LongWritable, Text> {
     @Override
     public void reduce(LongWritable longWritable, Iterator<Text> textIterator, OutputCollector<LongWritable, Text> longWritableTextOutputCollector, Reporter reporter) throws IOException {
@@ -31,6 +30,7 @@ class TestReducer extends MapReduceBase implements Reducer<LongWritable, Text, L
             longWritableTextOutputCollector.collect(longWritable,textIterator.next());
     }
 }
+
 class ShuttlTestJob extends Configured implements Tool {
 
     public int run(String[] args) throws Exception {

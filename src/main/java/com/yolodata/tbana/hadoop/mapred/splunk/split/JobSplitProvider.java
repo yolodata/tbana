@@ -23,30 +23,22 @@ public class JobSplitProvider extends SplitProvider {
 
         try {
             int resultsPerSplit = (int)numberOfEvents/numberOfSplits;
-            int overflow = (int)numberOfEvents%numberOfSplits;
 
             boolean skipHeader;
             for(int i=0; i<numberOfSplits; i++) {
-                int start;
-                int end;
-
-                start = i * resultsPerSplit;
-                if(i>0)
-                    start += overflow;
-
-                if(i==numberOfSplits-1)
-                    end= (int) numberOfEvents;
-                else
-                    end = start + resultsPerSplit;
-
-                if(i==0)
-                    end+=overflow;
-
-                // header is always included, therefore, always add +1 to account for that.
-                end++;
+                int start = i * resultsPerSplit;
+                int end = start + resultsPerSplit;
 
                 // Skip header for all splits except first
                 skipHeader = i>0;
+
+                // Header is always present, so we always need to read an extra row.
+                end++;
+
+                if(i==numberOfSplits-1) {
+                    long eventsLeft = numberOfEvents-(numberOfSplits*resultsPerSplit);
+                    end += eventsLeft;
+                }
 
                 splits[i] = new SplunkSplit(splunkJob.getJob().getSid(), start, end, skipHeader);
             }

@@ -12,6 +12,7 @@ import org.apache.hadoop.mapred.*;
 import org.apache.hadoop.util.Tool;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -24,6 +25,14 @@ class TestMapper extends MapReduceBase implements Mapper<LongWritable, List<Text
     }
 }
 
+class TestReducer extends MapReduceBase implements Reducer<LongWritable, Text, LongWritable, Text> {
+    @Override
+    public void reduce(LongWritable longWritable, Iterator<Text> textIterator, OutputCollector<LongWritable, Text> longWritableTextOutputCollector, Reporter reporter) throws IOException {
+        while(textIterator.hasNext())
+            longWritableTextOutputCollector.collect(longWritable,textIterator.next());
+    }
+}
+
 class SplunkTestRunner extends Configured implements Tool {
 
     public int run(String[] args) throws Exception {
@@ -31,11 +40,12 @@ class SplunkTestRunner extends Configured implements Tool {
 
         jobConf.set(SplunkInputFormat.INPUTFORMAT_MODE,args[0]);
         jobConf.setJarByClass(SplunkTestRunner.class);
-        jobConf.setNumReduceTasks(0);
+        jobConf.setNumReduceTasks(1);
         jobConf.setMapperClass(TestMapper.class);
+        jobConf.setReducerClass(TestReducer.class);
 
         jobConf.setInputFormat(SplunkInputFormat.class);
-        jobConf.setOutputKeyClass(NullWritable.class);
+        jobConf.setOutputKeyClass(LongWritable.class);
         jobConf.setOutputValueClass(Text.class);
 
         TextOutputFormat.setOutputPath(jobConf ,new Path(args[1]));

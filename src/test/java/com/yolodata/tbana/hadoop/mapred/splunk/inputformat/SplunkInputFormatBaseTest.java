@@ -17,6 +17,8 @@ import org.junit.Test;
 import java.io.File;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+
 public abstract class SplunkInputFormatBaseTest {
 
     private Path outputPath= new Path("build/testTMP/"+ getMethodToTest());
@@ -76,7 +78,7 @@ public abstract class SplunkInputFormatBaseTest {
         List<String> lines = TestUtils.getLinesFromString(outputContent);
         int actualEvents = lines.size()-1; //Remove one line due to header
 
-        assert(actualEvents == numberOfExpectedResults);
+        assertEquals(numberOfExpectedResults, actualEvents);
 
         List<String> expectedEndOfLines= FileUtils.readLines(new File("build/resources/test/splunkMockData.txt"));
 

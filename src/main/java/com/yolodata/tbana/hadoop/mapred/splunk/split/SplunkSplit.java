@@ -72,4 +72,17 @@ public class SplunkSplit implements InputSplit{
     public boolean getSkipHeader() {
         return skipHeader;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj==null || obj.getClass() != getClass())
+            return false;
+
+        SplunkSplit split = (SplunkSplit) obj;
+
+        return  this.jobID.equals(split.jobID) &&
+                this.start == split.start &&
+                this.end == split.end &&
+                this.skipHeader == split.skipHeader;
+    }
 }

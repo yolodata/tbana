@@ -39,4 +39,13 @@ public class IndexerSplit extends SplunkSplit{
         this.indexer = new Indexer(dataInput.readUTF(),dataInput.readInt());
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if(obj==null || obj.getClass() != getClass())
+            return false;
+
+        IndexerSplit split = (IndexerSplit) obj;
+        return this.indexer.equals(split.indexer) &&
+                super.equals(obj);
+    }
 }

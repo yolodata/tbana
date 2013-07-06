@@ -16,4 +16,14 @@ public class Indexer {
     public int getPort() {
         return port;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj==null || obj.getClass() != getClass())
+            return false;
+
+        Indexer indexer = (Indexer) obj;
+        return this.host.equals(indexer.host) &&
+                this.port == indexer.port;
+    }
 }

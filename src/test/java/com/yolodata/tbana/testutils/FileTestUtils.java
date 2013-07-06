@@ -16,6 +16,10 @@ public class FileTestUtils {
         return getPathToTestFile(getRandomFilename());
     }
 
+    public static String getRandomTestFilepath(String extension) {
+        return getPathToTestFile(getRandomFilename(extension));
+    }
+
     private static String getRandomFilename() {
         return RandomStringUtils.randomAlphanumeric(25);
     }

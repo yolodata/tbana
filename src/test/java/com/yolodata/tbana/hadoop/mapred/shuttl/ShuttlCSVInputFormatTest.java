@@ -1,10 +1,10 @@
 package com.yolodata.tbana.hadoop.mapred.shuttl;
 
+import com.yolodata.tbana.hadoop.mapred.FileContentProvider;
+import com.yolodata.tbana.testutils.FileSystemTestUtils;
 import com.yolodata.tbana.testutils.FileTestUtils;
 import com.yolodata.tbana.testutils.HadoopFileTestUtils;
 import com.yolodata.tbana.testutils.TestUtils;
-import com.yolodata.tbana.hadoop.mapred.FileContentProvider;
-import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -31,7 +31,7 @@ public class ShuttlCSVInputFormatTest {
 
     @After
     public void tearDown() throws IOException {
-        fs.delete(new Path(TestUtils.TEST_FILE_PATH),true);
+        fs.delete(new Path(TestUtils.TEST_FILE_PATH), true);
     }
 
     @Test
@@ -57,13 +57,58 @@ public class ShuttlCSVInputFormatTest {
 
     @Test
     public void testReadingDirectory() throws Exception {
+        Path directory = FileSystemTestUtils.createEmptyDir(fs);
+
+        String[] header = {"header", "_raw"};
+
+        String file1Content = "header,_raw\n" +
+                "\"ImCESTvlhu\",\"LOjZxHYGZy\"\n" +
+                "\"kqYkcFhbSB\",\"RRLjuHCHze\"\n" +
+                "\"kmeEaOcKTx\",\"mvIPrMSOSS\"\n" +
+                "\"lzzPLYFGFU\",\"sGHTPVsYlF\"\n" +
+                "\"zpUxVlTaAq\",\"ysoUYuyZKO\"";
+        String file2Content = "header,_raw\n" +
+                "\"fkBkKfCkuT\",\"BRlSkqHmHe\"\n" +
+                "\"dWDJViEuot\",\"LcdkTQBLmu\"\n" +
+                "\"ovQoDFATdn\",\"YewByxPXqN\"\n" +
+                "\"tKBxjsSZmV\",\"luuOivALWj\"\n" +
+                "\"mssAbiUnub\",\"NeYnIlDMdW\"";
+
+        int [] offsets = new int [] {12,38,64,90,116};
+        Path file1 = HadoopFileTestUtils.createPath(directory.toString(),"file1.csv");
+        Path file2 = HadoopFileTestUtils.createPath(directory.toString(),"file2.csv");
+
+        HadoopFileTestUtils.createFileWithContent(fs,file1,file1Content);
+        HadoopFileTestUtils.createFileWithContent(fs,file2,file2Content);
 
 
+        Path outputPath = new Path(FileTestUtils.getRandomTestFilepath());
+        assertTrue(runJob(new Configuration(), new String[] {directory.toString(),outputPath.toString()}));
+
+        String expectedContent = "0\theader,_raw\n" +
+                "12\tImCESTvlhu,LOjZxHYGZy\n" +
+                "38\tkqYkcFhbSB,RRLjuHCHze\n" +
+                "64\tkmeEaOcKTx,mvIPrMSOSS\n" +
+                "90\tlzzPLYFGFU,sGHTPVsYlF\n" +
+                "116\tzpUxVlTaAq,ysoUYuyZKO\n" +
+                "153\tfkBkKfCkuT,BRlSkqHmHe\n" +
+                "179\tdWDJViEuot,LcdkTQBLmu\n" +
+                "205\tovQoDFATdn,YewByxPXqN\n" +
+                "231\ttKBxjsSZmV,luuOivALWj\n" +
+                "257\tmssAbiUnub,NeYnIlDMdW\n";
+
+        String actualResults = HadoopFileTestUtils.readMapReduceOutputFile(fs,outputPath);
+
+        assertEquals(expectedContent,actualResults);
+    }
+
+    private String combineContent(String file1Content, String file2ContentWithoutHeader) {
+        return file1Content.concat(file2ContentWithoutHeader);
     }
 
     private void runTestOnContent(String content, int[] offsets) throws Exception {
 
-        Path inputPath = new Path(FileTestUtils.getRandomTestFilepath());
+        Path inputPath = new Path(FileTestUtils.getRandomTestFilepath("csv"));
         HadoopFileTestUtils.createFileWithContent(fs, inputPath, content);
 
         Path outputPath = new Path(FileTestUtils.getRandomTestFilepath());
@@ -71,6 +116,12 @@ public class ShuttlCSVInputFormatTest {
 
         String result = HadoopFileTestUtils.readMapReduceOutputFile(fs,outputPath);
 
+        String expected = getExpectedResult(content, offsets);
+
+        assertEquals(expected,result);
+    }
+
+    private String getExpectedResult(String content, int[] offsets) throws IOException {
         List<String> linesFromExpected = TestUtils.getLinesFromString(content);
         addOffsetToEachLine(linesFromExpected, offsets);
         String expected = "";
@@ -79,8 +130,7 @@ public class ShuttlCSVInputFormatTest {
                 expected = expected.concat(linesFromExpected.get(i)+"\n");
             else
                 expected = expected.concat(linesFromExpected.get(i));
-
-        assertEquals(expected,result);
+        return expected;
     }
 
 

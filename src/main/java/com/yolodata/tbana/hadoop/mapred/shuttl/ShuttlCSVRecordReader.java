@@ -24,6 +24,8 @@ public class ShuttlCSVRecordReader implements RecordReader<LongWritable, List<Te
     private long pos;
     private long end;
 
+    private long startKey;
+
     public ShuttlCSVRecordReader() {
 
     }
@@ -38,14 +40,15 @@ public class ShuttlCSVRecordReader implements RecordReader<LongWritable, List<Te
     }
 
     public void initialize(InputSplit genericSplit, JobConf conf) throws IOException {
-        FileSplit split = (FileSplit) genericSplit;
+        CsvSplit split = (CsvSplit) genericSplit;
 
         start = split.getStart();
         end = start + split.getLength();
-        final Path file = split.getPath();
+        final Path file = split.getFilepath();
 
+        startKey = split.getKeyStart();
         FileSystem fs = file.getFileSystem(conf);
-        FSDataInputStream fileIn = fs.open(split.getPath());
+        FSDataInputStream fileIn = fs.open(split.getFilepath());
 
         if (start != 0) {
             fileIn.seek(start);
@@ -54,6 +57,9 @@ public class ShuttlCSVRecordReader implements RecordReader<LongWritable, List<Te
         this.pos = start;
 
         createReader(is);
+
+        if(split.isSkipHeader())
+            next(null,null);
     }
 
     @Override
@@ -99,13 +105,14 @@ public class ShuttlCSVRecordReader implements RecordReader<LongWritable, List<Te
         if (key == null) {
             key = new LongWritable();
         }
-        key.set(pos);
+        key.set(startKey+pos);
 
         if (value == null) {
             value = new ArrayListTextWritable();
         }
 
         int bytesRead = reader.readLine(value);
+
         pos += bytesRead;
         if (bytesRead == 0) {
             key = null;

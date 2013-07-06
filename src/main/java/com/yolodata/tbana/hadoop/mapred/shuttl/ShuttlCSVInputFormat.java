@@ -36,33 +36,36 @@ public class ShuttlCSVInputFormat extends FileInputFormat<LongWritable, List<Tex
     public InputSplit[] getSplits(JobConf job, int numSplits) throws IOException {
         List<InputSplit> splits = new ArrayList<InputSplit>();
 
-        for(FileStatus status : listStatus(job)) {
-            for(FileStatus csvFile : getCsvAllFiles(status)) {
-                List<FileSplit> fileSplits = getSplitsForFile(csvFile, job, numSplits);
-                splits.addAll(fileSplits);
-            }
+        FileSystem fs = FileSystem.get(job);
+        FileFinder finder = new FileFinder(fs);
+
+        long currentOffset = 0;
+
+        for(Path p : finder.findFilesWithExtension(getInputPaths(job)[0],"csv"))
+        {
+            FileStatus csvFile = fs.getFileStatus(p);
+            List<CsvSplit> fileSplits = getSplitsForFile(csvFile, job, numSplits,currentOffset);
+            currentOffset += csvFile.getLen();
+            splits.addAll(fileSplits);
         }
+
+        if(splits.size() >0)
+            ((CsvSplit)splits.get(0)).setSkipHeader(false);
 
         return splits.toArray(new InputSplit[splits.size()]);
     }
 
-    private List<FileStatus> getCsvAllFiles(FileStatus status) {
-
-
-        return Arrays.asList(status);
-    }
-
-    protected static List<FileSplit> getSplitsForFile(FileStatus status, JobConf conf, int numSplits)
+    protected static List<CsvSplit> getSplitsForFile(FileStatus status, JobConf conf, int numSplits, long startKey)
             throws IOException {
         Path filePath = getPath(status);
         FileSystem fs = filePath.getFileSystem(conf);
         if(numSplits==0)
             numSplits++;
-        return getFileSplitsFast(numSplits, filePath, fs);
+        return getFileSplitsFast(numSplits, filePath, fs, startKey);
     }
 
-    private static List<FileSplit> getFileSplitsFast(int numSplits, Path filePath, FileSystem fs) {
-        List<FileSplit> splits = new ArrayList<FileSplit>();
+    private static List<CsvSplit> getFileSplitsFast(int numSplits, Path filePath, FileSystem fs, long startKey) {
+        List<CsvSplit> splits = new ArrayList<CsvSplit>();
 
         try {
             long fileSize = fs.getFileStatus(filePath).getLen();
@@ -74,15 +77,15 @@ public class ShuttlCSVInputFormat extends FileInputFormat<LongWritable, List<Tex
                 end = start+sizePerSplit;
 
                 if(restOfFileChunkFitsInOneSplit(fileSize, end)) {
-                    splits.add(createSplit(filePath,start,fileSize));
+                    splits.add(new CsvSplit(filePath,start,end,startKey,true));
                     break;
                 }
 
-                // Seek to current end and find the new line
+                // Seek to current length and find the new line
                 FSDataInputStream in = fs.open(filePath);
                 end = findEndOfLinePosition(in,end);
 
-                splits.add(createSplit(filePath,start,end-start));
+                splits.add(new CsvSplit(filePath,start,end,startKey,true));
                 start=end;
             }
 
@@ -98,6 +101,7 @@ public class ShuttlCSVInputFormat extends FileInputFormat<LongWritable, List<Tex
     }
 
     // TODO: This is a heuristic that might not be true in all cases
+    // We assume that a CSV line ends with "\n and does not start with a ,
     private static long findEndOfLinePosition(FSDataInputStream in, long end) throws IOException {
         in.seek(end);
         int c;
@@ -124,8 +128,8 @@ public class ShuttlCSVInputFormat extends FileInputFormat<LongWritable, List<Tex
         return in.getPos();
     }
 
-    private static FileSplit createSplit(Path filePath, long start, long end) {
-        return new FileSplit(filePath,start,end, new String[] {});
+    private static CsvSplit createSplit(Path filePath, long start, long end) {
+        return new CsvSplit(filePath,start,end);
     }
 
     private static Path getPath(FileStatus status) throws IOException {

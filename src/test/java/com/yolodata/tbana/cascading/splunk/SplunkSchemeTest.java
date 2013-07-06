@@ -72,11 +72,11 @@ public class SplunkSchemeTest extends CascadingTestCase {
     private void verifyContent(TupleEntryIterator iterator) throws IOException {
 
         String [] expectedRows = new String[] {
-                "1,moc3,#<DateTime 2012-12-31T23:59:59.000Z> count=0",
-                "2,moc3,#<DateTime 2012-12-31T23:59:58.000Z> count=1",
-                "3,moc3,#<DateTime 2012-12-31T23:59:57.000Z> count=2",
-                "4,moc3,#<DateTime 2012-12-31T23:59:56.000Z> count=3",
-                "5,moc3,#<DateTime 2012-12-31T23:59:55.000Z> count=4"
+                "1,count=4",
+                "2,count=3",
+                "3,count=2",
+                "4,count=1",
+                "5,count=0"
         };
         for(String expectedRow : expectedRows)
             checkResults(iterator.next().getTuple(), expectedRow);
@@ -85,8 +85,7 @@ public class SplunkSchemeTest extends CascadingTestCase {
     private void checkResults(Tuple actual, String row) {
         String [] rowValues = row.split(",");
         Tuple expected = new Tuple(new LongWritable(Long.parseLong(rowValues[0])),
-                new Text(rowValues[1]),
-                new Text(rowValues[2]));
+                new Text(rowValues[1]));
         assertEquals(expected, actual);
     }
 }

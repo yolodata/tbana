@@ -1,4 +1,4 @@
-package com.yolodata.tbana.hadoop.mapred.shuttl.bucket;
+package com.yolodata.tbana.util.search.filter;
 
 import com.yolodata.tbana.util.search.filter.SearchFilter;
 import org.apache.hadoop.fs.FileStatus;

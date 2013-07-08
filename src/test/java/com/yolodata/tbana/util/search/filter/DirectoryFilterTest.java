@@ -1,6 +1,5 @@
 package com.yolodata.tbana.util.search.filter;
 
-import com.yolodata.tbana.hadoop.mapred.shuttl.bucket.DirectoryFilter;
 import com.yolodata.tbana.testutils.FileSystemTestUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;

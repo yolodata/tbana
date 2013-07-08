@@ -1,6 +1,5 @@
 package com.yolodata.tbana.util.search.filter;
 
-import com.yolodata.tbana.hadoop.mapred.shuttl.bucket.DirectoryFilter;
 import org.apache.hadoop.fs.FileSystem;
 
 import java.io.IOException;

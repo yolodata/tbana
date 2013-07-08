@@ -27,7 +27,7 @@ public class ExtensionFilter implements SearchFilter{
 
     @Override
     public boolean accept(String path) {
-        return path.endsWith(extensionString);
+        return path.toLowerCase().endsWith(extensionString.toLowerCase());
     }
 
 

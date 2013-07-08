@@ -7,6 +7,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.yolodata.tbana.hadoop.mapred.util.CSVReader;
+import com.yolodata.tbana.util.search.HadoopPathFinder;
+import com.yolodata.tbana.util.search.PathFinder;
+import com.yolodata.tbana.util.search.filter.ExtensionFilter;
+import com.yolodata.tbana.util.search.filter.SearchFilter;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
@@ -37,13 +41,16 @@ public class ShuttlCSVInputFormat extends FileInputFormat<LongWritable, List<Tex
         List<InputSplit> splits = new ArrayList<InputSplit>();
 
         FileSystem fs = FileSystem.get(job);
-        FileFinder finder = new FileFinder(fs);
+        PathFinder finder = new HadoopPathFinder(fs);
 
         long currentOffset = 0;
 
-        for(Path p : finder.findFilesWithExtension(getInputPaths(job)[0],"csv"))
+        List<SearchFilter> filters = new ArrayList<SearchFilter>();
+        filters.add(new ExtensionFilter(ExtensionFilter.Extension.CSV));
+
+        for(String p : finder.findPaths(getInputPaths(job)[0].toString(), filters))
         {
-            FileStatus csvFile = fs.getFileStatus(p);
+            FileStatus csvFile = fs.getFileStatus(new Path(p));
             List<CsvSplit> fileSplits = getSplitsForFile(csvFile, job, numSplits,currentOffset);
             currentOffset += csvFile.getLen();
             splits.addAll(fileSplits);

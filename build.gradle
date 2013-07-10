@@ -9,7 +9,6 @@ repositories {
     mavenRepo name: 'ext-release-local', url: 'http://splunk.artifactoryonline.com/splunk/ext-releases-local'
 }
 
-
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.0.5'
 
@@ -31,4 +30,8 @@ dependencies {
 
     compile( group: 'com.splunk', name: 'splunk', version: '1.1.0' )
     compile files('lib/shuttl-0.8.4.jar')
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.6'
 }

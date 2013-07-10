@@ -8,6 +8,3 @@ out/
 *.class
 .gradle/
 
-# Package Files #
-*.jar
-

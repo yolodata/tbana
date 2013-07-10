@@ -17,9 +17,15 @@ import java.io.IOException;
 
 public class ShuttlCsv extends TextLine {
 
+    private SplunkDataQuery splunkDataQuery;
+
+    public ShuttlCsv(SplunkDataQuery splunkDataQuery){
+        super();
+        this.splunkDataQuery= splunkDataQuery;
+    }
+
     @Override
     public void sourceConfInit(FlowProcess<JobConf> flowProcess, Tap<JobConf, RecordReader, OutputCollector> tap, JobConf conf) {
-
 
 
         conf.setInputFormat( ShuttlCSVInputFormat.class );

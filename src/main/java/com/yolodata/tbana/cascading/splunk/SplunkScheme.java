@@ -4,10 +4,7 @@ import cascading.flow.FlowProcess;
 import cascading.scheme.Scheme;
 import cascading.scheme.SinkCall;
 import cascading.scheme.SourceCall;
-import cascading.scheme.local.TextLine;
-import cascading.tap.CompositeTap;
 import cascading.tap.Tap;
-import cascading.tap.local.FileTap;
 import cascading.tuple.Fields;
 import cascading.tuple.Tuple;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
@@ -25,16 +22,11 @@ import java.io.Serializable;
 
 public class SplunkScheme extends Scheme<JobConf, RecordReader, OutputCollector, Object[], Object[]> implements Serializable {
 
-    private SplunkSearch search;
+    private SplunkDataQuery splunkDataQuery;
 
-    public SplunkScheme(SplunkSearch search) {
-        this(search,search.getFields());
-    }
-
-    public SplunkScheme(SplunkSearch search, Fields fields) {
-        this.search = search;
-        search.setFields(fields);
-        setFields(fields);
+    public SplunkScheme(SplunkDataQuery splunkDataQuery) {
+        this.splunkDataQuery = splunkDataQuery;
+        setFields(Fields.ALL);
     }
 
     private void setFields(Fields fields) {
@@ -53,14 +45,9 @@ public class SplunkScheme extends Scheme<JobConf, RecordReader, OutputCollector,
 
         SplunkConf.validateLoginConfiguration(conf);
         conf.setInputFormat(SplunkInputFormat.class);
-        conf.set(SplunkConf.SPLUNK_SEARCH_QUERY, this.search.getQuery());
-        conf.set(SplunkConf.SPLUNK_EARLIEST_TIME, this.search.getEarliestTime());
-        conf.set(SplunkConf.SPLUNK_LATEST_TIME, this.search.getLatestTime());
-
-        if(this.search.getFields() != Fields.ALL) {
-            String value = this.search.getFields().toString();
-            conf.set(SplunkConf.SPLUNK_FIELD_LIST, value);
-        }
+        conf.set(SplunkConf.SPLUNK_SEARCH_QUERY, this.splunkDataQuery.getSplunkQuery());
+        conf.set(SplunkConf.SPLUNK_EARLIEST_TIME, this.splunkDataQuery.getEarliestTime());
+        conf.set(SplunkConf.SPLUNK_LATEST_TIME, this.splunkDataQuery.getLatestTime());
     }
 
     @Override

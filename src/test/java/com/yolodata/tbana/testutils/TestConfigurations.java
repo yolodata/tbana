@@ -1,6 +1,6 @@
 package com.yolodata.tbana.testutils;
 
-import com.yolodata.tbana.cascading.splunk.SplunkSearch;
+import com.yolodata.tbana.cascading.splunk.SplunkDataQuery;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import org.apache.hadoop.conf.Configuration;
 
@@ -37,7 +37,7 @@ public class TestConfigurations {
         return properties;
     }
 
-    public static SplunkSearch getSplunkSearch() {
-        return new SplunkSearch(query,earliest_time,latest_time);
+    public static SplunkDataQuery getSplunkSearch() {
+        return new SplunkDataQuery(earliest_time, latest_time);
     }
 }

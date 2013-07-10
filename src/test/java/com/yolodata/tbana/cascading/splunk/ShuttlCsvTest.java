@@ -77,7 +77,7 @@ public class ShuttlCsvTest extends CascadingTestCase {
     {
         Properties properties = new Properties();
 
-        ShuttlCsv inputScheme = new ShuttlCsv();
+        ShuttlCsv inputScheme = new ShuttlCsv(new SplunkDataQuery());
         TextLine outputScheme = new TextLine();
 
         Hfs input = new Hfs(inputScheme,inputPath.toString());

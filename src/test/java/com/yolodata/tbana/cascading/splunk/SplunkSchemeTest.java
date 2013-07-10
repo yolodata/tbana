@@ -54,7 +54,7 @@ public class SplunkSchemeTest extends CascadingTestCase {
 
         flow.complete();
 
-        validateLength( flow, 5, 2 );
+        validateLength( flow, 10, 2 );
 
         TupleEntryIterator iterator = flow.openSource();
 
@@ -86,6 +86,6 @@ public class SplunkSchemeTest extends CascadingTestCase {
         String [] rowValues = row.split(",");
         Tuple expected = new Tuple(new LongWritable(Long.parseLong(rowValues[0])),
                 new Text(rowValues[1]));
-        assertEquals(expected, actual);
+        assertEquals(expected, new Tuple(actual.get(new int[]{0,4})));
     }
 }

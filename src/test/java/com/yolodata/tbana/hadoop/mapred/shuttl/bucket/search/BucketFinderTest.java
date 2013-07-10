@@ -1,6 +1,6 @@
 package com.yolodata.tbana.hadoop.mapred.shuttl.bucket.search;
 
-import com.yolodata.tbana.cascading.splunk.SplunkSearch;
+import com.yolodata.tbana.cascading.splunk.SplunkDataQuery;
 import com.yolodata.tbana.hadoop.mapred.shuttl.bucket.Bucket;
 import com.yolodata.tbana.hadoop.mapred.shuttl.bucket.BucketFinder;
 import com.yolodata.tbana.testutils.FileSystemTestUtils;
@@ -39,7 +39,7 @@ public class BucketFinderTest {
         String latestTime = "1970-01-01 00:00:10";
 
         BucketFinder bucketFinder = new BucketFinder(fs, root);
-        List<Bucket> buckets = bucketFinder.search(new SplunkSearch("*",earliestTime,latestTime));
+        List<Bucket> buckets = bucketFinder.search(new SplunkDataQuery(earliestTime, latestTime));
 
         assertEquals(1, buckets.size());
     }

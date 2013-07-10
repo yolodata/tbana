@@ -1,6 +1,6 @@
 package com.yolodata.tbana.hadoop.mapred.shuttl.bucket;
 
-import com.yolodata.tbana.cascading.splunk.SplunkSearch;
+import com.yolodata.tbana.cascading.splunk.SplunkDataQuery;
 import com.yolodata.tbana.util.search.HadoopPathFinder;
 import com.yolodata.tbana.util.search.PathFinder;
 import com.yolodata.tbana.util.search.filter.BucketFilter;
@@ -36,7 +36,7 @@ public class BucketFinder {
         return result;
     }
 
-    public List<Bucket> search(SplunkSearch splunkSearch) throws ParseException, IOException {
+    public List<Bucket> search(SplunkDataQuery splunkSearch) throws ParseException, IOException {
 
         List<Bucket> buckets = new ArrayList<Bucket>();
 

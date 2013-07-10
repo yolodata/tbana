@@ -1,6 +1,7 @@
 package com.yolodata.tbana.hadoop.mapred.shuttl.bucket.search;
 
 
+import com.splunk.shuttl.archiver.model.Bucket;
 import com.yolodata.tbana.cascading.splunk.SplunkDataQuery;
 import com.yolodata.tbana.hadoop.mapred.shuttl.bucket.BucketFinder;
 import com.yolodata.tbana.hadoop.mapred.shuttl.index.Index;

@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.splunk.shuttl.archiver.model.Bucket;
-import com.yolodata.tbana.cascading.splunk.SplunkSearch;
 import com.yolodata.tbana.hadoop.mapred.shuttl.bucket.BucketFinder;
 import com.yolodata.tbana.hadoop.mapred.shuttl.index.Index;
 import com.yolodata.tbana.hadoop.mapred.shuttl.index.IndexFinder;

@@ -1,12 +1,9 @@
 package com.yolodata.tbana.hadoop.mapred.shuttl.bucket;
 
-<<<<<<< HEAD
-import com.yolodata.tbana.cascading.splunk.SplunkDataQuery;
-=======
 import com.splunk.shuttl.archiver.model.Bucket;
-import com.yolodata.tbana.cascading.splunk.SplunkSearch;
+import com.yolodata.tbana.cascading.splunk.SplunkDataQuery;
 import com.yolodata.tbana.hadoop.mapred.shuttl.index.Index;
->>>>>>> b4ea76f1ecb6fe0db890ec5a34adaa6f8301fdd5
+import org.apache.hadoop.fs.FileSystem;
 import com.yolodata.tbana.util.search.HadoopPathFinder;
 import com.yolodata.tbana.util.search.PathFinder;
 import com.yolodata.tbana.util.search.filter.BucketFilter;
@@ -54,7 +51,7 @@ public class BucketFinder {
         List<String> bucketPaths = finder.findPaths(index.getPath(), filters);
 
         for(String bucketPath : bucketPaths) {
-            buckets.add(HadoopBucketFactory.createUsingPathToBucket(bucketPath,index));
+            buckets.add(HadoopBucketFactory.createUsingPathToBucket(bucketPath, index));
         }
 
         return buckets;

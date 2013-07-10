@@ -19,7 +19,13 @@ public class TimeParser {
         supportedTimePatterns.put("(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{1,2}):(\\d{0,2})", "yyyy-MM-dd HH:mm:ss");
     }
 
-    public static long parse(String dateString) throws ParseException {
+    public static long parse(String dateString) throws RuntimeException {
+
+        if(isLong(dateString))
+            return Long.parseLong(dateString);
+
+        if(isNow(dateString))
+            return getTimeNow();
 
         for(String pattern : supportedTimePatterns.keySet()) {
             Pattern p = Pattern.compile(pattern);
@@ -27,11 +33,36 @@ public class TimeParser {
 
             if(m.matches()) {
                 DateFormat dateFormatter = new SimpleDateFormat(supportedTimePatterns.get(pattern));
-                Date d = dateFormatter.parse(dateString);
+                Date d;
+                try {
+                    d = dateFormatter.parse(dateString);
+                } catch (ParseException e) {
+                    throw new RuntimeException("Invalid date: "+dateString);
+                }
                 return d.getTime();
             }
         }
 
         return -1;
+    }
+
+    private static boolean isNow(String dateString) {
+        return dateString.toLowerCase().equals("now");
+    }
+
+    private static boolean isLong(String dateString) {
+        try {
+            Long.parseLong(dateString);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+
+    }
+
+    public static long getTimeNow() {
+        Date d = new Date();
+        return d.getTime();
+
     }
 }

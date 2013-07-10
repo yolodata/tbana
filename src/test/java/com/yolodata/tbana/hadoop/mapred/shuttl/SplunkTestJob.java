@@ -34,7 +34,7 @@ class TestReducer extends MapReduceBase implements Reducer<LongWritable, Text, L
 class ShuttlTestJob extends Configured implements Tool {
 
     public int run(String[] args) throws Exception {
-        JobConf jobConf = new JobConf(TestConfigurations.getConfigurationWithSplunkConfigured());
+        JobConf jobConf = new JobConf(TestConfigurations.getConfigurationWithShuttlSearch());
 
         jobConf.setJarByClass(ShuttlTestJob.class);
         jobConf.setNumReduceTasks(1);

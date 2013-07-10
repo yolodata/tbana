@@ -10,7 +10,7 @@ public class SplunkDataQueryTest {
         assert splunkDataQuery.getSplunkQuery().equals("search index=*");
         assert splunkDataQuery.getEarliestTime().equals("0");
         assert splunkDataQuery.getLatestTime().equals("now");
-        assert splunkDataQuery.getIndexes().equals("*");
+        assert splunkDataQuery.getIndexesString().equals("*");
     }
 
     @Test
@@ -24,6 +24,6 @@ public class SplunkDataQueryTest {
     public void testConstructorWithIndexes(){
         SplunkDataQuery splunkDataQuery= new SplunkDataQuery("-12h", "now", new String[] {"main", "_internal"});
         assert splunkDataQuery.getSplunkQuery().equals("search index=main OR index=_internal");
-        assert splunkDataQuery.getIndexes().equals("main,_internal");
+        assert splunkDataQuery.getIndexesString().equals("main,_internal");
     }
 }

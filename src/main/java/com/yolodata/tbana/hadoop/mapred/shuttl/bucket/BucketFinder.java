@@ -32,7 +32,7 @@ public class BucketFinder {
         return search(filters);
     }
 
-    public List<Bucket> search(SplunkDataQuery splunkSearch) throws ParseException, IOException {
+    public List<Bucket> search(SplunkDataQuery splunkSearch) throws IOException {
 
         long earliest = TimeParser.parse(splunkSearch.getEarliestTime());
         long latest = TimeParser.parse(splunkSearch.getLatestTime());

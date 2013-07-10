@@ -27,6 +27,9 @@ public class NameFilter implements SearchFilter{
     }
 
     private boolean matchesAnyName(String name) {
+        if(names.length == 0)
+            return true;
+
         for(String n : names) {
             // add regex if string contains *
             if(containsWildcard(n))

@@ -7,7 +7,7 @@ import cascading.scheme.hadoop.TextLine;
 import cascading.tap.Tap;
 import cascading.tuple.Tuple;
 import com.yolodata.tbana.hadoop.mapred.shuttl.ShuttlCSVInputFormat;
-import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
+import com.yolodata.tbana.hadoop.mapred.shuttl.ShuttlInputFormatConstants;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.mapred.JobConf;
@@ -28,8 +28,10 @@ public class ShuttlCsv extends TextLine {
     @Override
     public void sourceConfInit(FlowProcess<JobConf> flowProcess, Tap<JobConf, RecordReader, OutputCollector> tap, JobConf conf) {
 
-
-        conf.setInputFormat( ShuttlCSVInputFormat.class );
+        conf.set(ShuttlInputFormatConstants.INDEX_LIST,splunkDataQuery.getIndexesString());
+        conf.set(ShuttlInputFormatConstants.EARLIEST_TIME,splunkDataQuery.getEarliestTime());
+        conf.set(ShuttlInputFormatConstants.LATEST_TIME,splunkDataQuery.getLatestTime());
+        conf.setInputFormat(ShuttlCSVInputFormat.class);
     }
 
     @Override

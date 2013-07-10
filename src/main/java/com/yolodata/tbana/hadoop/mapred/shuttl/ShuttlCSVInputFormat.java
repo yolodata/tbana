@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.splunk.shuttl.archiver.model.Bucket;
+import com.yolodata.tbana.cascading.splunk.SplunkDataQuery;
+import com.yolodata.tbana.cascading.splunk.SplunkDataQueryFactory;
 import com.yolodata.tbana.hadoop.mapred.shuttl.bucket.BucketFinder;
 import com.yolodata.tbana.hadoop.mapred.shuttl.index.Index;
 import com.yolodata.tbana.hadoop.mapred.shuttl.index.IndexFinder;
@@ -48,12 +50,14 @@ public class ShuttlCSVInputFormat extends FileInputFormat<LongWritable, List<Tex
 
         IndexFinder indexFinder = new IndexFinder(fs,getInputPaths(job)[0]);
 
-        List<Index> indexes = indexFinder.find();
+        SplunkDataQuery dataQuery = SplunkDataQueryFactory.createWithJobConf(job);
+
+        List<Index> indexes = indexFinder.find(dataQuery.getIndexes());
 
         List<Bucket> buckets = new ArrayList<Bucket>();
         for(Index index : indexes) {
             BucketFinder bucketFinder = new BucketFinder(fs,index);
-            buckets.addAll(bucketFinder.search());
+            buckets.addAll(bucketFinder.search(dataQuery));
         }
 
         PathFinder finder = new HadoopPathFinder(fs);

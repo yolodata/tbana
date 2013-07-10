@@ -41,4 +41,15 @@ public class NameFilterTest {
         assertEquals(false,csvFilter.accept(notAccepted));
 
     }
+
+    @Test
+    public void testNameFilterWithEmptyList() throws Exception {
+        String acceptedName = "path/to/dir";
+
+        String [] acceptedNames = {};
+
+        NameFilter emptyFilter = new NameFilter(acceptedNames);
+
+        assertEquals(true, emptyFilter.accept(acceptedName));
+    }
 }

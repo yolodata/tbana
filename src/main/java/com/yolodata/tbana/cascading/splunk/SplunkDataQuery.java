@@ -1,11 +1,10 @@
 package com.yolodata.tbana.cascading.splunk;
 
-import cascading.tuple.Fields;
-import org.apache.hadoop.mapred.JobConf;
-
 import java.io.Serializable;
 
 public class SplunkDataQuery implements Serializable {
+
+    public static final String INDEX_LIST_SEPARATOR = ",";
 
     private String earliestTime;
     private String latestTime;
@@ -52,7 +51,11 @@ public class SplunkDataQuery implements Serializable {
         return latestTime;
     }
 
-    public String getIndexes() {
-        return concatenateIndexes(",");
+    public String [] getIndexes() {
+        return indexes;
+    }
+
+    public String getIndexesString() {
+        return concatenateIndexes(INDEX_LIST_SEPARATOR);
     }
 }

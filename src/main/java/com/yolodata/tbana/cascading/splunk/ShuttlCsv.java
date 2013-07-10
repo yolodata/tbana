@@ -7,6 +7,7 @@ import cascading.scheme.hadoop.TextLine;
 import cascading.tap.Tap;
 import cascading.tuple.Tuple;
 import com.yolodata.tbana.hadoop.mapred.shuttl.ShuttlCSVInputFormat;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.mapred.JobConf;

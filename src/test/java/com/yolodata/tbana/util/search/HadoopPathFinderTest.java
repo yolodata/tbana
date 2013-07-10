@@ -55,4 +55,10 @@ public class HadoopPathFinderTest {
         assertEquals(1,results.size());
         assertTrue(results.get(0).endsWith(extension));
     }
+
+    @Test
+    public void testRecursiveFindPathsWithStopCriteria() throws Exception {
+
+
+    }
 }

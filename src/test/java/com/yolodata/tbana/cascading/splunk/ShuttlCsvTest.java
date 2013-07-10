@@ -11,6 +11,7 @@ import com.yolodata.tbana.testutils.FileSystemTestUtils;
 import com.yolodata.tbana.testutils.FileTestUtils;
 import com.yolodata.tbana.testutils.HadoopFileTestUtils;
 import com.yolodata.tbana.testutils.TestUtils;
+import com.yolodata.tbana.util.search.ShuttlDirectoryTreeFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -31,7 +32,9 @@ public class ShuttlCsvTest extends CascadingTestCase {
 
     @Test
     public void testShuttlDirectory() throws IOException, InstantiationException, IllegalAccessException {
-        Path directory = FileSystemTestUtils.createEmptyDir(fs);
+        ShuttlDirectoryTreeFactory directoryTreeFactory = new ShuttlDirectoryTreeFactory();
+        Path index = directoryTreeFactory.addIndex(directoryTreeFactory.getIndexerPaths().get(0),"Index1");
+        Path bucket = directoryTreeFactory.addBucket(index,"db_0_1_idx");
 
         String[] header = {"header", "_raw"};
 
@@ -48,13 +51,13 @@ public class ShuttlCsvTest extends CascadingTestCase {
                 "\"tKBxjsSZmV\",\"luuOivALWj\"\n" +
                 "\"mssAbiUnub\",\"NeYnIlDMdW\"";
 
-        Path file1 = HadoopFileTestUtils.createPath(directory.toString(),"file1.csv");
-        Path file2 = HadoopFileTestUtils.createPath(directory.toString(),"file2.csv");
+        Path file1 = HadoopFileTestUtils.createPath(bucket.toString(),"file1.csv");
+        Path file2 = HadoopFileTestUtils.createPath(bucket.toString(),"file2.csv");
         HadoopFileTestUtils.createFileWithContent(fs,file1,file1Content);
         HadoopFileTestUtils.createFileWithContent(fs,file2,file2Content);
 
         Path outputPath = new Path(FileTestUtils.getRandomTestFilepath());
-        runCascadingJob(directory,outputPath);
+        runCascadingJob(directoryTreeFactory.getRoot(),outputPath);
 
         String expectedContent = "0\t[header, _raw]\n" +
                 "12\t[ImCESTvlhu, LOjZxHYGZy]\n" +
@@ -71,6 +74,8 @@ public class ShuttlCsvTest extends CascadingTestCase {
         String actualResults = HadoopFileTestUtils.readMapReduceOutputFile(fs,outputPath);
 
         assertEquals(expectedContent,actualResults);
+
+        directoryTreeFactory.remove();
     }
 
     public Flow runCascadingJob( Path inputPath, Path outputPath) throws IOException

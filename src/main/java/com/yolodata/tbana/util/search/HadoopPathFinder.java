@@ -30,9 +30,8 @@ public class HadoopPathFinder implements PathFinder {
 
         if(path.isDir())
             result.addAll(findAllPathsInDir(path.getPath(), filters));
-        else
-            if(pathPassesFilters(path,filters))
-                result.add(rootPath);
+        else if(pathPassesFilters(path,filters))
+            result.add(rootPath);
 
         return result;
     }
@@ -42,7 +41,7 @@ public class HadoopPathFinder implements PathFinder {
 
         FileStatus [] listFiles = fileSystem.listStatus(directory);
         for(FileStatus file : listFiles)
-            if(pathPassesFilters(file, filters))
+            if(pathPassesFilters(file,filters))
                 result.add(file.getPath().toString());
 
         return result;

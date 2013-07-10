@@ -6,6 +6,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.splunk.shuttl.archiver.model.Bucket;
+import com.yolodata.tbana.cascading.splunk.SplunkSearch;
+import com.yolodata.tbana.hadoop.mapred.shuttl.bucket.BucketFinder;
+import com.yolodata.tbana.hadoop.mapred.shuttl.index.Index;
+import com.yolodata.tbana.hadoop.mapred.shuttl.index.IndexFinder;
 import com.yolodata.tbana.hadoop.mapred.util.CSVReader;
 import com.yolodata.tbana.util.search.HadoopPathFinder;
 import com.yolodata.tbana.util.search.PathFinder;
@@ -41,14 +46,31 @@ public class ShuttlCSVInputFormat extends FileInputFormat<LongWritable, List<Tex
         List<InputSplit> splits = new ArrayList<InputSplit>();
 
         FileSystem fs = FileSystem.get(job);
+
+        IndexFinder indexFinder = new IndexFinder(fs,getInputPaths(job)[0]);
+
+        List<Index> indexes = indexFinder.find();
+
+        List<Bucket> buckets = new ArrayList<Bucket>();
+        for(Index index : indexes) {
+            BucketFinder bucketFinder = new BucketFinder(fs,index);
+            buckets.addAll(bucketFinder.search());
+        }
+
         PathFinder finder = new HadoopPathFinder(fs);
+        List<SearchFilter> csvFilter = new ArrayList<SearchFilter>();
+        csvFilter.add(new ExtensionFilter(ExtensionFilter.Extension.CSV));
+        List<String> csvPaths = new ArrayList<String>();
+        for(Bucket bucket : buckets) {
+            csvPaths.addAll(finder.findPaths(bucket.getPath(),csvFilter));
+        }
 
         long currentOffset = 0;
 
         List<SearchFilter> filters = new ArrayList<SearchFilter>();
         filters.add(new ExtensionFilter(ExtensionFilter.Extension.CSV));
 
-        for(String p : finder.findPaths(getInputPaths(job)[0].toString(), filters))
+        for(String p : csvPaths)
         {
             FileStatus csvFile = fs.getFileStatus(new Path(p));
             List<CsvSplit> fileSplits = getSplitsForFile(csvFile, job, numSplits,currentOffset);

@@ -5,6 +5,7 @@ import com.yolodata.tbana.testutils.FileSystemTestUtils;
 import com.yolodata.tbana.testutils.FileTestUtils;
 import com.yolodata.tbana.testutils.HadoopFileTestUtils;
 import com.yolodata.tbana.testutils.TestUtils;
+import com.yolodata.tbana.util.search.ShuttlDirectoryTreeFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -22,11 +23,13 @@ import static org.junit.Assert.assertTrue;
 public class ShuttlCSVInputFormatTest {
 
     FileSystem fs;
+    private ShuttlDirectoryTreeFactory directoryTreeFactory;
 
     @Before
     public void setUp() throws IOException {
         fs = FileSystem.get(new Configuration());
         fs.delete(new Path(TestUtils.TEST_FILE_PATH),true);
+        directoryTreeFactory = new ShuttlDirectoryTreeFactory();
     }
 
     @After
@@ -57,7 +60,8 @@ public class ShuttlCSVInputFormatTest {
 
     @Test
     public void testReadingDirectory() throws Exception {
-        Path directory = FileSystemTestUtils.createEmptyDir(fs);
+        Path index = directoryTreeFactory.addIndex(directoryTreeFactory.getIndexerPaths().get(0),"Index1");
+        Path bucket = directoryTreeFactory.addBucket(index,"db_0_1_idx");
 
         String[] header = {"header", "_raw"};
 
@@ -75,15 +79,15 @@ public class ShuttlCSVInputFormatTest {
                 "\"mssAbiUnub\",\"NeYnIlDMdW\"";
 
         int [] offsets = new int [] {12,38,64,90,116};
-        Path file1 = HadoopFileTestUtils.createPath(directory.toString(),"file1.csv");
-        Path file2 = HadoopFileTestUtils.createPath(directory.toString(),"file2.csv");
+        Path file1 = HadoopFileTestUtils.createPath(bucket.toString(),"file1.csv");
+        Path file2 = HadoopFileTestUtils.createPath(bucket.toString(),"file2.csv");
 
         HadoopFileTestUtils.createFileWithContent(fs,file1,file1Content);
         HadoopFileTestUtils.createFileWithContent(fs,file2,file2Content);
 
 
         Path outputPath = new Path(FileTestUtils.getRandomTestFilepath());
-        assertTrue(runJob(new Configuration(), new String[] {directory.toString(),outputPath.toString()}));
+        assertTrue(runJob(new Configuration(), new String[] {directoryTreeFactory.getRoot().toString(),outputPath.toString()}));
 
         String expectedContent = "0\theader,_raw\n" +
                 "12\tImCESTvlhu,LOjZxHYGZy\n" +
@@ -108,11 +112,14 @@ public class ShuttlCSVInputFormatTest {
 
     private void runTestOnContent(String content, int[] offsets) throws Exception {
 
-        Path inputPath = new Path(FileTestUtils.getRandomTestFilepath("csv"));
+        Path index = directoryTreeFactory.addIndex(directoryTreeFactory.getIndexerPaths().get(0),"Index1");
+        Path bucket = directoryTreeFactory.addBucket(index,"db_0_1_idx");
+
+        Path inputPath = HadoopFileTestUtils.createPath(bucket.toString(),FileTestUtils.getRandomFilename("csv"));
         HadoopFileTestUtils.createFileWithContent(fs, inputPath, content);
 
         Path outputPath = new Path(FileTestUtils.getRandomTestFilepath());
-        assertTrue(runJob(new Configuration(), new String[] {inputPath.toString(),outputPath.toString()}));
+        assertTrue(runJob(new Configuration(), new String[] {directoryTreeFactory.getRoot().toString(),outputPath.toString()}));
 
         String result = HadoopFileTestUtils.readMapReduceOutputFile(fs,outputPath);
 

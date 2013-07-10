@@ -17,13 +17,14 @@ public class BucketTimestampFilterTest {
 
         FileSystem fileSystem = FileSystem.getLocal(new Configuration());
 
-        String [] buckets = {"db_0_3000","db_1500_1501","db_4000_5000","db_1500_3000", "db_1500_3000", "db_1000_2000"};
+        String [] buckets = {"db_0_3000_index","db_1500_1501_index","db_4000_5000_index","db_1500_3000_index", "db_1500_3000_index", "db_1000_2000_index"};
 
         Path testRoot = FileSystemTestUtils.createEmptyDir(fileSystem);
         List<Path> bucketPaths = FileSystemTestUtils.createDirectories(fileSystem,testRoot,buckets);
 
-        long earliest = 1000;
-        long latest = 2000;
+        long earliest = 2000;
+        long latest = 1000;
+
         SearchFilter filter = new BucketTimestampFilter(fileSystem,earliest,latest);
 
         assertEquals(true, filter.accept(bucketPaths.get(0).toString()));

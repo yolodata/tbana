@@ -1,7 +1,8 @@
 package com.yolodata.tbana.util.search.filter;
 
-import com.yolodata.tbana.hadoop.mapred.shuttl.bucket.Bucket;
+import com.splunk.shuttl.archiver.model.BucketName;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 
 import java.io.IOException;
 
@@ -21,12 +22,12 @@ public class BucketTimestampFilter extends BucketFilter {
         if(!super.accept(path))
             return false;
 
-        Bucket bucket = Bucket.create(path);
+        BucketName bucket = new BucketName((new Path(path)).getName());
 
         return bucketWithinTimeRange(bucket);
     }
 
-    private boolean bucketWithinTimeRange(Bucket bucket) {
+    private boolean bucketWithinTimeRange(BucketName bucket) {
 
         // Improve.me
         return intervalFitsInBucket(bucket) ||
@@ -36,24 +37,24 @@ public class BucketTimestampFilter extends BucketFilter {
 
     }
 
-    private boolean atLeastOneTimeStampIsEqual(Bucket bucket) {
-        return bucket.getStart() == earliest || bucket.getStart() == latest ||
-                bucket.getEnd() == earliest || bucket.getEnd() == latest;
+    private boolean atLeastOneTimeStampIsEqual(BucketName bucket) {
+        return bucket.getEarliest() == earliest || bucket.getEarliest() == latest ||
+                bucket.getLatest() == earliest || bucket.getLatest() == latest;
     }
 
-    private boolean partOfBucketFitsInInterval(Bucket bucket) {
-        return (bucket.getStart() > earliest && bucket.getStart() < latest) ||
-                (bucket.getEnd() > earliest && bucket.getEnd() < latest);
+    private boolean partOfBucketFitsInInterval(BucketName bucket) {
+        return (bucket.getEarliest() < earliest && bucket.getEarliest() > latest) ||
+                (bucket.getLatest() < earliest && bucket.getLatest() > latest);
     }
 
 
-    private boolean bucketFitsInInterval(Bucket bucket) {
-        return (earliest < bucket.getStart() && earliest < bucket.getEnd()) &&
-                (latest > bucket.getStart() && latest > bucket.getEnd());
+    private boolean bucketFitsInInterval(BucketName bucket) {
+        return (earliest > bucket.getEarliest() && earliest > bucket.getLatest()) &&
+                (latest < bucket.getEarliest() && latest < bucket.getLatest());
     }
 
-    private boolean intervalFitsInBucket(Bucket bucket) {
-        return (earliest > bucket.getStart() && earliest < bucket.getEnd()) &&
-                (latest > bucket.getStart() && latest < bucket.getEnd());
+    private boolean intervalFitsInBucket(BucketName bucket) {
+        return (earliest < bucket.getEarliest() && earliest > bucket.getLatest()) &&
+                (latest < bucket.getEarliest() && latest > bucket.getLatest());
     }
 }

@@ -1,13 +1,14 @@
 package com.yolodata.tbana.hadoop.mapred.shuttl.bucket;
 
+import com.splunk.shuttl.archiver.model.Bucket;
 import com.yolodata.tbana.cascading.splunk.SplunkSearch;
+import com.yolodata.tbana.hadoop.mapred.shuttl.index.Index;
 import com.yolodata.tbana.util.search.HadoopPathFinder;
 import com.yolodata.tbana.util.search.PathFinder;
 import com.yolodata.tbana.util.search.filter.BucketFilter;
 import com.yolodata.tbana.util.search.filter.BucketTimestampFilter;
 import com.yolodata.tbana.util.search.filter.SearchFilter;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -17,40 +18,39 @@ import java.util.List;
 public class BucketFinder {
 
     private FileSystem fileSystem;
-    private Path shuttlHome;
+    private Index index;
 
-    private List<SearchFilter> filters;
-
-    public BucketFinder(FileSystem fs, Path shuttlHome) {
+    public BucketFinder(FileSystem fs, Index index) {
         this.fileSystem = fs;
-        this.shuttlHome = shuttlHome;
-
-        filters = getDefaultBucketFilters();
+        this.index = index;
     }
 
-    private List<SearchFilter> getDefaultBucketFilters() {
-        List<SearchFilter> result = new ArrayList<SearchFilter>();
-
-        result.add(new BucketFilter(fileSystem));
-
-        return result;
+    public List<Bucket> search() throws IOException {
+        List<SearchFilter> filters = new ArrayList<SearchFilter>();
+        filters.add(new BucketFilter(fileSystem));
+        return search(filters);
     }
 
     public List<Bucket> search(SplunkSearch splunkSearch) throws ParseException, IOException {
 
-        List<Bucket> buckets = new ArrayList<Bucket>();
-
         long earliest = TimeParser.parse(splunkSearch.getEarliestTime());
         long latest = TimeParser.parse(splunkSearch.getLatestTime());
 
-        filters.clear();
+        List<SearchFilter> filters = new ArrayList<SearchFilter>();
         filters.add(new BucketTimestampFilter(fileSystem,earliest,latest));
 
+        return search(filters);
+    }
+
+    public List<Bucket> search(List<SearchFilter> filters) throws IOException {
+
+        List<Bucket> buckets = new ArrayList<Bucket>();
+
         PathFinder finder = new HadoopPathFinder(fileSystem);
-        List<String> bucketPaths = finder.findPaths(shuttlHome.toString(), filters);
+        List<String> bucketPaths = finder.findPaths(index.getPath(), filters);
 
         for(String bucketPath : bucketPaths) {
-            buckets.add(Bucket.create(bucketPath));
+            buckets.add(HadoopBucketFactory.createUsingPathToBucket(bucketPath,index));
         }
 
         return buckets;

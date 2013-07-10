@@ -8,7 +8,7 @@ import java.util.Properties;
 
 public class TestConfigurations {
 
-    public static final String query = "search * sourcetype=\"mock\" | head 5 | table _raw";
+    public static final String query = "search * sourcetype=\"mock\" | head 5";
     public static final String earliest_time = "-12mon";
     public static final String latest_time = "now";
 

@@ -20,6 +20,10 @@ public class ShuttlCsv extends TextLine {
 
     private SplunkDataQuery splunkDataQuery;
 
+    public ShuttlCsv() {
+        this.splunkDataQuery = new SplunkDataQuery();
+    }
+
     public ShuttlCsv(SplunkDataQuery splunkDataQuery){
         super();
         this.splunkDataQuery= splunkDataQuery;

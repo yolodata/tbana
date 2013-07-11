@@ -29,32 +29,11 @@ public class BucketTimestampFilter extends BucketFilter {
 
     private boolean bucketWithinTimeRange(BucketName bucket) {
 
-        // Improve.me
-        return intervalFitsInBucket(bucket) ||
-                bucketFitsInInterval(bucket) ||
-                partOfBucketFitsInInterval(bucket) ||
-                atLeastOneTimeStampIsEqual(bucket);
+        if(bucket.getLatest() > earliest)
+            return false;
+        if (bucket.getEarliest() < latest)
+            return false;
 
-    }
-
-    private boolean atLeastOneTimeStampIsEqual(BucketName bucket) {
-        return bucket.getEarliest() == earliest || bucket.getEarliest() == latest ||
-                bucket.getLatest() == earliest || bucket.getLatest() == latest;
-    }
-
-    private boolean partOfBucketFitsInInterval(BucketName bucket) {
-        return (bucket.getEarliest() < earliest && bucket.getEarliest() > latest) ||
-                (bucket.getLatest() < earliest && bucket.getLatest() > latest);
-    }
-
-
-    private boolean bucketFitsInInterval(BucketName bucket) {
-        return (earliest > bucket.getEarliest() && earliest > bucket.getLatest()) &&
-                (latest < bucket.getEarliest() && latest < bucket.getLatest());
-    }
-
-    private boolean intervalFitsInBucket(BucketName bucket) {
-        return (earliest < bucket.getEarliest() && earliest > bucket.getLatest()) &&
-                (latest < bucket.getEarliest() && latest > bucket.getLatest());
+        return true;
     }
 }

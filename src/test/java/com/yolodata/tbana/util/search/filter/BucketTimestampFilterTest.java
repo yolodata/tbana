@@ -25,7 +25,7 @@ public class BucketTimestampFilterTest {
         long earliest = 2000;
         long latest = 1000;
 
-        SearchFilter filter = new BucketTimestampFilter(fileSystem,earliest,latest);
+        BucketTimestampFilter filter = new BucketTimestampFilter(fileSystem,earliest,latest);
 
         assertEquals(true, filter.accept(bucketPaths.get(0).toString()));
         assertEquals(true, filter.accept(bucketPaths.get(1).toString()));

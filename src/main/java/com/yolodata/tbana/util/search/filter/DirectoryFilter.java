@@ -17,7 +17,11 @@ public class DirectoryFilter implements SearchFilter {
 
     @Override
     public boolean accept(String path) throws IOException {
-        FileStatus status = fileSystem.getFileStatus(new Path(path));
+        return accept(new Path(path));
+    }
+
+    public boolean accept(Path path) throws IOException {
+        FileStatus status = fileSystem.getFileStatus(path);
 
         return status.isDir();
     }

@@ -29,9 +29,9 @@ public class BucketTimestampFilter extends BucketFilter {
 
     private boolean bucketWithinTimeRange(BucketName bucket) {
 
-        if(bucket.getLatest() > earliest)
+        if(bucket.getLatest() < earliest)
             return false;
-        if (bucket.getEarliest() < latest)
+        if (bucket.getEarliest() > latest)
             return false;
 
         return true;

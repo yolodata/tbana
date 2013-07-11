@@ -34,7 +34,7 @@ public class ShuttlCsvTest extends CascadingTestCase {
     public void testShuttlDirectory() throws IOException, InstantiationException, IllegalAccessException {
         ShuttlDirectoryTreeFactory directoryTreeFactory = new ShuttlDirectoryTreeFactory();
         Path index = directoryTreeFactory.addIndex(directoryTreeFactory.getIndexerPaths().get(0),"Index1");
-        Path bucket = directoryTreeFactory.addBucket(index,"db_0_1_idx");
+        Path bucket = directoryTreeFactory.addBucket(index,"db_1_0_idx");
 
         String[] header = {"header", "_raw"};
 

@@ -37,8 +37,8 @@ public class BucketFinderTest {
     @Test
     public void testGetBucketsByTimeRange() throws Exception {
 
-        String earliestTime = "1970-01-01 00:00:10";
-        String latestTime = "1970-01-01 00:00:00";
+        String earliestTime = "1970-01-01 00:00:00";
+        String latestTime = "1970-01-01 00:00:10";
 
         Index index = new Index(root.toString(),root.getName());
         BucketFinder bucketFinder = new BucketFinder(fs, index);

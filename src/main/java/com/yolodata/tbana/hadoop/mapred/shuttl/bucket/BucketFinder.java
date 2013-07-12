@@ -3,7 +3,6 @@ package com.yolodata.tbana.hadoop.mapred.shuttl.bucket;
 import com.splunk.shuttl.archiver.model.Bucket;
 import com.yolodata.tbana.cascading.splunk.SplunkDataQuery;
 import com.yolodata.tbana.hadoop.mapred.shuttl.index.Index;
-import org.apache.hadoop.fs.FileSystem;
 import com.yolodata.tbana.util.search.HadoopPathFinder;
 import com.yolodata.tbana.util.search.PathFinder;
 import com.yolodata.tbana.util.search.filter.BucketFilter;
@@ -12,23 +11,31 @@ import com.yolodata.tbana.util.search.filter.SearchFilter;
 import org.apache.hadoop.fs.FileSystem;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class BucketFinder {
 
     private FileSystem fileSystem;
-    private Index index;
+    private List<Index> indexes;
     private int maxResults;
 
     public BucketFinder(FileSystem fs, Index index) {
         this(fs,index,0);
     }
 
-    public BucketFinder(FileSystem fs, Index index,int maxResults) {
+    public BucketFinder(FileSystem fs, Index index, int maxResults) {
+        this(fs, Arrays.asList(index),maxResults);
+    }
+
+    public BucketFinder(FileSystem fs, List<Index> indexes) {
+        this(fs,indexes,0);
+    }
+
+    public BucketFinder(FileSystem fs, List<Index> indexes, int maxResults) {
         this.fileSystem = fs;
-        this.index = index;
+        this.indexes = indexes;
         this.maxResults = maxResults;
     }
 
@@ -54,12 +61,16 @@ public class BucketFinder {
         List<Bucket> buckets = new ArrayList<Bucket>();
 
         PathFinder finder = new HadoopPathFinder(fileSystem,maxResults);
-        List<String> bucketPaths = finder.findPaths(index.getPath(), filters);
 
-        for(String bucketPath : bucketPaths) {
-            buckets.add(HadoopBucketFactory.createUsingPathToBucket(bucketPath, index));
+        for(Index index : indexes) {
+            List<String> bucketPaths = finder.findPaths(index.getPath(), filters);
+
+            for(String bucketPath : bucketPaths) {
+                if(maxResults > 0 && buckets.size()-maxResults == 0)
+                    return buckets;
+                buckets.add(HadoopBucketFactory.createUsingPathToBucket(bucketPath, index));
+            }
         }
-
         return buckets;
     }
 }

@@ -77,7 +77,7 @@ public class SplunkTap extends Tap<JobConf, RecordReader, OutputCollector> {
     }
 
     public void setConfKey(JobConf conf, String key) {
-        String value = splunkLogin.getProperty(SplunkConf.SPLUNK_USERNAME, null);
+        String value = splunkLogin.getProperty(key, null);
         if(value != null)
             conf.set(key, value);
     }

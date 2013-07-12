@@ -31,6 +31,7 @@ import org.junit.Test;
 
 import java.util.Properties;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 public class SplunkTapTest {
@@ -61,5 +62,26 @@ public class SplunkTapTest {
         FlowProcess flowProcess = mock(FlowProcess.class);
 
         tap.sourceConfInit(flowProcess, new JobConf());
+    }
+
+    @Test
+    public void testSetConfKey() {
+
+        String key = "Some.Unique.key";
+        String value = "SomeValue";
+
+        Properties propsWithKey = new Properties();
+        propsWithKey.put(key, value);
+
+        SplunkTap tap = new SplunkTap(propsWithKey,inputScheme);
+        JobConf conf = new JobConf();
+
+
+        assertEquals(null, conf.get(key));
+        tap.setConfKey(conf,key);
+        assertEquals(value, conf.get(key));
+
+
+
     }
 }

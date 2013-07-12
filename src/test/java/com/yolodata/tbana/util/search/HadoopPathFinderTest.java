@@ -1,10 +1,10 @@
 package com.yolodata.tbana.util.search;
 
 import com.yolodata.tbana.testutils.FileSystemTestUtils;
-import com.yolodata.tbana.util.search.filter.ExtensionFilter;
-import com.yolodata.tbana.util.search.filter.SearchFilter;
 import com.yolodata.tbana.testutils.FileTestUtils;
 import com.yolodata.tbana.testutils.HadoopFileTestUtils;
+import com.yolodata.tbana.util.search.filter.ExtensionFilter;
+import com.yolodata.tbana.util.search.filter.SearchFilter;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.LocalFileSystem;
@@ -17,7 +17,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 public class HadoopPathFinderTest {
 

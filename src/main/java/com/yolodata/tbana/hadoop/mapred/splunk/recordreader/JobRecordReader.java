@@ -1,7 +1,6 @@
 package com.yolodata.tbana.hadoop.mapred.splunk.recordreader;
 
 import com.splunk.JobResultsArgs;
-import com.splunk.Service;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkJob;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkService;
@@ -11,7 +10,6 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.InputSplit;
-import org.apache.hadoop.mapred.JobConf;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

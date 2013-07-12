@@ -1,7 +1,6 @@
 package com.yolodata.tbana.hadoop.mapred.splunk;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.mapred.JobConf;
 
 public class SplunkConf {
     public static final String SPLUNK_USERNAME = "splunk.username";

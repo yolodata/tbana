@@ -1,11 +1,11 @@
 package com.yolodata.tbana.hadoop.mapred.csv;
 
 import com.yolodata.tbana.testutils.HadoopFileTestUtils;
-import com.yolodata.tbana.testutils.TestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.fs.*;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
@@ -16,7 +16,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.List;
 
 public class CSVInputFormatTest {

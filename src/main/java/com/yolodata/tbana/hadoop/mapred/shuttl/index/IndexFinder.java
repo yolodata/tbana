@@ -1,7 +1,6 @@
 package com.yolodata.tbana.hadoop.mapred.shuttl.index;
 
 import com.yolodata.tbana.util.search.HadoopPathFinder;
-import com.yolodata.tbana.util.search.filter.BucketFilter;
 import com.yolodata.tbana.util.search.filter.DirectoryFilter;
 import com.yolodata.tbana.util.search.filter.NameFilter;
 import com.yolodata.tbana.util.search.filter.SearchFilter;
@@ -10,9 +9,7 @@ import org.apache.hadoop.fs.Path;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class IndexFinder {
     private FileSystem fileSystem;

@@ -1,9 +1,6 @@
 package com.yolodata.tbana.hadoop.mapred;
 
-import com.yolodata.tbana.hadoop.mapred.shuttl.CsvSplit;
-import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.InputSplit;
-import org.junit.Test;
 
 import java.io.*;
 

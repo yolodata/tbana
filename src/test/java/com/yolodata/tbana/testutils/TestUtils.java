@@ -1,16 +1,10 @@
 package com.yolodata.tbana.testutils;
 
 import com.yolodata.tbana.hadoop.mapred.util.CSVReader;
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.hadoop.fs.FSDataOutputStream;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
-import org.apache.tools.ant.util.FileUtils;
 
-import java.io.*;
-import java.net.URI;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 

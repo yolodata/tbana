@@ -1,18 +1,11 @@
 package com.yolodata.tbana.hadoop.mapred.shuttl;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.splunk.shuttl.archiver.model.Bucket;
 import com.yolodata.tbana.cascading.splunk.SplunkDataQuery;
 import com.yolodata.tbana.cascading.splunk.SplunkDataQueryFactory;
 import com.yolodata.tbana.hadoop.mapred.shuttl.bucket.BucketFinder;
 import com.yolodata.tbana.hadoop.mapred.shuttl.index.Index;
 import com.yolodata.tbana.hadoop.mapred.shuttl.index.IndexFinder;
-import com.yolodata.tbana.hadoop.mapred.util.CSVReader;
 import com.yolodata.tbana.util.search.HadoopPathFinder;
 import com.yolodata.tbana.util.search.PathFinder;
 import com.yolodata.tbana.util.search.filter.ExtensionFilter;
@@ -23,12 +16,11 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.FileInputFormat;
-import org.apache.hadoop.mapred.FileSplit;
-import org.apache.hadoop.mapred.InputSplit;
-import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.mapred.RecordReader;
-import org.apache.hadoop.mapred.Reporter;
+import org.apache.hadoop.mapred.*;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ShuttlCSVInputFormat extends FileInputFormat<LongWritable, List<Text>> {
 

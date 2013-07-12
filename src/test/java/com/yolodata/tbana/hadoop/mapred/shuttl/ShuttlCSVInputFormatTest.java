@@ -1,7 +1,6 @@
 package com.yolodata.tbana.hadoop.mapred.shuttl;
 
 import com.yolodata.tbana.hadoop.mapred.FileContentProvider;
-import com.yolodata.tbana.testutils.FileSystemTestUtils;
 import com.yolodata.tbana.testutils.FileTestUtils;
 import com.yolodata.tbana.testutils.HadoopFileTestUtils;
 import com.yolodata.tbana.testutils.TestUtils;

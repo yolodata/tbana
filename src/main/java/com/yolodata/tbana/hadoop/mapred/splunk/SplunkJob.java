@@ -4,7 +4,6 @@ import com.splunk.Job;
 import com.splunk.JobArgs;
 import com.splunk.JobResultsArgs;
 import com.splunk.Service;
-import com.yolodata.tbana.hadoop.mapred.splunk.recordreader.JobRecordReader;
 import org.apache.hadoop.conf.Configuration;
 
 import java.io.BufferedReader;

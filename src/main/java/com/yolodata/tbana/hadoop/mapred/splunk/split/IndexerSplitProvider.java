@@ -5,7 +5,6 @@ import com.yolodata.tbana.hadoop.mapred.splunk.SplunkJob;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkService;
 import com.yolodata.tbana.hadoop.mapred.splunk.indexer.Indexer;
 import com.yolodata.tbana.hadoop.mapred.splunk.indexer.IndexerProvider;
-import com.yolodata.tbana.hadoop.mapred.splunk.recordreader.JobRecordReader;
 import org.apache.hadoop.mapred.InputSplit;
 import org.apache.hadoop.mapred.JobConf;
 

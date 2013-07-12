@@ -1,8 +1,8 @@
 package com.yolodata.tbana.hadoop.mapred;
 
+import com.yolodata.tbana.hadoop.mapred.util.CSVReader;
 import com.yolodata.tbana.testutils.FileTestUtils;
 import com.yolodata.tbana.testutils.TestUtils;
-import com.yolodata.tbana.hadoop.mapred.util.CSVReader;
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.io.Text;
 import org.junit.After;

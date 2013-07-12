@@ -2,12 +2,12 @@ package com.yolodata.tbana.hadoop.mapred.splunk.recordreader;
 
 import com.google.common.collect.Lists;
 import com.splunk.Service;
-import com.yolodata.tbana.testutils.TestConfigurations;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkInputFormat;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkJob;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkService;
 import com.yolodata.tbana.hadoop.mapred.splunk.split.SplunkSplit;
 import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;
+import com.yolodata.tbana.testutils.TestConfigurations;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;

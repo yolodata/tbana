@@ -24,7 +24,6 @@ import cascading.flow.FlowProcess;
 import cascading.tap.Tap;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConfigurationException;
 import com.yolodata.tbana.testutils.TestConfigurations;
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapred.JobConf;
 import org.junit.Before;
 import org.junit.Test;
@@ -80,8 +79,5 @@ public class SplunkTapTest {
         assertEquals(null, conf.get(key));
         tap.setConfKey(conf,key);
         assertEquals(value, conf.get(key));
-
-
-
     }
 }

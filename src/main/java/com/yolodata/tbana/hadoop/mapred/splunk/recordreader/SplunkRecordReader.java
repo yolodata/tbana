@@ -1,24 +1,22 @@
 package com.yolodata.tbana.hadoop.mapred.splunk.recordreader;
 
 
+import com.splunk.Service;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkService;
+import com.yolodata.tbana.hadoop.mapred.splunk.split.SplunkSplit;
 import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;
 import com.yolodata.tbana.hadoop.mapred.util.CSVReader;
-import com.yolodata.tbana.hadoop.mapred.splunk.split.SplunkSplit;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.InputSplit;
-import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.RecordReader;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
-
-import com.splunk.*;
 
 public abstract class SplunkRecordReader implements RecordReader<LongWritable, List<Text>> {
 

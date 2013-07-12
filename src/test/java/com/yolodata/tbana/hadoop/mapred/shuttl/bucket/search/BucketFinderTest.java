@@ -46,4 +46,13 @@ public class BucketFinderTest {
 
         assertEquals(1, buckets.size());
     }
+
+    @Test
+    public void testGetBucketsWithMaxResults() throws Exception {
+        Index index = new Index(root.toString(),root.getName());
+        BucketFinder bucketFinder = new BucketFinder(fs, index, 1);
+        List<Bucket> buckets = bucketFinder.search(new SplunkDataQuery());
+
+        assertEquals(1, buckets.size());
+    }
 }

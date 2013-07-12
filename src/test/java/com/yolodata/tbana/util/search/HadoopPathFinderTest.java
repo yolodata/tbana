@@ -17,6 +17,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class HadoopPathFinderTest {
 
@@ -57,8 +58,14 @@ public class HadoopPathFinderTest {
     }
 
     @Test
-    public void testRecursiveFindPathsWithStopCriteria() throws Exception {
+    public void testFindPathsWithMaxResultsParameter() throws Exception {
+        String [] filesToCreate = new String[] {"file.csv","file.tsv","file.ext"};
 
+        Path directory = FileSystemTestUtils.createDirectoryWithEmptyFiles(fileSystem,filesToCreate);
+        HadoopPathFinder finderWithMaxResults = new HadoopPathFinder(fileSystem,2);
 
+        List<String> paths = finderWithMaxResults.findPaths(directory.toString());
+
+        assertEquals(2, paths.size());
     }
 }

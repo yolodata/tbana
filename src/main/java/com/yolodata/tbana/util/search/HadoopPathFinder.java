@@ -12,9 +12,15 @@ import java.util.List;
 public class HadoopPathFinder implements PathFinder {
 
     private FileSystem fileSystem;
+    private int maxResults;
 
     public HadoopPathFinder(FileSystem fs) {
+        this(fs,0);
+    }
+
+    public HadoopPathFinder(FileSystem fs,int maxResults) {
         this.fileSystem = fs;
+        this.maxResults = maxResults;
     }
 
     @Override
@@ -32,6 +38,9 @@ public class HadoopPathFinder implements PathFinder {
             result.addAll(findAllPathsInDir(path.getPath(), filters));
         else if(pathPassesFilters(path,filters))
             result.add(rootPath);
+
+        if(maxResults>0 && maxResults-result.size() <= 0)
+            return result.subList(0,maxResults);
 
         return result;
     }

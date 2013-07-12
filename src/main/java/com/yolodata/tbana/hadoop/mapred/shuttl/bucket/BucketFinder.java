@@ -20,10 +20,16 @@ public class BucketFinder {
 
     private FileSystem fileSystem;
     private Index index;
+    private int maxResults;
 
     public BucketFinder(FileSystem fs, Index index) {
+        this(fs,index,0);
+    }
+
+    public BucketFinder(FileSystem fs, Index index,int maxResults) {
         this.fileSystem = fs;
         this.index = index;
+        this.maxResults = maxResults;
     }
 
     public List<Bucket> search() throws IOException {
@@ -47,7 +53,7 @@ public class BucketFinder {
 
         List<Bucket> buckets = new ArrayList<Bucket>();
 
-        PathFinder finder = new HadoopPathFinder(fileSystem);
+        PathFinder finder = new HadoopPathFinder(fileSystem,maxResults);
         List<String> bucketPaths = finder.findPaths(index.getPath(), filters);
 
         for(String bucketPath : bucketPaths) {

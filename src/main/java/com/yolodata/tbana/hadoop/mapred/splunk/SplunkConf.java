@@ -41,8 +41,3 @@ public class SplunkConf {
     }
 }
 
-class SplunkConfigurationException extends RuntimeException {
-    public SplunkConfigurationException(String message) {
-        super(message);
-    }
-}

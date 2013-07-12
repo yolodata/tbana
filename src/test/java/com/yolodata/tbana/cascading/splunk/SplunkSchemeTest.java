@@ -46,11 +46,11 @@ public class SplunkSchemeTest extends CascadingTestCase {
         SplunkScheme inputScheme = new SplunkScheme(TestConfigurations.getSplunkSearch());
         TextLine outputScheme = new TextLine();
 
-        SplunkTap input = new SplunkTap(inputScheme);
+        SplunkTap input = new SplunkTap(properties,inputScheme);
         Hfs output = new Hfs( outputScheme, outputPath + "/quoted/" + path, SinkMode.REPLACE );
 
         Pipe pipe = new Pipe( "test" );
-        Flow flow = new HadoopFlowConnector( properties ).connect( input, output, pipe );
+        Flow flow = new HadoopFlowConnector().connect( input, output, pipe );
 
         flow.complete();
 

@@ -20,21 +20,46 @@
 
 package com.yolodata.tbana.cascading.splunk;
 
+import cascading.flow.FlowProcess;
 import cascading.tap.Tap;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConfigurationException;
 import com.yolodata.tbana.testutils.TestConfigurations;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.mapred.JobConf;
+import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Properties;
+
+import static org.mockito.Mockito.mock;
 
 public class SplunkTapTest {
 
-    @Test
-    public void testConstructors()
-    {
-        SplunkScheme inputScheme = new SplunkScheme(TestConfigurations.getSplunkSearch());
+    private SplunkScheme inputScheme;
+    private Properties properties;
 
-        Tap tap = new SplunkTap(inputScheme);
-
-
+    @Before
+    public void setUp() throws Exception {
+        inputScheme = new SplunkScheme(TestConfigurations.getSplunkSearch());
+        properties = TestConfigurations.getSplunkLoginAsProperties();
     }
 
+    @Test
+    public void testSplunkTap()
+    {
+        Tap tap = new SplunkTap(properties, inputScheme);
+        FlowProcess flowProcess = mock(FlowProcess.class);
 
+        tap.sourceConfInit(flowProcess, new JobConf());
+    }
+
+    @Test(expected=SplunkConfigurationException.class)
+    public void testSplunkTapWithInvalidConfig() throws Exception {
+        Properties emptyProperties = new Properties();
+
+        Tap tap = new SplunkTap(emptyProperties, inputScheme);
+        FlowProcess flowProcess = mock(FlowProcess.class);
+
+        tap.sourceConfInit(flowProcess, new JobConf());
+    }
 }

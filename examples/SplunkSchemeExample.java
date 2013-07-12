@@ -26,13 +26,13 @@ public class SplunkSchemeExample {
 
         SplunkDataQuery splunkSearch = new SplunkDataQuery("-12m","now");
         SplunkScheme inputScheme = new SplunkScheme(splunkSearch);
-        SplunkTap input = new SplunkTap(inputScheme);
+        SplunkTap input = new SplunkTap(properties,inputScheme);
 
         TextLine outputScheme = new TextLine();
         Hfs output = new Hfs( outputScheme, PATH_TO_OUTPUT, SinkMode.REPLACE );
 
         Pipe pipe = new Pipe( "test" );
-        Flow flow = new HadoopFlowConnector( properties ).connect( input, output, pipe );
+        Flow flow = new HadoopFlowConnector().connect( input, output, pipe );
 
         flow.complete();
     }

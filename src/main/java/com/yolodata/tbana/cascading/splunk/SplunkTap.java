@@ -33,7 +33,7 @@ public class SplunkTap extends Tap<JobConf, RecordReader, OutputCollector> {
 
     @Override
     public TupleEntryCollector openForWrite(FlowProcess<JobConf> flowProcess, OutputCollector outputCollector) throws IOException {
-        throw new NotImplementedException("Write to Splunk not yet implemented");
+        throw new NotImplementedException("Write to Splunk not implemented");
     }
 
     @Override

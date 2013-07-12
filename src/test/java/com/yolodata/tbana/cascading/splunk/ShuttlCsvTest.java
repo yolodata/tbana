@@ -7,7 +7,6 @@ import cascading.pipe.Pipe;
 import cascading.scheme.hadoop.TextLine;
 import cascading.tap.SinkMode;
 import cascading.tap.hadoop.Hfs;
-import com.yolodata.tbana.testutils.FileSystemTestUtils;
 import com.yolodata.tbana.testutils.FileTestUtils;
 import com.yolodata.tbana.testutils.HadoopFileTestUtils;
 import com.yolodata.tbana.testutils.TestUtils;
@@ -33,6 +32,7 @@ public class ShuttlCsvTest extends CascadingTestCase {
     @Test
     public void testShuttlDirectory() throws IOException, InstantiationException, IllegalAccessException {
         ShuttlDirectoryTreeFactory directoryTreeFactory = new ShuttlDirectoryTreeFactory();
+
         Path index = directoryTreeFactory.addIndex(directoryTreeFactory.getIndexerPaths().get(0),"Index1");
         Path bucket = directoryTreeFactory.addBucket(index,"db_1_0_idx");
 
@@ -59,17 +59,17 @@ public class ShuttlCsvTest extends CascadingTestCase {
         Path outputPath = new Path(FileTestUtils.getRandomTestFilepath());
         runCascadingJob(directoryTreeFactory.getRoot(),outputPath);
 
-        String expectedContent = "0\t[header, _raw]\n" +
-                "12\t[ImCESTvlhu, LOjZxHYGZy]\n" +
-                "38\t[kqYkcFhbSB, RRLjuHCHze]\n" +
-                "64\t[kmeEaOcKTx, mvIPrMSOSS]\n" +
-                "90\t[lzzPLYFGFU, sGHTPVsYlF]\n" +
-                "116\t[zpUxVlTaAq, ysoUYuyZKO]\n" +
-                "153\t[fkBkKfCkuT, BRlSkqHmHe]\n" +
-                "179\t[dWDJViEuot, LcdkTQBLmu]\n" +
-                "205\t[ovQoDFATdn, YewByxPXqN]\n" +
-                "231\t[tKBxjsSZmV, luuOivALWj]\n" +
-                "257\t[mssAbiUnub, NeYnIlDMdW]\n";
+        String expectedContent = "0\theader\t_raw\n" +
+                "12\tImCESTvlhu\tLOjZxHYGZy\n" +
+                "38\tkqYkcFhbSB\tRRLjuHCHze\n" +
+                "64\tkmeEaOcKTx\tmvIPrMSOSS\n" +
+                "90\tlzzPLYFGFU\tsGHTPVsYlF\n" +
+                "116\tzpUxVlTaAq\tysoUYuyZKO\n" +
+                "153\tfkBkKfCkuT\tBRlSkqHmHe\n" +
+                "179\tdWDJViEuot\tLcdkTQBLmu\n" +
+                "205\tovQoDFATdn\tYewByxPXqN\n" +
+                "231\ttKBxjsSZmV\tluuOivALWj\n" +
+                "257\tmssAbiUnub\tNeYnIlDMdW\n";
 
         String actualResults = HadoopFileTestUtils.readMapReduceOutputFile(fs,outputPath);
 

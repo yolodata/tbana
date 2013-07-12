@@ -13,7 +13,7 @@ import java.util.Properties;
 
 public class SplunkSchemeExample {
 
-    private static final String PATH_TO_OUTPUT = "output/splunk-scheme-example";
+    private static final String PATH_TO_OUTPUT = "examples/output/splunk-scheme-example";
 
     public static void main(String [] args) {
 

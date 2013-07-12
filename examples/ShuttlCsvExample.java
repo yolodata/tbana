@@ -9,8 +9,8 @@ import java.util.Properties;
 
 public class ShuttlCsvExample {
 
-    private static final String PATH_TO_SHUTTL_ARCHIVE = "shuttl";
-    private static final String PATH_TO_OUTPUT = "output/shuttl-example";
+    private static final String PATH_TO_SHUTTL_ARCHIVE = "examples/shuttl";
+    private static final String PATH_TO_OUTPUT = "examples/output/shuttl-example";
 
     public static void main(String [] args) {
 

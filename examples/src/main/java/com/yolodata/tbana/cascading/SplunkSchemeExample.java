@@ -1,3 +1,5 @@
+package com.yolodata.tbana.cascading;
+
 import cascading.flow.Flow;
 import cascading.flow.hadoop.HadoopFlowConnector;
 import cascading.pipe.Pipe;

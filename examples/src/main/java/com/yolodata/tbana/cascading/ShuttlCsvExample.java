@@ -1,3 +1,5 @@
+package com.yolodata.tbana.cascading;
+
 import cascading.flow.Flow;
 import cascading.flow.hadoop.HadoopFlowConnector;
 import cascading.pipe.Pipe;
@@ -9,7 +11,7 @@ import java.util.Properties;
 
 public class ShuttlCsvExample {
 
-    private static final String PATH_TO_SHUTTL_ARCHIVE = "examples/shuttl";
+    private static final String PATH_TO_SHUTTL_ARCHIVE = "examples/resources/shuttl";
     private static final String PATH_TO_OUTPUT = "examples/output/shuttl-example";
 
     public static void main(String [] args) {

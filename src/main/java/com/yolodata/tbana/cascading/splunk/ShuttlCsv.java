@@ -106,7 +106,7 @@ public class ShuttlCsv extends TextLine {
             FileSystem fileSystem = FileSystem.get(conf);
             IndexFinder indexFinder = new IndexFinder(fileSystem,new Path(path));
             List<Index> indexList = indexFinder.find(splunkDataQuery.getIndexes());
-            List<Bucket> bucketList = (new BucketFinder(fileSystem,indexList.get(0))).search(splunkDataQuery);
+            List<Bucket> bucketList = (new BucketFinder(fileSystem,indexList,1)).search(splunkDataQuery);
             List<String> pathFinder = (new HadoopPathFinder(fileSystem)).findPaths(bucketList.get(0).getPath(), Arrays.asList((SearchFilter) (new ExtensionFilter("csv"))));
             FSDataInputStream in = fileSystem.open(new Path(pathFinder.get(0)));
 

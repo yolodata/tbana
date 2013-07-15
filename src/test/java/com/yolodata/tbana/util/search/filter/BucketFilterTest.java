@@ -1,46 +1,44 @@
 package com.yolodata.tbana.util.search.filter;
 
-import com.yolodata.tbana.testutils.FileSystemTestUtils;
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class BucketFilterTest {
 
     private FileSystem fileSystem;
-    private Path testRoot;
 
     @Before
     public void setUp() throws Exception {
-        fileSystem = FileSystem.getLocal(new Configuration());
-        testRoot = FileSystemTestUtils.createEmptyDir(fileSystem);
+        fileSystem = mock(FileSystem.class);
     }
 
     @Test
     public void testFilterCorrectBucketFormat() throws Exception {
+        Path bucket = new Path("path/to/bucket/db_1000_900_0");
 
-        String [] bucketNames = {"db_1000_2000_index"};
-        List<Path> bucketPaths = FileSystemTestUtils.createDirectories(fileSystem, testRoot, bucketNames);
+        BucketFilter bucketFilter = new BucketFilter(fileSystem);
+        SearchFilter dependency = mock(SearchFilter.class);
+        when(dependency.accept(anyString())).thenReturn(true);
 
-        SearchFilter bucketFilter = new BucketFilter(fileSystem);
-
-        assertEquals(true, bucketFilter.accept(bucketPaths.get(0).toString()));
+        assertEquals(true, bucketFilter.accept(bucket, dependency));
     }
 
     @Test
     public void testFilterBadlyFormattedBuckets() throws Exception {
-        String [] bucketNames = {"db_a_b"};
-        List<Path> bucketPaths = FileSystemTestUtils.createDirectories(fileSystem, testRoot, bucketNames);
+        Path badBucket = new Path("path/to/bucket/db_a_b");
 
-        SearchFilter bucketFilter = new BucketFilter(fileSystem);
+        BucketFilter bucketFilter = new BucketFilter(fileSystem);
+        SearchFilter dependency = mock(SearchFilter.class);
+        when(dependency.accept(anyString())).thenReturn(true);
 
-        assertEquals(false, bucketFilter.accept(bucketPaths.get(0).toString()));
+        assertEquals(false, bucketFilter.accept(badBucket,dependency));
     }
 
 

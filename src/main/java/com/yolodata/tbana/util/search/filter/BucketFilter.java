@@ -18,11 +18,14 @@ public class BucketFilter implements SearchFilter {
     @Override
     public boolean accept(String path) throws IOException {
         DirectoryFilter directoryFilter = new DirectoryFilter(fileSystem);
-        if(!directoryFilter.accept(path))
+        return accept(new Path(path), directoryFilter);
+    }
+
+    public boolean accept(Path path, SearchFilter dependency) throws IOException {
+        if(!dependency.accept(path.toString()))
             return false;
 
-        String bucketName = (new Path(path)).getName();
-        return validateBucketName(bucketName);
+        return validateBucketName(path.getName());
     }
 
     private boolean validateBucketName(String bucketName) {

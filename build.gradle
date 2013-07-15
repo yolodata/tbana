@@ -7,6 +7,8 @@ repositories {
     mavenLocal()
     mavenCentral()
 
+    mavenRepo name: 'Spray repo', url: 'http://repo.spray.io/'
+    mavenRepo name: 'akka', url: 'http://repo.akka.io/releases/'
     mavenRepo name: 'conjars', url: 'http://conjars.org/repo/'
     mavenRepo name: 'ext-release-local', url: 'http://splunk.artifactoryonline.com/splunk/ext-releases-local'
 }
@@ -32,6 +34,7 @@ sourceSets {
 
 dependencies {
     compile 'org.scala-lang:scala-library:2.9.3'
+    compile 'org.scala-lang:scala-compiler:2.9.3'
     testCompile 'org.scalatest:scalatest_2.9.3:1.9.1'
 
     compile 'org.spark-project:spark-core_2.9.3:0.7.2'

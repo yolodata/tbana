@@ -20,7 +20,7 @@ buildscript { //Adds splunk to gradle path
     splunkClusterDir.mkdirs()
 
 }
-def instances= ['master']//, 'slave1', 'slave2', 'slave3']
+def instances= ['master']//, 'slave1', 'slave2']//, 'slave3']
 ext.splunkAuth= "-auth admin:changeIt"
 
 task setUpCluster(dependsOn: ['getIp','copyAll']) << {
@@ -45,6 +45,12 @@ task setUpCluster(dependsOn: ['getIp','copyAll']) << {
     pushDataToSplunk(9050, 5)
 }
 
+setUpCluster.onlyIf{
+    return tasks.copyAll.didWork
+}
+
+test.dependsOn setUpCluster
+
 task getIp(type:Exec){
 
     commandLine 'sh', '-c', / ifconfig -a | perl -ne 'if ( m\/^\s*inet (?:addr:)?([\d.]+).*?cast\/ ) { print qq($1); exit 0; }'/
@@ -55,47 +61,37 @@ task getIp(type:Exec){
     }
 }
 
-task copyAll(dependsOn: ['extractSplunk', 'cleanSplunkInstallations']) << {
-    def filesToCopy = copySpec {
-        from splunkDir
+task copyAll(dependsOn: ['extractSplunk']) {
+    onlyIf {
+        return getCurrentSplunks().size() == 0
     }
 
-    instances.each { dest ->
-        copy {
-            with filesToCopy
-            into "$splunkClusterDir/$dest"
+    doLast {
+        def filesToCopy = copySpec {
+            from splunkDir
+        }
+
+        instances.each { dest ->
+            copy {
+                with filesToCopy
+                into "$splunkClusterDir/$dest"
+            }
         }
     }
 }
 
-task extractSplunk << {
+task extractSplunk {
 
-    if(splunkDir.exists())
-        return
-    else{
+    def dest= new File(buildCache, 'splunk')
+    outputs.dir dest
+
+    doLast {
         def tarPath= 'splunk_tgz/splunk*.tgz'
         def proc= ['sh', '-c', "tar xf $tarPath -C $buildCache.path"].execute()
         proc.consumeProcessOutput(System.out, System.err)
         proc.waitFor()
     }
 }
-
-task cleanSplunkInstallations(type:Delete, dependsOn: 'stopAllSplunks') {
-    delete splunkClusterDir
-}
-
-task stopAllSplunks << {
-    instances.each { instance ->
-        def splunk= "$splunkClusterDir/$instance/bin/splunk"
-        if (file(splunk).exists()){
-            def proc= "$splunk stop -f".execute()
-            //proc.consumeProcessOutput(System.out, System.err)
-            proc.waitFor()
-        }
-    }
-}
-
-clean.dependsOn('stopAllSplunks')
 
 def startAndSetupSplunk(path, name, web_port, splunkd_port) {
     def splunkDir= file(path)
@@ -159,14 +155,44 @@ def pushDataToSplunk(port, numberOfResults) { //AND TEST FILE
 }
 
 task startAllSplunks << {
-    if (!splunkClusterDir.exists())
-        throw new FileNotFoundException(splunkClusterDir.path) //Or should the task simply skip execution?
-    instances.each { instance ->
+    callEachSplunkWith("start")
+}
+
+startAllSplunks.mustRunAfter setUpCluster
+test.dependsOn startAllSplunks
+test << {
+    callEachSplunkWith('stop')
+}
+
+def callEachSplunkWith(args){
+    def currentSplunks= getCurrentSplunks()
+    if (currentSplunks.size() == 0)
+        throw new FileNotFoundException("No splunk instances where found in $splunkClusterDir")
+
+    currentSplunks.each { instance ->
         def splunk= "$splunkClusterDir/$instance/bin/splunk"
         if (file(splunk).exists()){
-            def proc= "$splunk start".execute()
-            //proc.consumeProcessOutput(System.out, System.err)
+            def proc= "$splunk $args".execute()
+            proc.consumeProcessOutput(System.out, System.err)
             proc.waitFor()
         }
     }
+}
+
+def getCurrentSplunks() {
+    return splunkClusterDir.listFiles().name
+}
+
+task cleanSplunkInstallations(type:Delete, dependsOn: 'stopAllSplunks') {
+    delete splunkClusterDir
+}
+
+task stopAllSplunks << {
+    callEachSplunkWith("stop")
+}
+
+clean.dependsOn('stopAllSplunks')
+
+task ss << {
+    callEachSplunkWith("status")
 }

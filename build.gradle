@@ -1,15 +1,41 @@
 apply plugin: 'java'
+apply plugin: 'scala'
 apply plugin: 'idea'
 apply from: 'scripts/setupSplunk.gradle'
 
 repositories {
     mavenLocal()
     mavenCentral()
+
     mavenRepo name: 'conjars', url: 'http://conjars.org/repo/'
     mavenRepo name: 'ext-release-local', url: 'http://splunk.artifactoryonline.com/splunk/ext-releases-local'
 }
 
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        scala {
+            srcDirs = ['src/main/scala']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        scala {
+            srcDirs = ['src/test/scala']
+        }
+    }
+}
+
 dependencies {
+    compile 'org.scala-lang:scala-library:2.9.3'
+    testCompile 'org.scalatest:scalatest_2.9.3:1.9.1'
+
+    compile 'org.spark-project:spark-core_2.9.3:0.7.2'
+
     compile 'org.codehaus.groovy:groovy-all:2.0.5'
 
     compile( group: 'cascading', name: 'cascading-core', version: '2.1.6' )

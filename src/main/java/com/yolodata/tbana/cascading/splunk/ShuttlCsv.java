@@ -8,17 +8,11 @@ import cascading.tap.CompositeTap;
 import cascading.tap.Tap;
 import cascading.tuple.Fields;
 import cascading.tuple.Tuple;
-import com.splunk.shuttl.archiver.model.Bucket;
 import com.yolodata.tbana.hadoop.mapred.shuttl.ShuttlCSVInputFormat;
 import com.yolodata.tbana.hadoop.mapred.shuttl.ShuttlInputFormatConstants;
-import com.yolodata.tbana.hadoop.mapred.shuttl.bucket.BucketFinder;
-import com.yolodata.tbana.hadoop.mapred.shuttl.index.Index;
-import com.yolodata.tbana.hadoop.mapred.shuttl.index.IndexFinder;
 import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;
 import com.yolodata.tbana.hadoop.mapred.util.CSVReader;
-import com.yolodata.tbana.util.search.HadoopPathFinder;
-import com.yolodata.tbana.util.search.filter.ExtensionFilter;
-import com.yolodata.tbana.util.search.filter.SearchFilter;
+import com.yolodata.tbana.util.search.ShuttlCsvFileFinder;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -31,8 +25,6 @@ import org.apache.hadoop.mapred.RecordReader;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.List;
 
 public class ShuttlCsv extends TextLine {
 
@@ -104,11 +96,10 @@ public class ShuttlCsv extends TextLine {
 
         try {
             FileSystem fileSystem = FileSystem.get(conf);
-            IndexFinder indexFinder = new IndexFinder(fileSystem,new Path(path));
-            List<Index> indexList = indexFinder.find(splunkDataQuery.getIndexes());
-            List<Bucket> bucketList = (new BucketFinder(fileSystem,indexList,1)).search(splunkDataQuery);
-            List<String> pathFinder = (new HadoopPathFinder(fileSystem)).findPaths(bucketList.get(0).getPath(), Arrays.asList((SearchFilter) (new ExtensionFilter("csv"))));
-            FSDataInputStream in = fileSystem.open(new Path(pathFinder.get(0)));
+            ShuttlCsvFileFinder fileFinder = new ShuttlCsvFileFinder(fileSystem, new Path(path));
+            Path pathToOneOfTheBucketCsvs = fileFinder.findSingleFile(splunkDataQuery);
+
+            FSDataInputStream in = fileSystem.open(pathToOneOfTheBucketCsvs);
 
             CSVReader reader = new CSVReader(new InputStreamReader(in));
             ArrayListTextWritable values = new ArrayListTextWritable();

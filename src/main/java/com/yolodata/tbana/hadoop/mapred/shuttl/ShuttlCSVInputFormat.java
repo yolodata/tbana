@@ -1,15 +1,8 @@
 package com.yolodata.tbana.hadoop.mapred.shuttl;
 
-import com.splunk.shuttl.archiver.model.Bucket;
 import com.yolodata.tbana.cascading.splunk.SplunkDataQuery;
 import com.yolodata.tbana.cascading.splunk.SplunkDataQueryFactory;
-import com.yolodata.tbana.hadoop.mapred.shuttl.bucket.BucketFinder;
-import com.yolodata.tbana.hadoop.mapred.shuttl.index.Index;
-import com.yolodata.tbana.hadoop.mapred.shuttl.index.IndexFinder;
-import com.yolodata.tbana.util.search.HadoopPathFinder;
-import com.yolodata.tbana.util.search.PathFinder;
-import com.yolodata.tbana.util.search.filter.ExtensionFilter;
-import com.yolodata.tbana.util.search.filter.SearchFilter;
+import com.yolodata.tbana.util.search.ShuttlCsvFileFinder;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
@@ -37,33 +30,13 @@ public class ShuttlCSVInputFormat extends FileInputFormat<LongWritable, List<Tex
 
     public InputSplit[] getSplits(JobConf job, int numSplits) throws IOException {
         List<InputSplit> splits = new ArrayList<InputSplit>();
-
         FileSystem fs = FileSystem.get(job);
-
-        IndexFinder indexFinder = new IndexFinder(fs,getInputPaths(job)[0]);
-
         SplunkDataQuery dataQuery = SplunkDataQueryFactory.createWithJobConf(job);
 
-        List<Index> indexes = indexFinder.find(dataQuery.getIndexes());
-
-        List<Bucket> buckets = new ArrayList<Bucket>();
-        for(Index index : indexes) {
-            BucketFinder bucketFinder = new BucketFinder(fs,index);
-            buckets.addAll(bucketFinder.search(dataQuery));
-        }
-
-        PathFinder finder = new HadoopPathFinder(fs);
-        List<SearchFilter> csvFilter = new ArrayList<SearchFilter>();
-        csvFilter.add(new ExtensionFilter(ExtensionFilter.Extension.CSV));
-        List<String> csvPaths = new ArrayList<String>();
-        for(Bucket bucket : buckets) {
-            csvPaths.addAll(finder.findPaths(bucket.getPath(),csvFilter));
-        }
+        ShuttlCsvFileFinder fileFinder = new ShuttlCsvFileFinder(fs,getInputPaths(job)[0]);
+        List<String> csvPaths = fileFinder.findFiles(dataQuery);
 
         long currentOffset = 0;
-
-        List<SearchFilter> filters = new ArrayList<SearchFilter>();
-        filters.add(new ExtensionFilter(ExtensionFilter.Extension.CSV));
 
         for(String p : csvPaths)
         {

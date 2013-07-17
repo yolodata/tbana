@@ -18,7 +18,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
-public abstract class SplunkRecordReader implements RecordReader<LongWritable, List<Text>> {
+public abstract class SplunkRecordReader implements RecordReader<LongWritable, ArrayListTextWritable> {
 
     protected final Configuration configuration;
     protected long currentPosition;
@@ -47,7 +47,7 @@ public abstract class SplunkRecordReader implements RecordReader<LongWritable, L
     }
 
     @Override
-    public boolean next(LongWritable key, List<Text> value) throws IOException {
+    public boolean next(LongWritable key, ArrayListTextWritable value) throws IOException {
 
         reader = new CSVReader(in);
         if(key == null) key = createKey();
@@ -71,7 +71,7 @@ public abstract class SplunkRecordReader implements RecordReader<LongWritable, L
     }
 
     @Override
-    public List<Text> createValue() {
+    public ArrayListTextWritable createValue() {
         return new ArrayListTextWritable();
     }
 

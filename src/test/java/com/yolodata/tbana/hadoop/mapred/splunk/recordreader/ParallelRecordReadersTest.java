@@ -144,7 +144,7 @@ public class ParallelRecordReadersTest {
             try {
                 recordReader.initialize(split);
                 LongWritable key = recordReader.createKey();
-                List<Text> values = recordReader.createValue();
+                ArrayListTextWritable values = recordReader.createValue();
 
                 while(recordReader.next(key,values)){
                     results.put(key,values);

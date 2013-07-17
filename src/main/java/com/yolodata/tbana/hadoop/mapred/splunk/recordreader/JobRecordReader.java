@@ -6,6 +6,7 @@ import com.yolodata.tbana.hadoop.mapred.splunk.SplunkJob;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkService;
 import com.yolodata.tbana.hadoop.mapred.splunk.split.IndexerSplit;
 import com.yolodata.tbana.hadoop.mapred.splunk.split.SplunkSplit;
+import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -56,7 +57,7 @@ public class JobRecordReader extends SplunkRecordReader {
     }
 
     @Override
-    public boolean next(LongWritable key, List<Text> value) throws IOException {
+    public boolean next(LongWritable key, ArrayListTextWritable value) throws IOException {
 
         if(currentPosition == endPosition)
             return false;

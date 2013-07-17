@@ -4,6 +4,7 @@ import com.yolodata.tbana.hadoop.mapred.splunk.recordreader.ExportRecordReader;
 import com.yolodata.tbana.hadoop.mapred.splunk.recordreader.JobRecordReader;
 import com.yolodata.tbana.hadoop.mapred.splunk.recordreader.SplunkRecordReader;
 import com.yolodata.tbana.hadoop.mapred.splunk.split.SplitProvider;
+import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -12,7 +13,7 @@ import org.apache.hadoop.mapred.*;
 import java.io.IOException;
 import java.util.List;
 
-public class SplunkInputFormat implements InputFormat<LongWritable, List<Text>> {
+public class SplunkInputFormat implements InputFormat<LongWritable, ArrayListTextWritable> {
 
     public static final String INPUTFORMAT_SPLITS = "splunk.inputformat.splits";
     public static final String INPUTFORMAT_MODE = "splunk.inputformat.mode";
@@ -21,7 +22,7 @@ public class SplunkInputFormat implements InputFormat<LongWritable, List<Text>> 
     private static final Mode DEFAULT_MODE = Mode.Job;
 
     @Override
-    public RecordReader<LongWritable, List<Text>> getRecordReader(InputSplit inputSplit, JobConf configuration, Reporter reporter) throws IOException {
+    public RecordReader<LongWritable,ArrayListTextWritable> getRecordReader(InputSplit inputSplit, JobConf configuration, Reporter reporter) throws IOException {
         SplunkRecordReader splunkRecordReader = getRecordReaderFromConf(configuration);
         splunkRecordReader.initialize(inputSplit);
 

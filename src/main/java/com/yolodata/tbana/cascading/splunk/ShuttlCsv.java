@@ -48,8 +48,8 @@ public class ShuttlCsv extends TextLine {
     public void sourceConfInit(FlowProcess<JobConf> flowProcess, Tap<JobConf, RecordReader, OutputCollector> tap, JobConf conf) {
 
         conf.set(ShuttlInputFormatConstants.INDEX_LIST,splunkDataQuery.getIndexesString());
-        conf.set(ShuttlInputFormatConstants.EARLIEST_TIME,splunkDataQuery.getEarliestTime());
-        conf.set(ShuttlInputFormatConstants.LATEST_TIME, splunkDataQuery.getLatestTime());
+        conf.set(ShuttlInputFormatConstants.EARLIEST_TIME,splunkDataQuery.getEarliestTimeString());
+        conf.set(ShuttlInputFormatConstants.LATEST_TIME, splunkDataQuery.getLatestTimeString());
         conf.setInputFormat(ShuttlCSVInputFormat.class);
     }
 

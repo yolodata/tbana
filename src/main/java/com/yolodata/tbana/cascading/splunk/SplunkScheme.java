@@ -46,8 +46,8 @@ public class SplunkScheme extends Scheme<JobConf, RecordReader, OutputCollector,
         SplunkConf.validateLoginConfiguration(conf);
         conf.setInputFormat(SplunkInputFormat.class);
         conf.set(SplunkConf.SPLUNK_SEARCH_QUERY, this.splunkDataQuery.getSplunkQuery());
-        conf.set(SplunkConf.SPLUNK_EARLIEST_TIME, this.splunkDataQuery.getEarliestTime());
-        conf.set(SplunkConf.SPLUNK_LATEST_TIME, this.splunkDataQuery.getLatestTime());
+        conf.set(SplunkConf.SPLUNK_EARLIEST_TIME, this.splunkDataQuery.getEarliestTimeString());
+        conf.set(SplunkConf.SPLUNK_LATEST_TIME, this.splunkDataQuery.getLatestTimeString());
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.yolodata.tbana.util.search.filter.BucketFilter;
 import com.yolodata.tbana.util.search.filter.BucketTimestampFilter;
 import com.yolodata.tbana.util.search.filter.SearchFilter;
 import org.apache.hadoop.fs.FileSystem;
+import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,8 +48,8 @@ public class BucketFinder {
 
     public List<Bucket> search(SplunkDataQuery splunkSearch) throws IOException {
 
-        long earliest = TimeParser.parse(splunkSearch.getEarliestTime());
-        long latest = TimeParser.parse(splunkSearch.getLatestTime());
+        long earliest = splunkSearch.getEarliestTime().getMillis();
+        long latest = splunkSearch.getLatestTime().getMillis();
 
         List<SearchFilter> filters = new ArrayList<SearchFilter>();
         filters.add(new BucketTimestampFilter(fileSystem,earliest,latest));

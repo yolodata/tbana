@@ -4,6 +4,7 @@ import com.yolodata.tbana.cascading.splunk.SplunkDataQuery;
 import com.yolodata.tbana.hadoop.mapred.shuttl.ShuttlInputFormatConstants;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import org.apache.hadoop.conf.Configuration;
+import org.joda.time.DateTime;
 
 import java.util.Properties;
 
@@ -11,7 +12,7 @@ import java.util.Properties;
 public class TestConfigurations {
 
     public static final String query = "search * sourcetype=\"mock\" | head 5 | table _raw";
-    public static final String earliest_time = "-12mon";
+    public static final String earliest_time = "0";
     public static final String latest_time = "now";
     private static final String index_list = "*";
 
@@ -37,8 +38,8 @@ public class TestConfigurations {
 
     public static Configuration getConfigurationWithShuttlSearch() {
         Configuration conf = getSplunkLoginConfig();
-        conf.set(ShuttlInputFormatConstants.EARLIEST_TIME, "0");
-        conf.set(ShuttlInputFormatConstants.LATEST_TIME, "now");
+        conf.set(ShuttlInputFormatConstants.EARLIEST_TIME, earliest_time);
+        conf.set(ShuttlInputFormatConstants.LATEST_TIME, DateTime.now().toString());
         conf.set(ShuttlInputFormatConstants.INDEX_LIST, index_list);
 
         return conf;
@@ -56,7 +57,7 @@ public class TestConfigurations {
     }
 
     public static SplunkDataQuery getSplunkSearch() {
-        return new SplunkDataQuery(earliest_time, latest_time);
+        return new SplunkDataQuery();
     }
 
 }

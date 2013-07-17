@@ -1,34 +1,37 @@
 package com.yolodata.tbana.cascading.splunk;
 
+import org.joda.time.DateTime;
+
 import java.io.Serializable;
 
 public class SplunkDataQuery implements Serializable {
 
     public static final String INDEX_LIST_SEPARATOR = ",";
 
-    private String earliestTime;
-    private String latestTime;
+    private DateTime earliestTime;
+    private DateTime latestTime;
     private String[] indexes;
     public static final String[] ALL_INDEXES= new String[] {"*"};
     public static final String[] ALL_INDEXES_INCLUDING_INTERNAL= new String[] {"*", "_*"};
+    public static final DateTime ALL_TIME_EARLIEST= new DateTime(0);
 
     public SplunkDataQuery(){
-        this("0", "now");
+        this(ALL_TIME_EARLIEST, DateTime.now());
     }
 
-    public SplunkDataQuery(String earliestTime, String latestTime) {
+    public SplunkDataQuery(DateTime earliestTime, DateTime latestTime) {
         this(earliestTime, latestTime, ALL_INDEXES);
     }
 
-    public SplunkDataQuery(String earliestTime, String latestTime, String[] indexes) {
+    public SplunkDataQuery(DateTime earliestTime, DateTime latestTime, String[] indexes){
         if(indexes == null)
             throw new NullPointerException();
         if(indexes.length == 0)
             throw new IllegalArgumentException("Empty index list is not allowed." +
                     " Use different constructor or SplunkDataQuery.ALL_INDEXES");
-        this.earliestTime = earliestTime;
-        this.latestTime = latestTime;
         this.indexes= indexes;
+        this.earliestTime= earliestTime;
+        this.latestTime= latestTime;
     }
 
     public String getSplunkQuery() {
@@ -43,12 +46,23 @@ public class SplunkDataQuery implements Serializable {
         return results.toString();
     }
 
-    public String getEarliestTime() {
+    public DateTime getEarliestTime(){
         return earliestTime;
     }
 
-    public String getLatestTime() {
+    public String getEarliestTimeString(){
+        if (earliestTime == ALL_TIME_EARLIEST){
+            return "0";
+        }
+        else return earliestTime.toString();
+    }
+
+    public DateTime getLatestTime() {
         return latestTime;
+    }
+
+    public String getLatestTimeString(){
+        return latestTime.toString();
     }
 
     public String [] getIndexes() {

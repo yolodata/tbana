@@ -10,6 +10,7 @@ import com.yolodata.tbana.testutils.TestUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,8 +45,8 @@ public class BucketFinderTest {
     @Test
     public void testGetBucketsByTimeRange() throws Exception {
 
-        String earliestTime = "1970-01-01 00:00:00";
-        String latestTime = "1970-01-01 00:00:10";
+        DateTime earliestTime = DateTime.parse("1970-01-01T00:00:00");
+        DateTime latestTime = DateTime.parse("1970-01-01T00:00:10");
 
         BucketFinder bucketFinder = new BucketFinder(fs, index);
         List<Bucket> buckets = bucketFinder.search(new SplunkDataQuery(earliestTime, latestTime));

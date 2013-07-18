@@ -2,6 +2,8 @@ package com.yolodata.tbana.hadoop.mapred.shuttl;
 
 import com.yolodata.tbana.cascading.splunk.SplunkDataQuery;
 import com.yolodata.tbana.cascading.splunk.SplunkDataQueryFactory;
+import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;
+import com.yolodata.tbana.hadoop.mapred.util.LongWritableSerializable;
 import com.yolodata.tbana.util.search.ShuttlCsvFileFinder;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileStatus;
@@ -15,10 +17,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShuttlCSVInputFormat extends FileInputFormat<LongWritable, List<Text>> {
+public class ShuttlCSVInputFormat extends FileInputFormat<LongWritableSerializable, ArrayListTextWritable> {
 
     @Override
-    public RecordReader<LongWritable, List<Text>> getRecordReader(
+    public RecordReader<LongWritableSerializable, ArrayListTextWritable> getRecordReader(
             InputSplit inputSplit, JobConf jobConf, Reporter reporter) throws IOException {
         reporter.setStatus(inputSplit.toString());
 

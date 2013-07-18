@@ -2,6 +2,8 @@ package com.yolodata.tbana.hadoop.mapred.shuttl;
 
 import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;
 import com.yolodata.tbana.hadoop.mapred.util.CSVReader;
+import com.yolodata.tbana.hadoop.mapred.util.LongWritableSerializable;
+import com.yolodata.tbana.hadoop.mapred.util.TextSerializable;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -17,7 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
-public class ShuttlCSVRecordReader implements RecordReader<LongWritable, List<Text>> {
+public class ShuttlCSVRecordReader implements RecordReader<LongWritableSerializable, ArrayListTextWritable> {
 
     protected InputStream is;
     protected CSVReader reader;
@@ -85,12 +87,12 @@ public class ShuttlCSVRecordReader implements RecordReader<LongWritable, List<Te
     }
 
     @Override
-    public LongWritable createKey() {
-        return new LongWritable();
+    public LongWritableSerializable createKey() {
+        return new LongWritableSerializable();
     }
 
     @Override
-    public List<Text> createValue() {
+    public ArrayListTextWritable createValue() {
         return new ArrayListTextWritable();
     }
 
@@ -100,12 +102,12 @@ public class ShuttlCSVRecordReader implements RecordReader<LongWritable, List<Te
     }
 
     @Override
-    public boolean next(LongWritable key, List<Text> value) throws IOException {
+    public boolean next(LongWritableSerializable key, ArrayListTextWritable value) throws IOException {
         if(pos==end) {
             return false;
         }
         if (key == null) {
-            key = new LongWritable();
+            key = new LongWritableSerializable();
         }
         key.set(startKey+pos);
 
@@ -127,9 +129,9 @@ public class ShuttlCSVRecordReader implements RecordReader<LongWritable, List<Te
 
     }
 
-    private void removeNewLineOnLastColumn(List<Text> value) {
+    private void removeNewLineOnLastColumn(ArrayListTextWritable value) {
         String lastColumn = value.get(value.size()-1).toString();
         if(lastColumn.endsWith("\n"))
-            value.set(value.size()-1, new Text(lastColumn.substring(0,lastColumn.length()-1)));
+            value.set(value.size()-1, new TextSerializable(lastColumn.substring(0,lastColumn.length()-1)));
     }
 }

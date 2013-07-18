@@ -1,5 +1,6 @@
 package com.yolodata.tbana.testutils;
 
+import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;
 import com.yolodata.tbana.hadoop.mapred.util.CSVReader;
 import org.apache.hadoop.io.Text;
 
@@ -17,7 +18,7 @@ public class TestUtils {
          StringReader reader = new StringReader(outputContent);
          CSVReader csvReader = new CSVReader(reader);
 
-         List<Text> textList = new ArrayList<Text>();
+         ArrayListTextWritable textList = new ArrayListTextWritable();
          StringBuilder sb = new StringBuilder();
          while(csvReader.readLine(textList) != 0) {
              sb.setLength(0);

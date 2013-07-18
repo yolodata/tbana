@@ -2,6 +2,8 @@ package com.yolodata.tbana.hadoop.mapred.csv;
 
 import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;
 import com.yolodata.tbana.hadoop.mapred.util.CSVReader;
+import com.yolodata.tbana.hadoop.mapred.util.LongWritableSerializable;
+import com.yolodata.tbana.hadoop.mapred.util.TextSerializable;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -18,7 +20,7 @@ import java.io.*;
 import java.util.List;
 import java.util.zip.ZipInputStream;
 
-public class CSVLineRecordReader implements RecordReader<LongWritable, List<Text>> {
+public class CSVLineRecordReader implements RecordReader<LongWritableSerializable, ArrayListTextWritable> {
 
 	public static final String FORMAT_DELIMITER = "mapred.csvinput.delimiter";
 	public static final String FORMAT_SEPARATOR = "mapred.csvinput.separator";
@@ -59,7 +61,7 @@ public class CSVLineRecordReader implements RecordReader<LongWritable, List<Text
 		this.reader = new CSVReader(new BufferedReader(new InputStreamReader(is)));
 	}
 
-    public int readLine(List<Text> values) throws IOException {
+    public int readLine(ArrayListTextWritable values) throws IOException {
         return this.reader.readLine(values);
     }
 	public void initialize(InputSplit genericSplit, JobConf conf) throws IOException {
@@ -110,12 +112,12 @@ public class CSVLineRecordReader implements RecordReader<LongWritable, List<Text
 	}
 
 	@Override
-	public LongWritable createKey() {
-		return new LongWritable();
+	public LongWritableSerializable createKey() {
+		return new LongWritableSerializable();
 	}
 
 	@Override
-	public List<Text> createValue() {
+	public ArrayListTextWritable createValue() {
 		return new ArrayListTextWritable();
 	}
 
@@ -125,9 +127,9 @@ public class CSVLineRecordReader implements RecordReader<LongWritable, List<Text
 	}
 
 	@Override
-	public boolean next(LongWritable key, List<Text> value) throws IOException {
+	public boolean next(LongWritableSerializable key, ArrayListTextWritable value) throws IOException {
 		if (key == null) {
-			key = new LongWritable();
+			key = new LongWritableSerializable();
 		}
 		key.set(pos);
 
@@ -159,9 +161,9 @@ public class CSVLineRecordReader implements RecordReader<LongWritable, List<Text
 		}
 	}
 
-    private void removeNewLineOnLastColumn(List<Text> value) {
+    private void removeNewLineOnLastColumn(ArrayListTextWritable value) {
         String lastColumn = value.get(value.size()-1).toString();
         if(lastColumn.endsWith("\n"))
-            value.set(value.size()-1, new Text(lastColumn.substring(0,lastColumn.length()-1)));
+            value.set(value.size()-1, new TextSerializable(lastColumn.substring(0,lastColumn.length()-1)));
     }
 }

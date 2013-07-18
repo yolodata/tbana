@@ -6,6 +6,7 @@ import org.apache.hadoop.io.Writable;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -17,7 +18,7 @@ import java.util.ArrayList;
  *
  * Source: https://github.com/mvallebr/CSVInputFormat
  */
-public class ArrayListTextWritable extends ArrayList<Text> implements Writable {
+public class ArrayListTextWritable extends ArrayList<TextSerializable> implements Writable,Serializable {
 	private static final long serialVersionUID = -6737762624115237320L;
 
 	/*
@@ -44,7 +45,7 @@ public class ArrayListTextWritable extends ArrayList<Text> implements Writable {
 		int count = datainput.readInt();
 		for (int i = 0; i < count; i++) {
 			try {
-				Text obj = Text.class.newInstance();
+				TextSerializable obj = TextSerializable.class.newInstance();
 				obj.readFields(datainput);
 				this.add(obj);
 			} catch (InstantiationException e) {

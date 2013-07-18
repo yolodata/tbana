@@ -1,5 +1,8 @@
 package com.yolodata.tbana.hadoop.mapred.csv;
 
+import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;
+import com.yolodata.tbana.hadoop.mapred.util.LongWritableSerializable;
+import com.yolodata.tbana.hadoop.mapred.util.TextSerializable;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
@@ -12,14 +15,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CSVNLineInputFormat extends FileInputFormat<LongWritable, List<Text>> {
+public class CSVNLineInputFormat extends FileInputFormat<LongWritableSerializable, ArrayListTextWritable> {
 
 	public static final String LINES_PER_MAP = "mapreduce.input.lineinputformat.linespermap";
 
 	public static final int DEFAULT_LINES_PER_MAP = 1;
 
 	@Override
-	public RecordReader<LongWritable, List<Text>> getRecordReader(
+	public RecordReader<LongWritableSerializable, ArrayListTextWritable> getRecordReader(
 			InputSplit inputSplit, JobConf jobConf, Reporter reporter) throws IOException {
 
 		String quote = jobConf.get(CSVLineRecordReader.FORMAT_DELIMITER, CSVLineRecordReader.DEFAULT_DELIMITER);
@@ -62,7 +65,7 @@ public class CSVNLineInputFormat extends FileInputFormat<LongWritable, List<Text
         try {
             FSDataInputStream in = fs.open(filePath);
             lr = new CSVLineRecordReader(in, conf);
-            List<Text> line = new ArrayList<Text>();
+            ArrayListTextWritable line = new ArrayListTextWritable();
             int numLines = 0;
             long startPos = 0;
             long splitLength = 0;

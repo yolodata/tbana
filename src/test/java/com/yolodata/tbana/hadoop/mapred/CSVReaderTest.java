@@ -1,6 +1,8 @@
 package com.yolodata.tbana.hadoop.mapred;
 
+import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;
 import com.yolodata.tbana.hadoop.mapred.util.CSVReader;
+import com.yolodata.tbana.hadoop.mapred.util.TextSerializable;
 import com.yolodata.tbana.testutils.FileTestUtils;
 import com.yolodata.tbana.testutils.TestUtils;
 import org.apache.commons.io.FileUtils;
@@ -18,15 +20,15 @@ import java.util.List;
 public class CSVReaderTest {
 
     private CSVReader csvReader;
-    private ArrayList<Text> actual;
-    private ArrayList<Text> expected;
+    private ArrayListTextWritable actual;
+    private ArrayListTextWritable expected;
 
     @Before
     public void setUp() throws IOException {
         FileUtils.deleteDirectory(new File(TestUtils.TEST_FILE_PATH));
         FileUtils.forceMkdir(new File(TestUtils.TEST_FILE_PATH));
-        actual = new ArrayList<Text>();
-        expected = new ArrayList<Text>();
+        actual = new ArrayListTextWritable();
+        expected = new ArrayListTextWritable();
     }
 
     @After
@@ -37,7 +39,7 @@ public class CSVReaderTest {
     @Test
     public void readLine_emptyFile_returnsEmptyText() throws IOException {
         String csvContent = "";
-        expected.add(new Text());
+        expected.add(new TextSerializable());
         testFileContent(csvContent, expected);
     }
 
@@ -45,7 +47,7 @@ public class CSVReaderTest {
     @Test
     public void readLine_oneColumn_returnsOneText() throws IOException {
         String csvContent = "hello";
-        expected.add(new Text("hello"));
+        expected.add(new TextSerializable("hello"));
         testFileContent(csvContent, expected);
     }
 
@@ -53,12 +55,12 @@ public class CSVReaderTest {
     public void readLine_twoColumns_returnsTwoTexts() throws IOException {
         String csvContent = "hello,world";
 
-        expected.add(new Text("hello"));
-        expected.add(new Text("world"));
+        expected.add(new TextSerializable("hello"));
+        expected.add(new TextSerializable("world"));
         testFileContent(csvContent,expected);
     }
 
-    private void testFileContent(String csvContent, List<Text> expected) throws IOException {
+    private void testFileContent(String csvContent, ArrayListTextWritable expected) throws IOException {
         String filepath = FileTestUtils.getRandomTestFilepath();
 
         assert(FileTestUtils.createFileWithContent(filepath, csvContent));

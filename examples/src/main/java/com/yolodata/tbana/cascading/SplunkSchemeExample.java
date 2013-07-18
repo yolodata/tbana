@@ -26,7 +26,7 @@ public class SplunkSchemeExample {
         properties.put(SplunkConf.SPLUNK_HOST, "localhost");
         properties.put(SplunkConf.SPLUNK_PORT, "9050");
 
-        SplunkDataQuery splunkSearch = new SplunkDataQuery("-12m","now");
+        SplunkDataQuery splunkSearch = new SplunkDataQuery();
         SplunkScheme inputScheme = new SplunkScheme(splunkSearch);
         SplunkTap input = new SplunkTap(properties,inputScheme);
 

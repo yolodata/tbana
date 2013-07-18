@@ -7,6 +7,7 @@ import com.yolodata.tbana.hadoop.mapred.splunk.SplunkService;
 import com.yolodata.tbana.hadoop.mapred.splunk.split.SplunkSplit;
 import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;
 import com.yolodata.tbana.hadoop.mapred.util.CSVReader;
+import com.yolodata.tbana.hadoop.mapred.util.LongWritableSerializable;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -18,7 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
-public abstract class SplunkRecordReader implements RecordReader<LongWritable, ArrayListTextWritable> {
+public abstract class SplunkRecordReader implements RecordReader<LongWritableSerializable, ArrayListTextWritable> {
 
     protected final Configuration configuration;
     protected long currentPosition;
@@ -47,7 +48,7 @@ public abstract class SplunkRecordReader implements RecordReader<LongWritable, A
     }
 
     @Override
-    public boolean next(LongWritable key, ArrayListTextWritable value) throws IOException {
+    public boolean next(LongWritableSerializable key, ArrayListTextWritable value) throws IOException {
 
         reader = new CSVReader(in);
         if(key == null) key = createKey();
@@ -66,8 +67,8 @@ public abstract class SplunkRecordReader implements RecordReader<LongWritable, A
     }
 
     @Override
-    public LongWritable createKey() {
-        return new LongWritable();
+    public LongWritableSerializable createKey() {
+        return new LongWritableSerializable();
     }
 
     @Override

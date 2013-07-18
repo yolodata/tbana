@@ -7,6 +7,8 @@ import com.yolodata.tbana.hadoop.mapred.splunk.SplunkJob;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkService;
 import com.yolodata.tbana.hadoop.mapred.splunk.split.SplunkSplit;
 import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;
+import com.yolodata.tbana.hadoop.mapred.util.LongWritableSerializable;
+import com.yolodata.tbana.hadoop.mapred.util.TextSerializable;
 import com.yolodata.tbana.testutils.TestConfigurations;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
@@ -99,7 +101,7 @@ public class ParallelRecordReadersTest {
 
     private void addKVToMap(Map expected, int key, String value) {
         ArrayListTextWritable texts = new ArrayListTextWritable();
-        texts.add(new Text(value));
+        texts.add(new TextSerializable(value));
         expected.put(new LongWritable(key), texts);
     }
 
@@ -124,11 +126,11 @@ public class ParallelRecordReadersTest {
     private class RecordReaderThread extends Thread {
 
         private SplunkSplit split;
-        private Map<LongWritable,List<Text>> results;
+        private Map<LongWritableSerializable,ArrayListTextWritable> results;
         private SplunkRecordReader recordReader;
 
         public RecordReaderThread(SplunkRecordReader recordReader, SplunkSplit split) {
-            this.results = new HashMap<LongWritable, List<Text>>();
+            this.results = new HashMap<LongWritableSerializable, ArrayListTextWritable>();
             this.recordReader = recordReader;
             this.split = split;
 
@@ -143,7 +145,7 @@ public class ParallelRecordReadersTest {
         public void run() {
             try {
                 recordReader.initialize(split);
-                LongWritable key = recordReader.createKey();
+                LongWritableSerializable key = recordReader.createKey();
                 ArrayListTextWritable values = recordReader.createValue();
 
                 while(recordReader.next(key,values)){

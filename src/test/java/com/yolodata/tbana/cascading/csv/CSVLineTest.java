@@ -9,6 +9,7 @@ import cascading.tap.SinkMode;
 import cascading.tap.hadoop.Hfs;
 import cascading.tuple.TupleEntryIterator;
 import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;
+import com.yolodata.tbana.hadoop.mapred.util.TextSerializable;
 import org.apache.hadoop.io.Text;
 import org.junit.Test;
 
@@ -49,18 +50,18 @@ public class CSVLineTest extends CascadingTestCase
 
         ArrayListTextWritable expected = new ArrayListTextWritable();
 
-        expected.add(new Text("header1"));
-        expected.add(new Text("header2"));
+        expected.add(new TextSerializable("header1"));
+        expected.add(new TextSerializable("header2"));
         assertEquals(expected, iterator.next().getTuple().getObject(1));
 
         expected.clear();
-        expected.add(new Text("Column1"));
-        expected.add(new Text("Column 2 using\ntwo rows"));
+        expected.add(new TextSerializable("Column1"));
+        expected.add(new TextSerializable("Column 2 using\ntwo rows"));
         assertEquals(expected, iterator.next().getTuple().getObject(1));
 
         expected.clear();
-        expected.add(new Text("c1"));
-        expected.add(new Text("c2"));
+        expected.add(new TextSerializable("c1"));
+        expected.add(new TextSerializable("c2"));
         assertEquals(expected, iterator.next().getTuple().getObject(1));
     }
 }

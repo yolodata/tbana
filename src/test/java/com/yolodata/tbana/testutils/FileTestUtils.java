@@ -1,6 +1,8 @@
 package com.yolodata.tbana.testutils;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.hadoop.fs.Path;
+import org.apache.tools.ant.util.FileUtils;
 
 import java.io.*;
 import java.net.URI;
@@ -42,7 +44,7 @@ public class FileTestUtils {
 
     public static String readContentFromLocalFile(URI path) throws IOException {
         InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(new File(path)));
-        String content = org.apache.tools.ant.util.FileUtils.readFully(inputStreamReader);
+        String content = FileUtils.readFully(inputStreamReader);
         inputStreamReader.close();
 
         return content;

@@ -4,6 +4,7 @@ import com.yolodata.tbana.cascading.splunk.SplunkDataQuery;
 import com.yolodata.tbana.hadoop.mapred.shuttl.ShuttlInputFormatConstants;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.mapred.JobConf;
 import org.joda.time.DateTime;
 
 import java.util.Properties;
@@ -16,8 +17,8 @@ public class TestConfigurations {
     public static final String latest_time = "now";
     private static final String index_list = "*";
 
-    public static Configuration getSplunkLoginConfig() {
-        Configuration conf = new Configuration();
+    public static JobConf getSplunkLoginConfig() {
+        JobConf conf = new JobConf();
 
         conf.set(SplunkConf.SPLUNK_USERNAME, "admin");
         conf.set(SplunkConf.SPLUNK_PASSWORD, "changeIt");
@@ -27,8 +28,8 @@ public class TestConfigurations {
         return conf;
     }
 
-    public static Configuration getConfigurationWithSplunkConfigured() {
-        Configuration conf = getSplunkLoginConfig();
+    public static JobConf getConfigurationWithSplunkConfigured() {
+        JobConf conf = getSplunkLoginConfig();
         conf.set(SplunkConf.SPLUNK_EARLIEST_TIME, earliest_time);
         conf.set(SplunkConf.SPLUNK_LATEST_TIME, latest_time);
         conf.set(SplunkConf.SPLUNK_SEARCH_QUERY, query);

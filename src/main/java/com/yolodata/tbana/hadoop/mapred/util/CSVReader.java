@@ -21,7 +21,7 @@ public class CSVReader implements Closeable {
         this.reader = reader;
     }
 
-    public int readLine(List<Text> values) throws IOException {
+    public int readLine(ArrayListTextWritable values) throws IOException {
         values.clear();
 
         StringBuffer line = new StringBuffer();
@@ -67,9 +67,9 @@ public class CSVReader implements Closeable {
         return charactersRead;
     }
 
-    protected void foundDelimiter(StringBuffer sb, List<Text> values, boolean takeDelimiterOut)
+    protected void foundDelimiter(StringBuffer sb, ArrayListTextWritable values, boolean takeDelimiterOut)
             throws UnsupportedEncodingException {
-        Text text = new Text();
+        TextSerializable text = new TextSerializable();
         String val = (takeDelimiterOut) ? sb.substring(0, sb.length() - separator.length()) : sb.toString();
         val = StringUtils.strip(val,"\n");
         val = StringUtils.strip(val,delimiter);

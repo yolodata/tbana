@@ -1,4 +1,4 @@
-package com.yolodata.tbana.cascading.splunk;
+package com.yolodata.tbana.hadoop.mapred.splunk;
 
 import com.yolodata.tbana.hadoop.mapred.shuttl.ShuttlInputFormatConstants;
 import org.apache.hadoop.mapred.JobConf;

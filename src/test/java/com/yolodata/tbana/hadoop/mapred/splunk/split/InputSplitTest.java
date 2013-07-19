@@ -1,4 +1,4 @@
-package com.yolodata.tbana.hadoop.mapred;
+package com.yolodata.tbana.hadoop.mapred.splunk.split;
 
 import org.apache.hadoop.mapred.InputSplit;
 

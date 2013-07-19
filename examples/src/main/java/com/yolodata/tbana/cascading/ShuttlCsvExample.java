@@ -5,7 +5,7 @@ import cascading.flow.hadoop.HadoopFlowConnector;
 import cascading.pipe.Pipe;
 import cascading.scheme.hadoop.TextLine;
 import cascading.tap.hadoop.Hfs;
-import com.yolodata.tbana.cascading.splunk.ShuttlCsv;
+import com.yolodata.tbana.cascading.shuttl.ShuttlCsv;
 
 import java.util.Properties;
 

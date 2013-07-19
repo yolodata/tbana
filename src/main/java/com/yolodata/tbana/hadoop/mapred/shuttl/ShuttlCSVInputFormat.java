@@ -1,7 +1,7 @@
 package com.yolodata.tbana.hadoop.mapred.shuttl;
 
-import com.yolodata.tbana.cascading.splunk.SplunkDataQuery;
-import com.yolodata.tbana.cascading.splunk.SplunkDataQueryFactory;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkDataQuery;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkDataQueryFactory;
 import com.yolodata.tbana.util.search.ShuttlCsvFileFinder;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileStatus;

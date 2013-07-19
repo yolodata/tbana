@@ -1,4 +1,4 @@
-package com.yolodata.tbana.cascading.splunk;
+package com.yolodata.tbana.cascading.shuttl;
 
 import cascading.flow.FlowProcess;
 import cascading.scheme.SinkCall;
@@ -8,6 +8,7 @@ import cascading.tap.CompositeTap;
 import cascading.tap.Tap;
 import cascading.tuple.Fields;
 import cascading.tuple.Tuple;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkDataQuery;
 import com.yolodata.tbana.hadoop.mapred.shuttl.ShuttlCSVInputFormat;
 import com.yolodata.tbana.hadoop.mapred.shuttl.ShuttlInputFormatConstants;
 import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable;

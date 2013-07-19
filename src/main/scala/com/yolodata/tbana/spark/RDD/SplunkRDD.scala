@@ -3,10 +3,9 @@ package com.yolodata.tbana.spark.RDD
 import spark.rdd.HadoopRDD
 import spark.SparkContext
 import org.apache.hadoop.mapred.JobConf
-import com.yolodata.tbana.hadoop.mapred.splunk.{SplunkConf, SplunkInputFormat}
+import com.yolodata.tbana.hadoop.mapred.splunk.{SplunkDataQuery, SplunkConf, SplunkInputFormat}
 import com.yolodata.tbana.hadoop.mapred.util.ArrayListTextWritable
 import org.apache.hadoop.io.LongWritable
-import com.yolodata.tbana.cascading.splunk.SplunkDataQuery
 
 object SplunkRDD {
   def apply(context : SparkContext, query : SplunkDataQuery) : SplunkRDD = {

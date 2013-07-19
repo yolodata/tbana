@@ -1,6 +1,6 @@
 package com.yolodata.tbana.testutils;
 
-import com.yolodata.tbana.cascading.splunk.SplunkDataQuery;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkDataQuery;
 import com.yolodata.tbana.hadoop.mapred.shuttl.ShuttlInputFormatConstants;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import org.apache.hadoop.conf.Configuration;

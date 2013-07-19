@@ -1,4 +1,4 @@
-package com.yolodata.tbana.cascading.splunk;
+package com.yolodata.tbana.cascading.shuttl;
 
 import cascading.CascadingTestCase;
 import cascading.flow.Flow;
@@ -7,6 +7,7 @@ import cascading.pipe.Pipe;
 import cascading.scheme.hadoop.TextLine;
 import cascading.tap.SinkMode;
 import cascading.tap.hadoop.Hfs;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkDataQuery;
 import com.yolodata.tbana.testutils.FileTestUtils;
 import com.yolodata.tbana.testutils.HadoopFileTestUtils;
 import com.yolodata.tbana.testutils.TestUtils;

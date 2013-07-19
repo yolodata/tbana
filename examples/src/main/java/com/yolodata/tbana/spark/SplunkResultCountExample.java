@@ -1,6 +1,6 @@
 package com.yolodata.tbana.spark;
 
-import com.yolodata.tbana.cascading.splunk.SplunkDataQuery;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkDataQuery;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import com.yolodata.tbana.spark.RDD.SplunkRDD;
 import org.apache.hadoop.mapred.JobConf;

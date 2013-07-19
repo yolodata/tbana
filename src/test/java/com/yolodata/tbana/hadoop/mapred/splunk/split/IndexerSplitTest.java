@@ -1,6 +1,5 @@
 package com.yolodata.tbana.hadoop.mapred.splunk.split;
 
-import com.yolodata.tbana.hadoop.mapred.InputSplitTest;
 import com.yolodata.tbana.hadoop.mapred.splunk.indexer.Indexer;
 import org.junit.Test;
 

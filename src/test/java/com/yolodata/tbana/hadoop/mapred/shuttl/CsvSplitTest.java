@@ -1,6 +1,6 @@
 package com.yolodata.tbana.hadoop.mapred.shuttl;
 
-import com.yolodata.tbana.hadoop.mapred.InputSplitTest;
+import com.yolodata.tbana.hadoop.mapred.splunk.split.InputSplitTest;
 import org.apache.hadoop.fs.Path;
 import org.junit.Test;
 

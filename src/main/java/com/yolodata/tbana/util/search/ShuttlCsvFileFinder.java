@@ -1,13 +1,12 @@
 package com.yolodata.tbana.util.search;
 
 import com.splunk.shuttl.archiver.model.Bucket;
-import com.yolodata.tbana.cascading.splunk.SplunkDataQuery;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkDataQuery;
 import com.yolodata.tbana.hadoop.mapred.shuttl.bucket.BucketFinder;
 import com.yolodata.tbana.hadoop.mapred.shuttl.index.Index;
 import com.yolodata.tbana.hadoop.mapred.shuttl.index.IndexFinder;
 import com.yolodata.tbana.util.search.filter.ExtensionFilter;
 import com.yolodata.tbana.util.search.filter.SearchFilter;
-import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 

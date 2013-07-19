@@ -1,4 +1,4 @@
-package com.yolodata.tbana.cascading.splunk;
+package com.yolodata.tbana.hadoop.mapred.splunk;
 
 import org.joda.time.DateTime;
 import org.junit.Test;

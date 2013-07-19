@@ -1,7 +1,7 @@
 package com.yolodata.tbana.hadoop.mapred.shuttl.bucket;
 
 import com.splunk.shuttl.archiver.model.Bucket;
-import com.yolodata.tbana.cascading.splunk.SplunkDataQuery;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkDataQuery;
 import com.yolodata.tbana.hadoop.mapred.shuttl.index.Index;
 import com.yolodata.tbana.util.search.HadoopPathFinder;
 import com.yolodata.tbana.util.search.PathFinder;
@@ -9,7 +9,6 @@ import com.yolodata.tbana.util.search.filter.BucketFilter;
 import com.yolodata.tbana.util.search.filter.BucketTimestampFilter;
 import com.yolodata.tbana.util.search.filter.SearchFilter;
 import org.apache.hadoop.fs.FileSystem;
-import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.util.ArrayList;

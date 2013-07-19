@@ -6,7 +6,7 @@ import cascading.pipe.Pipe;
 import cascading.scheme.hadoop.TextLine;
 import cascading.tap.SinkMode;
 import cascading.tap.hadoop.Hfs;
-import com.yolodata.tbana.cascading.splunk.SplunkDataQuery;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkDataQuery;
 import com.yolodata.tbana.cascading.splunk.SplunkScheme;
 import com.yolodata.tbana.cascading.splunk.SplunkTap;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;

@@ -3,9 +3,29 @@ apply plugin: 'scala'
 apply plugin: 'idea'
 apply from: 'scripts/setupSplunk.gradle'
 
+
+/*Clojure and Strom*/
+buildscript {
+    repositories {
+        mavenRepo name: 'clojars', url: 'http://clojars.org/repo'
+    }
+    dependencies {
+        classpath 'clojuresque:clojuresque:1.5.8'
+    }
+}
+apply plugin: 'clojure'
+
+group = 'com.yolodata'
+version = '1.0.0'
+
+warnOnReflection = true
+aotCompile = true
+/*******************/
+
 repositories {
     mavenLocal()
     mavenCentral()
+    clojarsRepo()
 
     mavenRepo name: 'Spray repo', url: 'http://repo.spray.io/'
     mavenRepo name: 'akka', url: 'http://repo.akka.io/releases/'
@@ -14,6 +34,12 @@ repositories {
 }
 
 dependencies {
+    /*Clojure and Strom*/
+    compile 'org.clojure:clojure:1.4.0'
+    compile 'storm:storm:0.8.2'
+    compile 'opencsv-clj:opencsv-clj:1.2.1'
+    /*******************/
+
     compile 'org.scala-lang:scala-library:2.9.3'
     compile 'org.scala-lang:scala-compiler:2.9.3'
     testCompile 'org.scalatest:scalatest_2.9.3:1.9.1'

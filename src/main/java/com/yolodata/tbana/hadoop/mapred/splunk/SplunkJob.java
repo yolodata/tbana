@@ -23,8 +23,8 @@ public class SplunkJob {
         return new SplunkJob(job);
     }
 
-    public static SplunkJob createSplunkJob(Service service, Configuration conf) {
-        SplunkConf.validateSearchConfiguration(conf);
+    public static SplunkJob createSplunkJob(Service service, SplunkConf conf) {
+        conf.validateSearchConfiguration();
 
         String searchQuery = conf.get(SplunkConf.SPLUNK_SEARCH_QUERY);
         JobArgs jobArgs = getJobArgs(conf);
@@ -55,12 +55,11 @@ public class SplunkJob {
         return job;
     }
 
-    public int getNumberOfResultsFromJob(Configuration conf) {
+    public int getNumberOfResultsFromJob(SplunkConf conf) {
         Service service = job.getService();
         String searchString = job.getSearch();
         searchString = searchString.concat(" | stats count");
-
-        Configuration newConfig = new Configuration(conf);
+        SplunkConf newConfig = new SplunkConf(conf);
         newConfig.set(SplunkConf.SPLUNK_SEARCH_QUERY,searchString);
 
         SplunkJob getEvents = SplunkJob.createSplunkJob(service,newConfig);

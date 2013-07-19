@@ -2,6 +2,7 @@ package com.yolodata.tbana.hadoop.mapred.splunk.recordreader;
 
 import com.google.common.collect.Lists;
 import com.splunk.Service;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkInputFormat;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkJob;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkService;
@@ -23,7 +24,7 @@ import java.util.Map;
 public class ParallelRecordReadersTest {
 
     private Service splunkService;
-    private Configuration configuration;
+    private SplunkConf configuration;
 
     @Before
     public void setUp() {
@@ -52,14 +53,13 @@ public class ParallelRecordReadersTest {
 
     @Test
     public void testMultipleExportRecordReadersInParallel() throws Exception {
-        Configuration conf = new Configuration(configuration);
+        SplunkConf conf = new SplunkConf(configuration);
         conf.set(SplunkInputFormat.INPUTFORMAT_MODE, SplunkInputFormat.Mode.Export.toString());
         startTest(conf,3);
     }
 
-    private void startTest(Configuration conf, int concurrentSplits) throws InterruptedException, IOException {
+    private void startTest(SplunkConf conf, int concurrentSplits) throws InterruptedException, IOException {
         List<SplunkSplit> splits = getSplunkSplits(concurrentSplits);
-
         List<RecordReaderThread> threads = Lists.newArrayList();
 
         for(SplunkSplit split : splits) {
@@ -73,7 +73,6 @@ public class ParallelRecordReadersTest {
 
         Map<LongWritable, List<Text>> expected = getExpectedResults();
 
-
         for(RecordReaderThread thread : threads) {
             Map<LongWritable, List<Text>> actual = thread.getResults();
 
@@ -82,7 +81,6 @@ public class ParallelRecordReadersTest {
             for(LongWritable key : actual.keySet())
                 assert(expected.get(key).get(0).equals(actual.get(key).get(0)));
         }
-
     }
 
     private Map<LongWritable, List<Text>> getExpectedResults() {
@@ -122,7 +120,6 @@ public class ParallelRecordReadersTest {
     }
 
     private class RecordReaderThread extends Thread {
-
         private SplunkSplit split;
         private Map<LongWritable,List<Text>> results;
         private SplunkRecordReader recordReader;

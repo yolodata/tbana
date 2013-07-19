@@ -1,6 +1,7 @@
 package com.yolodata.tbana.hadoop.mapred.splunk.split;
 
 import com.splunk.Service;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkJob;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkService;
 import org.apache.hadoop.mapred.InputSplit;
@@ -13,13 +14,14 @@ public class JobSplitProvider extends SplitProvider {
     @Override
     public InputSplit[] getSplits(JobConf conf, int numberOfSplits) throws IOException {
 
-        numberOfSplits = getNumberOfSplits(conf,numberOfSplits);
+        SplunkConf splunkConf = new SplunkConf(conf);
+        numberOfSplits = getNumberOfSplits(splunkConf,numberOfSplits);
         InputSplit[] splits = new InputSplit[numberOfSplits];
 
-        Service service = SplunkService.connect(conf);
-        SplunkJob splunkJob = SplunkJob.createSplunkJob(service,conf);
+        Service service = SplunkService.connect(splunkConf);
+        SplunkJob splunkJob = SplunkJob.createSplunkJob(service,splunkConf);
 
-        long numberOfEvents = splunkJob.getNumberOfResultsFromJob(conf);
+        long numberOfEvents = splunkJob.getNumberOfResultsFromJob(splunkConf);
 
         try {
             int resultsPerSplit = (int)numberOfEvents/numberOfSplits;

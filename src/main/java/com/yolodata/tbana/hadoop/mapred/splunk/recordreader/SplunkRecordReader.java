@@ -20,7 +20,7 @@ import java.util.List;
 
 public abstract class SplunkRecordReader implements RecordReader<LongWritable, ArrayListTextWritable> {
 
-    protected final Configuration configuration;
+    protected final SplunkConf configuration;
     protected long currentPosition;
     protected long startPosition;
     protected long endPosition;
@@ -30,10 +30,11 @@ public abstract class SplunkRecordReader implements RecordReader<LongWritable, A
     protected InputStreamReader in;
     protected CSVReader reader;
 
-    public SplunkRecordReader(Configuration configuration) throws IOException {
+    public SplunkRecordReader(SplunkConf configuration) throws IOException {
 
         this.configuration = configuration;
-        SplunkConf.validateConfiguration(this.configuration);
+        this.configuration.validateConfiguration();
+
         splunkService = SplunkService.connect(configuration);
 
     }

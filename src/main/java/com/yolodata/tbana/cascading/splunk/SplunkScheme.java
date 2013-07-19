@@ -44,7 +44,6 @@ public class SplunkScheme extends Scheme<JobConf, RecordReader, OutputCollector,
     @Override
     public void sourceConfInit(FlowProcess<JobConf> flowProcess, Tap<JobConf, RecordReader, OutputCollector> tap, JobConf conf) {
 
-        SplunkConf.validateLoginConfiguration(conf);
         conf.setInputFormat(SplunkInputFormat.class);
         conf.set(SplunkConf.SPLUNK_SEARCH_QUERY, this.splunkDataQuery.getSplunkQuery());
         conf.set(SplunkConf.SPLUNK_EARLIEST_TIME, this.splunkDataQuery.getEarliestTimeString());

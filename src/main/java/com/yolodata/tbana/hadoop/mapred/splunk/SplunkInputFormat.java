@@ -23,7 +23,8 @@ public class SplunkInputFormat implements InputFormat<LongWritable, ArrayListTex
 
     @Override
     public RecordReader<LongWritable,ArrayListTextWritable> getRecordReader(InputSplit inputSplit, JobConf configuration, Reporter reporter) throws IOException {
-        SplunkRecordReader splunkRecordReader = getRecordReaderFromConf(configuration);
+        SplunkConf splunkConf = new SplunkConf(configuration);
+        SplunkRecordReader splunkRecordReader = getRecordReaderFromConf(splunkConf);
         splunkRecordReader.initialize(inputSplit);
 
         return splunkRecordReader;
@@ -48,7 +49,7 @@ public class SplunkInputFormat implements InputFormat<LongWritable, ArrayListTex
         return DEFAULT_MODE;
     }
 
-    public static SplunkRecordReader getRecordReaderFromConf(Configuration conf) throws IOException {
+    public static SplunkRecordReader getRecordReaderFromConf(SplunkConf conf) throws IOException {
         Mode mode = getMethodFromConf(conf);
         switch(mode) {
             case Job:

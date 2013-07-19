@@ -1,6 +1,7 @@
 package com.yolodata.tbana.hadoop.mapred.splunk.split;
 
 import com.splunk.Service;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkJob;
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkService;
 import com.yolodata.tbana.hadoop.mapred.splunk.indexer.Indexer;
@@ -15,8 +16,9 @@ public class IndexerSplitProvider extends SplitProvider{
     @Override
     public InputSplit[] getSplits(JobConf conf, int numberOfSplits) throws IOException {
 
-        Service mainService = SplunkService.connect(conf);
-        List<Indexer> indexers = IndexerProvider.getIndexers(SplunkService.connect(conf));
+        SplunkConf splunkConf = new SplunkConf(conf);
+        Service mainService = SplunkService.connect(splunkConf);
+        List<Indexer> indexers = IndexerProvider.getIndexers(SplunkService.connect(splunkConf));
 
         Indexer mainIndexer = new Indexer(mainService.getHost(), mainService.getPort());
         indexers.add(0, mainIndexer);
@@ -26,14 +28,14 @@ public class IndexerSplitProvider extends SplitProvider{
         for(int i=0;i<indexers.size();i++)
         {
             Indexer indexer = indexers.get(i);
-            Service service = SplunkService.connect(conf, indexer.getHost(), indexer.getPort());
+            Service service = SplunkService.connect(splunkConf, indexer.getHost(), indexer.getPort());
 
-            SplunkJob splunkJob = SplunkJob.createSplunkJob(service,conf);
+            SplunkJob splunkJob = SplunkJob.createSplunkJob(service,splunkConf);
 
             int start = 0;
 
             // Add one for the header
-            int end = splunkJob.getNumberOfResultsFromJob(conf) + 1;
+            int end = splunkJob.getNumberOfResultsFromJob(splunkConf) + 1;
             boolean skipHeader = i>0;
 
             splits[i] = new IndexerSplit(indexer,splunkJob.getJob().getSid(), start, end, skipHeader);

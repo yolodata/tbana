@@ -1,8 +1,9 @@
 package com.yolodata.tbana.hadoop.mapred.splunk;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.mapred.JobConf;
 
-public class SplunkConf {
+public class SplunkConf extends JobConf {
     public static final String SPLUNK_USERNAME = "splunk.username";
     public static final String SPLUNK_PASSWORD = "splunk.password";
     public static final String SPLUNK_HOST = "splunk.host";
@@ -15,27 +16,35 @@ public class SplunkConf {
     public static final String[] REQUIRED_LOGIN_PARAMS = {SPLUNK_USERNAME,SPLUNK_PASSWORD,SPLUNK_HOST,SPLUNK_PORT};
     public static final String[] REQUIRED_SEARCH_PARAMS = {SPLUNK_SEARCH_QUERY,SPLUNK_EARLIEST_TIME,SPLUNK_LATEST_TIME};
 
-    public static void validateConfiguration(Configuration configuration) throws SplunkConfigurationException {
-        validateLoginConfiguration(configuration);
-        validateSearchConfiguration(configuration);
+    public SplunkConf() {
+        super(new JobConf());
     }
 
-    public static void validateLoginConfiguration(Configuration configuration) {
+    public SplunkConf(Configuration configuration) {
+        super(configuration);
+    }
+
+    public void validateConfiguration() throws SplunkConfigurationException {
+        validateLoginConfiguration();
+        validateSearchConfiguration();
+    }
+
+    public void validateLoginConfiguration() {
         for(String key : REQUIRED_LOGIN_PARAMS)
-            requireKeyInConfiguration(configuration,key);
+            requireKeyInConfiguration(key);
     }
 
-    public static void validateSearchConfiguration(Configuration configuration) {
+    public void validateSearchConfiguration() {
         for(String key : REQUIRED_SEARCH_PARAMS)
-            requireKeyInConfiguration(configuration,key);
+            requireKeyInConfiguration(key);
     }
 
-    public static boolean keyExists(Configuration configuration, String key) {
-        return configuration.get(key) != null;
+    public boolean keyExists(String key) {
+        return this.get(key) != null;
     }
 
-    public static void requireKeyInConfiguration(Configuration configuration, String key) {
-        if(!keyExists(configuration,key))
+    public void requireKeyInConfiguration(String key) {
+        if(!keyExists(key))
             throw new SplunkConfigurationException("Key "+key+" is required in JobConf configuration and is currently not set\n");
     }
 }

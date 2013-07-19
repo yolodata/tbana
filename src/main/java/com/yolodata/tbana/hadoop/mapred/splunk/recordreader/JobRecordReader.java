@@ -22,7 +22,7 @@ public class JobRecordReader extends SplunkRecordReader {
 
     private SplunkJob splunkJob;
 
-    public JobRecordReader(Configuration configuration) throws IOException {
+    public JobRecordReader(SplunkConf configuration) throws IOException {
         super(configuration);
     }
 
@@ -38,9 +38,7 @@ public class JobRecordReader extends SplunkRecordReader {
         }
 
         skipHeader = splunkSplit.getSkipHeader();
-
         splunkJob = SplunkJob.getSplunkJob(splunkService,splunkSplit.getJobID());
-
         splunkJob.waitForCompletion(1000);
 
         JobResultsArgs resultsArgs = new JobResultsArgs();
@@ -75,6 +73,4 @@ public class JobRecordReader extends SplunkRecordReader {
 
         resultsArgs.setFieldList(fields.split(","));
     }
-
-
 }

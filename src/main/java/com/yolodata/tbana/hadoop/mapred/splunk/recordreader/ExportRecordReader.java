@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
 
 public class ExportRecordReader extends SplunkRecordReader {
 
-    public ExportRecordReader(Configuration configuration) throws IOException {
+    public ExportRecordReader(SplunkConf configuration) throws IOException {
         super(configuration);
     }
 
@@ -32,9 +32,6 @@ public class ExportRecordReader extends SplunkRecordReader {
     public JobExportArgs getExportArgs() {
         JobExportArgs jobExportArgs = new JobExportArgs();
         jobExportArgs.setOutputMode(JobExportArgs.OutputMode.CSV);
-        // jobExportArgs.add("offset", startPosition); does not work in SplunkAPI
-        //long totalLinesToGet = endPosition-startPosition;
-        //jobExportArgs.add("count",totalLinesToGet);
 
         jobExportArgs.setLatestTime(configuration.get(SplunkConf.SPLUNK_LATEST_TIME));
         jobExportArgs.setEarliestTime(configuration.get(SplunkConf.SPLUNK_EARLIEST_TIME));

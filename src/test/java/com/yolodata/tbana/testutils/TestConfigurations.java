@@ -16,8 +16,8 @@ public class TestConfigurations {
     public static final String latest_time = "now";
     private static final String index_list = "*";
 
-    public static Configuration getSplunkLoginConfig() {
-        Configuration conf = new Configuration();
+    public static SplunkConf getSplunkLoginConfig() {
+        SplunkConf conf = new SplunkConf();
 
         conf.set(SplunkConf.SPLUNK_USERNAME, "admin");
         conf.set(SplunkConf.SPLUNK_PASSWORD, "changeIt");
@@ -27,8 +27,8 @@ public class TestConfigurations {
         return conf;
     }
 
-    public static Configuration getConfigurationWithSplunkConfigured() {
-        Configuration conf = getSplunkLoginConfig();
+    public static SplunkConf getConfigurationWithSplunkConfigured() {
+        SplunkConf conf = getSplunkLoginConfig();
         conf.set(SplunkConf.SPLUNK_EARLIEST_TIME, earliest_time);
         conf.set(SplunkConf.SPLUNK_LATEST_TIME, latest_time);
         conf.set(SplunkConf.SPLUNK_SEARCH_QUERY, query);
@@ -36,8 +36,8 @@ public class TestConfigurations {
         return conf;
     }
 
-    public static Configuration getConfigurationWithShuttlSearch() {
-        Configuration conf = getSplunkLoginConfig();
+    public static SplunkConf getConfigurationWithShuttlSearch() {
+        SplunkConf conf = getSplunkLoginConfig();
         conf.set(ShuttlInputFormatConstants.EARLIEST_TIME, earliest_time);
         conf.set(ShuttlInputFormatConstants.LATEST_TIME, DateTime.now().toString());
         conf.set(ShuttlInputFormatConstants.INDEX_LIST, index_list);

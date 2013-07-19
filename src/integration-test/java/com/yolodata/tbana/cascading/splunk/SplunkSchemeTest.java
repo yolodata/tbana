@@ -10,6 +10,7 @@ import cascading.tap.hadoop.Hfs;
 import cascading.tuple.Fields;
 import cascading.tuple.Tuple;
 import cascading.tuple.TupleEntryIterator;
+import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf;
 import com.yolodata.tbana.testutils.TestConfigurations;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.LongWritable;
@@ -25,7 +26,7 @@ public class SplunkSchemeTest extends CascadingTestCase {
     String testData = "src/test/resources/multilineCSV.csv";
     String outputPath = "build/testTMP";
 
-    Configuration conf;
+    SplunkConf conf;
 
     @Before
     public void setUp() {
@@ -36,13 +37,11 @@ public class SplunkSchemeTest extends CascadingTestCase {
     public void testSplunkScheme() throws IOException {
 
         runSplunkScheme("csvtest", testData);
-
     }
 
     public void runSplunkScheme(String path, String inputData) throws IOException
     {
         Properties properties = TestConfigurations.getSplunkLoginAsProperties();
-
         SplunkScheme inputScheme = new SplunkScheme(TestConfigurations.getSplunkSearch());
         TextLine outputScheme = new TextLine();
 

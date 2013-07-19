@@ -39,7 +39,8 @@ public class SplunkTap extends Tap<JobConf, RecordReader, OutputCollector> {
         setConfKey(conf, SplunkConf.SPLUNK_PASSWORD);
         setConfKey(conf, SplunkConf.SPLUNK_PORT);
 
-        SplunkConf.validateLoginConfiguration(conf);
+        SplunkConf splunkConf = new SplunkConf(conf);
+        splunkConf.validateLoginConfiguration();
         super.sourceConfInit(process, conf);
     }
 

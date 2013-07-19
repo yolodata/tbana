@@ -6,7 +6,7 @@ import org.apache.hadoop.conf.Configuration;
 
 public class SplunkService {
 
-    public static Service connect(Configuration configuration) {
+    public static Service connect(SplunkConf configuration) {
         return connect(
                 configuration.get(SplunkConf.SPLUNK_USERNAME),
                 configuration.get(SplunkConf.SPLUNK_PASSWORD),
@@ -14,7 +14,7 @@ public class SplunkService {
                 configuration.getInt(SplunkConf.SPLUNK_PORT, 8080));
     }
 
-    public static Service connect(Configuration configuration, String host, int port) {
+    public static Service connect(SplunkConf configuration, String host, int port) {
         return connect(
                 configuration.get(SplunkConf.SPLUNK_USERNAME),
                 configuration.get(SplunkConf.SPLUNK_PASSWORD),

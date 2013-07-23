@@ -14,7 +14,7 @@ object SplunkRDD {
 
   def apply(context: SparkContext, query : SplunkDataQuery, jobConf : JobConf) : SplunkRDD = {
     jobConf.set(SplunkConf.SPLUNK_EARLIEST_TIME,query.getEarliestTimeString)
-    jobConf.set(SplunkConf.SPLUNK_LATEST_TIME,query.getEarliestTimeString)
+    jobConf.set(SplunkConf.SPLUNK_LATEST_TIME,query.getLatestTimeString)
     jobConf.set(SplunkConf.SPLUNK_SEARCH_QUERY,query.getSplunkQuery)
 
     new SplunkRDD(context,jobConf)

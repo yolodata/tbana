@@ -4,7 +4,7 @@ apply plugin: 'idea'
 apply from: 'scripts/setupSplunk.gradle'
 
 
-/*Clojure and Strom*/
+/*Clojure*/
 buildscript {
     repositories {
         mavenRepo name: 'clojars', url: 'http://clojars.org/repo'
@@ -34,7 +34,7 @@ repositories {
 }
 
 dependencies {
-    /*Clojure and Strom*/
+    /*Clojure and Storm*/
     compile 'org.clojure:clojure:1.4.0'
     compile 'storm:storm:0.8.2'
     compile 'opencsv-clj:opencsv-clj:1.2.1'
@@ -70,6 +70,35 @@ dependencies {
     compile( group: 'com.splunk', name: 'splunk', version: '1.1.0' )
     compile files('lib/shuttl-0.8.4.jar')
 }
+
+// Add integration test source sets
+sourceSets {
+    //TODO: doesn't work for clojure?!
+    integrationTest { sourceSet ->
+        ['clojure', 'scala', 'java'].each {
+            if (!sourceSet.hasProperty(it)) {
+                return
+            }
+            sourceSet."$it".srcDir file("src/integration-test/${it}")
+        }
+    }
+}
+
+// Setup dependencies for integration testing
+dependencies {
+    integrationTestCompile sourceSets.main.output
+    integrationTestCompile sourceSets.test.output
+    integrationTestCompile configurations.testCompile
+    integrationTestRuntime configurations.testRuntime
+}
+
+task integrationTest(type: Test) {
+    testClassesDir = sourceSets.integrationTest.output.classesDir
+    classpath = sourceSets.integrationTest.runtimeClasspath
+}
+
+integrationTest.dependsOn setUpCluster
+check.dependsOn integrationTest
 
 task wrapper(type: Wrapper) {
     gradleVersion = '1.6'

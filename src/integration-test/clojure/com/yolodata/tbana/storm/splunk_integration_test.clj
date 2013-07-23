@@ -20,10 +20,6 @@
            split-event
            :p 1)}))
 
-;;(deftest splunk-spout-test
-  ;;(with-local-cluster [cluster]
-    ;;(.submitTopology cluster "splunk-integration-test" {TOPOLOGY-DEBUG true} (mk-topology))))
-
-(defn -main
-  ([]
-    (run-local!)))
+(deftest splunk-spout-test
+  (with-local-cluster [cluster]
+    (.submitTopology cluster "splunk-integration-test" {TOPOLOGY-DEBUG true} (mk-topology))))

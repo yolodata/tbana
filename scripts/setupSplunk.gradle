@@ -159,7 +159,6 @@ task startAllSplunks << {
 }
 
 startAllSplunks.mustRunAfter setUpCluster
-test.dependsOn startAllSplunks
 test << {
     callEachSplunkWith('stop')
 }

@@ -17,7 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
-public class ShuttlCSVRecordReader implements RecordReader<LongWritable, List<Text>> {
+public class ShuttlCSVRecordReader implements RecordReader<LongWritable, ArrayListTextWritable> {
 
     protected InputStream is;
     protected CSVReader reader;
@@ -90,7 +90,7 @@ public class ShuttlCSVRecordReader implements RecordReader<LongWritable, List<Te
     }
 
     @Override
-    public List<Text> createValue() {
+    public ArrayListTextWritable createValue() {
         return new ArrayListTextWritable();
     }
 
@@ -100,7 +100,7 @@ public class ShuttlCSVRecordReader implements RecordReader<LongWritable, List<Te
     }
 
     @Override
-    public boolean next(LongWritable key, List<Text> value) throws IOException {
+    public boolean next(LongWritable key, ArrayListTextWritable value) throws IOException {
         if(pos==end) {
             return false;
         }

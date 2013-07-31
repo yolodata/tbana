@@ -1,5 +1,4 @@
 (ns com.yolodata.tbana.storm.splunk
-  (:import [backtype.storm StormSubmitter LocalCluster])
   (:import (com.splunk Service ServiceArgs JobExportArgs))
   (:require [opencsv-clj.core :as csv])
   (:use [backtype.storm clojure config])
@@ -17,7 +16,7 @@
         exportArgsWithCSV (conj exportArgs {"output_mode" "csv"}) ;;overrides output format to csv
         exportStream (createExportStream service splunkQuery exportArgsWithCSV)
         csvSeq (atom (csv/parse (java.io.InputStreamReader. exportStream) :mapped true))]
-    ;;(do (println "***\n***\n" (first csvSeq) "\n***\n***\n\n" exportArgsWithCSV "\n\n"))
+    ;;(do (println "***\n***\n" (first csvSeq) "\n***\n***\n"))
     (spout
       (nextTuple []
         (Thread/sleep 500)

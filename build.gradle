@@ -15,7 +15,7 @@ buildscript {
 }
 apply plugin: 'clojure'
 
-group = 'com.yolodata'
+group = 'com.yolodata.tbana'
 version = '1.0.0'
 
 warnOnReflection = true
@@ -77,6 +77,7 @@ sourceSets {
     integrationTest { sourceSet ->
         ['clojure', 'scala', 'java'].each {
             if (!sourceSet.hasProperty(it)) {
+                println "WARN $it not found"
                 return
             }
             sourceSet."$it".srcDir file("src/integration-test/${it}")
@@ -97,7 +98,7 @@ task integrationTest(type: Test) {
     classpath = sourceSets.integrationTest.runtimeClasspath
 }
 
-integrationTest.dependsOn setUpCluster
+integrationTest.dependsOn setUpCluster, startAllSplunks
 check.dependsOn integrationTest
 
 task wrapper(type: Wrapper) {

@@ -21,15 +21,25 @@ object GetMachinesJob {
     val withoutHeader = rdd.filter(_._1.get()!=0L)
 
     val machines : RDD[Machine] = withoutHeader
-      .map { x=>
-        (x._2.get(0).toString,x._2.get(1).toString.toDouble)
+      .map { line =>
+        val hostColumn: String = line._2.get(2).toString
+        val rawColumn: String = line._2.get(4).toString
+
+        (hostColumn,getLatencyFromRaw(rawColumn))
       }.
-      groupBy(x=>x._1).
+      groupBy(x=>x._1). // x._1 is the offset number in the file
       map{ x =>
         val sum = x._2.foldLeft(0.0)(_+_._2)
         new Machine(x._1, sum/x._2.size.toLong ,x._2.size.toLong)
       }
 
     machines.collect()
+  }
+
+
+  def getLatencyFromRaw(raw:String) : Long = {
+
+    val index: Int = raw.indexOf("Latency:") + "Latency:".length
+    raw.substring(index).toLong
   }
 }

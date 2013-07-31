@@ -1,0 +1,8 @@
+"_time",source,host,sourcetype,"_raw","_meta"
+1336330530,"source::/some/path/to/some/file/small_loremIpsum.txt","A","sourcetype::small_loremIpsum-too_small","Latency:10","_indextime::1336330530 timestamp::none punct::____,_"
+1336330531,"source::/some/path/to/some/file/small_loremIpsum.txt","B","sourcetype::small_loremIpsum-too_small","Latency:12","_indextime::1336330530 timestamp::none punct::____,_"
+1336330532,"source::/some/path/to/some/file/small_loremIpsum.txt","A","sourcetype::small_loremIpsum-too_small","Latency:25","_indextime::1336330530 timestamp::none punct::____,_"
+1336330533,"source::/some/path/to/some/file/small_loremIpsum.txt","B","sourcetype::small_loremIpsum-too_small","Latency:11","_indextime::1336330530 timestamp::none punct::____,_"
+1336330534,"source::/some/path/to/some/file/small_loremIpsum.txt","C","sourcetype::small_loremIpsum-too_small","Latency:20","_indextime::1336330530 timestamp::none punct::____,_"
+1336330535,"source::/some/path/to/some/file/small_loremIpsum.txt","C","sourcetype::small_loremIpsum-too_small","Latency:15","_indextime::1336330530 timestamp::none punct::____,_"
+1336330536,"source::/some/path/to/some/file/small_loremIpsum.txt","A","sourcetype::small_loremIpsum-too_small","Latency:11","_indextime::1336330530 timestamp::none punct::____,_"

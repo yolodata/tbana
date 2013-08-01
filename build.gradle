@@ -83,6 +83,23 @@ sourceSets {
             sourceSet."$it".srcDir file("src/integration-test/${it}")
         }
     }
+
+    examples { sourceSet ->
+        ['scala', 'java'].each {
+            if (!sourceSet.hasProperty(it)) {
+                println "WARN $it not found"
+                return
+            }
+            sourceSet."$it".srcDir file("examples/src/main/${it}")
+        }
+        sourceSet.resources.srcDir file("examples/resources")
+    }
+}
+
+task examplesJar(type: Jar, dependsOn: classes){
+    from sourceSets.examples.output
+    from sourceSets.main.output
+    classifier 'examples'
 }
 
 // Setup dependencies for integration testing
@@ -93,13 +110,19 @@ dependencies {
     integrationTestRuntime configurations.testRuntime
 }
 
+dependencies {
+    //examplesCompile sourceSets.examples.output
+    examplesCompile sourceSets.main.output
+    examplesCompile configurations.compile
+}
+
 task integrationTest(type: Test) {
     testClassesDir = sourceSets.integrationTest.output.classesDir
     classpath = sourceSets.integrationTest.runtimeClasspath
 }
 
 integrationTest.dependsOn setUpCluster, startAllSplunks
-check.dependsOn integrationTest
+//check.dependsOn integrationTest
 
 task wrapper(type: Wrapper) {
     gradleVersion = '1.6'

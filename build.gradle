@@ -97,11 +97,18 @@ sourceSets {
 }
 
 task examplesJar(type: Jar, dependsOn: classes){
+
     from sourceSets.examples.output
-    from sourceSets.main.output
+//    from (configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
+//        exclude "META-INF/*.SF"
+//        exclude "META-INF/*.DSA"
+//        exclude "META-INF/*.RSA"
+//    }
+
+
     classifier 'examples'
 }
-
+build.dependsOn(examplesJar)
 // Setup dependencies for integration testing
 dependencies {
     integrationTestCompile sourceSets.main.output
@@ -127,3 +134,10 @@ integrationTest.dependsOn setUpCluster, startAllSplunks
 task wrapper(type: Wrapper) {
     gradleVersion = '1.6'
 }
+
+task copyToLibManaged( type: Copy ) {
+    into "lib_managed"
+    from configurations.runtime
+}
+
+jar { dependsOn copyToLibManaged }

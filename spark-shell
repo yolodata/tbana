@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+## Load env variables for spark shell
+. conf/spark-env.sh
+
+## Start spark-shell
+$SPARK_HOME/spark-shell
+

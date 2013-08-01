@@ -10,6 +10,10 @@ public class SplunkResultCountExample {
     public static void main(String [] args) {
         JavaSparkContext sparkContext = new JavaSparkContext("local","example");
 
+        run(sparkContext);
+    }
+
+    private static void run(JavaSparkContext sparkContext) {
         JobConf conf = new JobConf();
 
         conf.set(SplunkConf.SPLUNK_USERNAME, "admin");

@@ -8,8 +8,14 @@ import spark.SparkContext
 object SplunkWordCountExample {
 
   def main(args : Array[String]) {
-    val sc : SparkContext = new SparkContext("local","example")
-    val conf : JobConf = new JobConf()
+
+    val sc = new SparkContext("local", "SplunkWordCountExample")
+
+    run(sc)
+  }
+
+  def run(sc: SparkContext) {
+    val conf: JobConf = new JobConf()
 
     conf.set(SplunkConf.SPLUNK_USERNAME, "admin")
     conf.set(SplunkConf.SPLUNK_PASSWORD, "changeIt")
@@ -19,15 +25,16 @@ object SplunkWordCountExample {
     conf.set(SplunkConf.SPLUNK_LATEST_TIME, "now")
     conf.set(SplunkConf.SPLUNK_SEARCH_QUERY, "search index=_internal | head 5 | table _raw")
 
-
     val rdd = new SplunkRDD(sc, conf)
 
-    rdd.foreach{x=>println(x)}
+    rdd.foreach {
+      x => println(x)
+    }
 
-    val words = rdd.flatMap{
+    val words = rdd.flatMap {
       x => x._2.get(0).toString.split(" ")
     }
 
-      println(words.count())
+    println(words.count())
   }
 }

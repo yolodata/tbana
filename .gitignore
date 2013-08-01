@@ -9,3 +9,4 @@ out/
 .gradle/
 consolesink.log
 .gradletasknamecache
+/lib_managed

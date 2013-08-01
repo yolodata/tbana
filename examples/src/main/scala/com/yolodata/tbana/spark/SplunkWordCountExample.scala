@@ -27,14 +27,11 @@ object SplunkWordCountExample {
 
     val rdd = new SplunkRDD(sc, conf)
 
-    rdd.foreach {
-      x => println(x)
-    }
-
     val words = rdd.flatMap {
       x => x._2.get(0).toString.split(" ")
     }
 
+    rdd.foreach(println)
     println(words.count())
   }
 }

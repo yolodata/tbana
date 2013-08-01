@@ -15,4 +15,6 @@ TBANA_JAR=$(ls "$PATH_TO_TBANA/build/libs/tbana-"*[0-9T].jar)
 DEPS_JARS=$(ls -d $PATH_TO_TBANA/lib_managed/*.jar | paste -sd "," -)
 ADD_JARS="$TBANA_JAR,$EXAMPLES_JAR,$DEPS_JARS"
 export ADD_JARS
-export CLASSPATH=$CLASSPATH:$TBANA_JAR
+
+DEPS_JARS_COLON_SEPARATED=$(ls -d $PATH_TO_TBANA/lib_managed/*.jar | paste -sd ":" -)
+export SPARK_CLASSPATH=$SPARK_CLASSPATH:$EXAMPLES_JAR:$TBANA_JAR:$DEPS_JARS_COLON_SEPARATED

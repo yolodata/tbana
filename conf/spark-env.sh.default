@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ## Set this to the home directory of spark
-export SPARK_HOME="/Users/matteusklich/YD/git-repos/spark"
+export SPARK_HOME=""
 
 if [ -z "$SPARK_HOME" ]; then
     echo "SPARK_HOME not set, go to conf/spark-env.sh and add the path to spark"

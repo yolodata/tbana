@@ -10,3 +10,4 @@ out/
 consolesink.log
 .gradletasknamecache
 /lib_managed
+conf/spark-env.sh

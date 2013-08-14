@@ -8,30 +8,32 @@ import spark.SparkContext
 object SplunkWordCountExample {
 
   def main(args : Array[String]) {
-
-    val sc = new SparkContext("local", "SplunkWordCountExample")
-
+    val sc = new SparkContext("spark://172.0.0.1:63758", "SplunkWordCountExample")
     run(sc)
   }
 
   def run(sc: SparkContext) {
     val conf: JobConf = new JobConf()
 
-    conf.set(SplunkConf.SPLUNK_USERNAME, "admin")
-    conf.set(SplunkConf.SPLUNK_PASSWORD, "changeIt")
+    conf.set(SplunkConf.SPLUNK_USERNAME, "admin") //replace with your own user
+    conf.set(SplunkConf.SPLUNK_PASSWORD, "changeIt") // replace with your own password
     conf.set(SplunkConf.SPLUNK_HOST, "localhost")
-    conf.set(SplunkConf.SPLUNK_PORT, "9050")
-    conf.set(SplunkConf.SPLUNK_EARLIEST_TIME, "0")
+    conf.set(SplunkConf.SPLUNK_PORT, "8089") 
+    conf.set(SplunkConf.SPLUNK_EARLIEST_TIME, "0") // from the begining
     conf.set(SplunkConf.SPLUNK_LATEST_TIME, "now")
-    conf.set(SplunkConf.SPLUNK_SEARCH_QUERY, "search index=_internal | head 5 | table _raw")
-
+    // most recent 50 rows from the _internal index
+    conf.set(SplunkConf.SPLUNK_SEARCH_QUERY, "search index=_internal | head 50 | table _raw")
+    
     val rdd = new SplunkRDD(sc, conf)
 
     val words = rdd.flatMap {
-      x => x._2.get(0).toString.split(" ")
+      x => x._2.get(0).toString.split("\\W+")
     }
+    val wordcount = words.map(word => (word, 1)).reduceByKey((a, b) => a + b)
 
+    // Show the source data (the _raw field in Splunk, which is the data from the log file)
     rdd.foreach(println)
-    println(words.count())
+    // Show the tuples of words and their counts
+    wordcount.foreach(println)
   }
 }

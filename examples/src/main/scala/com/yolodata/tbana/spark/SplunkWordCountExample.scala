@@ -4,6 +4,7 @@ import com.yolodata.tbana.spark.RDD.SplunkRDD
 import org.apache.hadoop.mapred.JobConf
 import com.yolodata.tbana.hadoop.mapred.splunk.SplunkConf
 import spark.SparkContext
+import spark.SparkContext._
 
 object SplunkWordCountExample {
 

@@ -16,7 +16,7 @@ buildscript {
 apply plugin: 'clojure'
 
 group = 'com.yolodata.tbana'
-version = '1.0.0'
+version = '0.1.0'
 
 warnOnReflection = true
 aotCompile = true

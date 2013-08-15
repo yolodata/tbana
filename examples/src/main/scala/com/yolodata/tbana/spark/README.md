@@ -45,10 +45,14 @@ Build spark, so you can execute:
 
 ### Build tbana
 
-> gradle build
-> gradle exampleJar
+You need to build tbana and the examples.
+
+    gradle build
+    gradle exampleJar
 
 ### Setup Environment
+
+Before you do anything, it is *important* to ensure your environment is setup.
 
 * Be sure to set $SPARK_HOME to your spark home location. For example: 
 
@@ -67,6 +71,7 @@ In <b>tbana/conf</b> there is a file <b>spark-env.sh</b>. To setup classpath:
 To run the example via spark run:
 > cd $TBANA_HOME;./spark-run com.yolodata.tbana.spark.SplunkWordCountExample
 
+This will run in local mode. If you want to run against a cluster, then make the appropriate changes to the SparkContext constructor call.
 
 ### Using the spark-shell
 
@@ -84,19 +89,20 @@ You can also use the spark-shell repl by doing the following
 
 * You should see something like this for the raw data:
 
->(26,[08-14-2013 16:51:52.160 -0700 INFO  Metrics - group=pipeline, name=typing, processor=regexreplacement, cpu_seconds=0.000000, executes=49, cumulative_hits=7996])
->(27,[08-14-2013 16:51:52.160 -0700 INFO  Metrics - group=pipeline, name=typing, processor=readerin, cpu_seconds=0.000000, executes=49, cumulative_hits=7996])
->(28,[08-14-2013 16:51:52.160 -0700 INFO  Metrics - group=pipeline, name=typing, processor=previewout, cpu_seconds=0.000000, executes=49, cumulative_hits=7996])
-(
+    (26,[08-14-2013 16:51:52.160 -0700 INFO  Metrics - group=pipeline, name=typing, processor=regexreplacement, cpu_seconds=0.000000, executes=49, cumulative_hits=7996])
+    (27,[08-14-2013 16:51:52.160 -0700 INFO  Metrics - group=pipeline, name=typing, processor=readerin, cpu_seconds=0.000000, executes=49, cumulative_hits=7996])
+    (28,[08-14-2013 16:51:52.160 -0700 INFO  Metrics - group=pipeline, name=typing, processor=previewout, cpu_seconds=0.000000, executes=49, cumulative_hits=7996])
+    ....
+
 
 * Something like this for the word count tuples:
 
-> (com,2)
-> (mrsparkle_path,1)
-> (520c0979161671ff0,50)
-> (js,1)
-> (quickdraw,1)
-> (False,2)
-
+    (com,2)
+    (mrsparkle_path,1)
+    (520c0979161671ff0,50)
+    (js,1)
+    (quickdraw,1)
+    (False,2)
+    ....
 
 

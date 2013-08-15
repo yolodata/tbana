@@ -9,7 +9,8 @@ import spark.SparkContext._
 object SplunkWordCountExample {
 
   def main(args : Array[String]) {
-    val sc = new SparkContext("spark://172.0.0.1:63758", "SplunkWordCountExample")
+//    val sc = new SparkContext("spark://172.0.0.1:63758", "SplunkWordCountExample")
+    val sc = new SparkContext("local", "SplunkWordCountExample", "$SPARK_HOME")
     run(sc)
   }
 

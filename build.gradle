@@ -109,6 +109,7 @@ task examplesJar(type: Jar, dependsOn: classes){
     classifier 'examples'
 }
 build.dependsOn(examplesJar)
+
 // Setup dependencies for integration testing
 dependencies {
     integrationTestCompile sourceSets.main.output
@@ -166,6 +167,7 @@ task shuttlCascadingExample(type: Jar, dependsOn: classes){
 
     classifier 'shuttlCascadingExample'
 }
+shuttlCascadingExample.dependsOn build
 
 task splunkCascadingExample(type: Jar, dependsOn: classes){
 
@@ -186,3 +188,4 @@ task splunkCascadingExample(type: Jar, dependsOn: classes){
 
     classifier 'splunkCascadingExample'
 }
+splunkCascadingExample.dependsOn build

@@ -141,3 +141,48 @@ task copyToLibManaged( type: Copy ) {
 }
 
 jar { dependsOn copyToLibManaged }
+
+task shuttlCascadingExample(type: Jar, dependsOn: classes){
+
+    // include example class files
+    from sourceSets.examples.output
+
+    // include tbana class files
+    from sourceSets.main.output
+
+    // copy required libs
+    into('lib') {
+        from 'lib_managed'
+    }
+
+    // copy resources
+    into('examples/resources/shuttl') {
+        from 'examples/resources/shuttl'
+    }
+
+    manifest {
+        attributes( "Main-Class": "com/yolodata/tbana/cascading/ShuttlCsvExample" )
+    }
+
+    classifier 'shuttlCascadingExample'
+}
+
+task splunkCascadingExample(type: Jar, dependsOn: classes){
+
+    // include example class files
+    from sourceSets.examples.output
+
+    // include tbana class files
+    from sourceSets.main.output
+
+    // copy required libs
+    into('lib') {
+        from 'lib_managed'
+    }
+
+    manifest {
+        attributes( "Main-Class": "com/yolodata/tbana/cascading/SplunkSchemeExample" )
+    }
+
+    classifier 'splunkCascadingExample'
+}

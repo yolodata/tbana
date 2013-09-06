@@ -80,19 +80,14 @@ task copyAll(dependsOn: ['extractSplunk']) {
     }
 }
 
-task extractSplunk {
-
-    def dest= new File(buildCache, 'splunk')
-    outputs.dir dest
-
-    doLast {
-        def tarPath= 'splunk_tgz/splunk*.tgz'
-        def proc= ['sh', '-c', "tar xf $tarPath -C $buildCache.path"].execute()
-        proc.consumeProcessOutput(System.out, System.err)
-        proc.waitFor()
+task extractSplunk << {
+    file("splunk_tgz").listFiles().each { f ->
+        if (f.name.endsWith(".tgz"))
+            exec {
+                commandLine 'tar', 'xf', "${f.path}", "-C", "$buildCache.path"
+            }
     }
 }
-
 def startAndSetupSplunk(path, name, web_port, splunkd_port) {
     def splunkDir= file(path)
     assert splunkDir.isDirectory()
@@ -167,7 +162,7 @@ test << {
 def callEachSplunkWith(args){
     def currentSplunks= getCurrentSplunks()
     if (currentSplunks.size() == 0)
-        throw new FileNotFoundException("No splunk instances where found in $splunkClusterDir")
+        println("No splunk instances where found in $splunkClusterDir")
 
     currentSplunks.each { instance ->
         def splunk= "$splunkClusterDir/$instance/bin/splunk"

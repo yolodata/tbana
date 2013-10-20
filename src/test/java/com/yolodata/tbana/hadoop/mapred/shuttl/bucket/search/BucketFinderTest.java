@@ -61,8 +61,9 @@ public class BucketFinderTest {
     @Test
     public void testGetBucketsByTimeRange() throws Exception {
 
-        DateTime earliestTime = DateTime.parse("1970-01-01T00:00:00");
-        DateTime latestTime = DateTime.parse("1970-01-01T00:00:10");
+
+        DateTime earliestTime = new DateTime(28810001);
+        DateTime latestTime = new DateTime(28820000);
 
         BucketFinder bucketFinder = new BucketFinder(fs, index);
         List<Bucket> buckets = bucketFinder.search(new SplunkDataQuery(earliestTime, latestTime));

@@ -12,7 +12,7 @@ Splunk to analyze data on non-Splunk systems.  In Hadoop, for instance, this is 
 an InputFormat that Hadoop MapReduce jobs can use. In effect, this opens up the data for
 any higher-layer system that can utilize a Hadoop InputFormat such as Hive, Pig, etc. 
 
-![My image](yolodata.github.io/images/tbana_architecture.png)
+![My image](http://yolodata.github.io/images/tbana_architecture.png)
 
 ## Features
 
